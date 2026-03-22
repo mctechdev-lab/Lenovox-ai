@@ -1,0 +1,360 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>EduMateAI - Kids Learning Hub</title>
+
+<!-- Font Awesome 6 Free -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+  :root {
+    --nav-height: 65px; /* Reduced for portability */
+    --primary-blue: #007AFF;
+    --primary-purple: #AF52DE;
+    --bg-color: #F2F2F7;
+    --nav-bg: rgba(255, 255, 255, 0.98);
+    --accent-orange: #FF9500;
+    --accent-red: #FF3B30;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-color);
+    overflow: hidden;
+  }
+
+  /* MASTER CONTAINER */
+  .app-shell {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    position: relative;
+  }
+
+  /* CONTENT WINDOW - Fixed to occupy space above navigation */
+  .content-window {
+    flex: 1;
+    width: 100%;
+    position: relative;
+    background: #fff;
+    overflow: hidden;
+    /* Ensure it doesn't overlap nav */
+    margin-bottom: 0; 
+  }
+
+  /* SECTION WRAPPERS */
+  .section {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .section.active {
+    display: block;
+    opacity: 1;
+  }
+
+  /* IFRAME STYLING - Fixed to fit the container */
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  /* 3D LIVE LOADING ANIMATION */
+  .skeleton-loader {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .loader-3d {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    perspective: 150px;
+  }
+
+  .loader-3d div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 4px solid transparent;
+    border-top-color: var(--primary-blue);
+    border-radius: 50%;
+    animation: loader-rotate 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  }
+
+  .loader-3d div:nth-child(1) { animation-delay: -0.45s; border-top-color: var(--primary-purple); }
+  .loader-3d div:nth-child(2) { animation-delay: -0.3s; border-top-color: var(--accent-orange); }
+  .loader-3d div:nth-child(3) { animation-delay: -0.15s; border-top-color: var(--accent-red); }
+
+  @keyframes loader-rotate {
+    0% { transform: rotateX(35deg) rotateY(-45deg) rotateZ(0deg); }
+    100% { transform: rotateX(35deg) rotateY(-45deg) rotateZ(360deg); }
+  }
+
+  /* NAVIGATION BAR */
+  .pro-nav {
+    height: var(--nav-height);
+    background: var(--nav-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    padding: 0 10px;
+    padding-bottom: env(safe-area-inset-bottom);
+    z-index: 9999;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.08);
+  }
+
+  .nav-item {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: #A1A1A6;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+  }
+
+  /* REALISTIC 3D ICON WRAPPER */
+  .icon-wrapper {
+    width: 32px; /* Smaller as requested */
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    border-radius: 8px;
+    margin-bottom: 2px;
+    transition: inherit;
+    background: #F2F2F7;
+    box-shadow: 
+      2px 2px 5px rgba(0,0,0,0.1),
+      -2px -2px 5px rgba(255,255,255,0.8),
+      inset 0 0 0 rgba(0,0,0,0.05); /* Neumorphic base */
+  }
+
+  .nav-item span {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ACTIVE 3D STATE */
+  .nav-item.active {
+    color: var(--primary-blue);
+  }
+
+  .nav-item.active .icon-wrapper {
+    transform: translateY(-6px) scale(1.1);
+    background: #fff;
+    color: var(--primary-blue);
+    box-shadow: 
+      0 10px 20px rgba(0, 122, 255, 0.2),
+      0 4px 0 var(--primary-blue), /* 3D depth edge */
+      inset 0 -2px 5px rgba(0,0,0,0.05);
+    text-shadow: 0 2px 4px rgba(0, 122, 255, 0.2);
+  }
+
+  /* CENTER PLAY BUTTON - SUPER REALISTIC 3D */
+  .nav-item.center-play {
+    flex: 0 0 60px;
+    margin-top: -25px;
+  }
+
+  .center-play .icon-wrapper {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(145deg, #FF5E5E, #FF2D55);
+    color: #fff;
+    border-radius: 18px;
+    font-size: 24px;
+    border: 3px solid #fff;
+    box-shadow: 
+      0 8px 15px rgba(255, 45, 85, 0.4),
+      0 4px 0 #D00036, /* 3D Bottom Edge */
+      inset 0 2px 4px rgba(255,255,255,0.3);
+  }
+
+  .nav-item.center-play.active .icon-wrapper {
+    transform: translateY(2px);
+    box-shadow: 
+      0 4px 8px rgba(255, 45, 85, 0.3),
+      0 1px 0 #D00036,
+      inset 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  /* MEETUP PORTAL STYLING */
+  #social-portal {
+    background: linear-gradient(135deg, #5856D6 0%, #AF52DE 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+  }
+  .portal-card {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 25px;
+    width: 90%;
+    max-width: 300px;
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  }
+</style>
+</head>
+
+<body>
+
+<div class="app-shell">
+  
+  <!-- DYNAMIC CONTENT WINDOW -->
+  <main class="content-window">
+    
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="section active">
+      <div class="skeleton-loader"><div class="loader-3d"><div></div><div></div><div></div><div></div></div></div>
+      <iframe src="userdashboard.html" onload="this.previousElementSibling.style.display='none'"></iframe>
+    </div>
+    
+    <!-- AI BUDDY -->
+    <div id="ai-buddy" class="section">
+      <div class="skeleton-loader"><div class="loader-3d"><div></div><div></div><div></div><div></div></div></div>
+      <iframe src="ai-chat-bot-assitant.html" onload="this.previousElementSibling.style.display='none'"></iframe>
+    </div>
+    
+    <!-- GAMES -->
+    <div id="gaming" class="section">
+      <div class="skeleton-loader"><div class="loader-3d"><div></div><div></div><div></div><div></div></div></div>
+      <iframe src="gaming-section.html" onload="this.previousElementSibling.style.display='none'"></iframe>
+    </div>
+    
+    <!-- MEETUP -->
+    <div id="meetup" class="section">
+      <div id="social-portal" style="height: 100%;">
+        <div style="font-size: 60px; margin-bottom: 10px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));">🪐</div>
+        <h2 style="font-size: 28px; margin: 0; font-weight: 800; text-shadow: 0 4px 10px rgba(0,0,0,0.2);">MeetUp AI</h2>
+        <p style="opacity: 0.9; font-size: 14px;">The ultimate kids community.</p>
+        
+        <div class="portal-card" style="margin-top: 20px;">
+          <div style="text-align: left; font-size: 14px; line-height: 1.6;">
+            <p>🚀 Team up for Quizzes</p>
+            <p>🤝 Make new Study Buddies</p>
+            <p>🛡️ Secure & Kid-Safe</p>
+          </div>
+        </div>
+        
+        <div style="margin-top: 25px; background: #fff; color: #5856D6; padding: 10px 20px; border-radius: 50px; font-weight: 800; box-shadow: 0 10px 20px rgba(0,0,0,0.1); font-size: 14px;">
+          Dec 16, 2026
+        </div>
+      </div>
+    </div>
+    
+    <!-- SETTINGS -->
+    <div id="magic-settings" class="section">
+      <div class="skeleton-loader"><div class="loader-3d"><div></div><div></div><div></div><div></div></div></div>
+      <iframe src="lenovox-settings.html" onload="this.previousElementSibling.style.display='none'"></iframe>
+    </div>
+
+  </main>
+
+  <!-- PROFESSIONAL 3D NAVIGATION -->
+  <nav class="pro-nav">
+    <div class="nav-item active" data-target="dashboard">
+      <div class="icon-wrapper"><i class="fas fa-house"></i></div>
+      <span>Home</span>
+    </div>
+
+    <div class="nav-item" data-target="ai-buddy">
+      <div class="icon-wrapper"><i class="fas fa-robot"></i></div>
+      <span>AI Buddy</span>
+    </div>
+
+    <div class="nav-item center-play" data-target="gaming">
+      <div class="icon-wrapper"><i class="fas fa-gamepad"></i></div>
+    </div>
+
+    <div class="nav-item" data-target="meetup">
+      <div class="icon-wrapper"><i class="fas fa-users"></i></div>
+      <span>MeetUp</span>
+    </div>
+
+    <div class="nav-item" data-target="magic-settings">
+      <div class="icon-wrapper"><i class="fas fa-gear"></i></div>
+      <span>Magic</span>
+    </div>
+  </nav>
+
+</div>
+
+<script>
+  const navItems = document.querySelectorAll('.nav-item');
+  const sections = document.querySelectorAll('.section');
+
+  // Handle Tab Switching
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const target = item.dataset.target;
+      if (!target) return;
+
+      // 1. Update Navigation UI
+      navItems.forEach(nav => nav.classList.remove('active'));
+      item.classList.add('active');
+
+      // 2. Switch Sections
+      sections.forEach(sec => {
+        sec.classList.remove('active');
+        if (sec.id === target) {
+          sec.classList.add('active');
+        }
+      });
+
+      // 3. Haptic Feedback
+      if (window.navigator.vibrate) window.navigator.vibrate(15);
+    });
+  });
+
+  // Dynamic Viewport Height Fix
+  function adjustAppHeight() {
+    document.querySelector('.app-shell').style.height = window.innerHeight + 'px';
+  }
+  window.addEventListener('resize', adjustAppHeight);
+  adjustAppHeight();
+</script>
+
+</body>
+</html>

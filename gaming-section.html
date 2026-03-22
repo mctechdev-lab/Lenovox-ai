@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EduMateAI — Games Store</title>
+<style>
+:root {
+  --brand: #1877f2;
+  --muted: #6b7280;
+  --card: #fff;
+  --bg: #f5f7fb;
+  --radius: 14px;
+}
+
+/* General Styles */
+* { box-sizing: border-box; }
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background: var(--bg);
+  color: #0b1220;
+  -webkit-font-smoothing: antialiased;
+}
+header {
+  background: var(--brand);
+  color: #fff;
+  padding: 20px 16px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 20px;
+  box-shadow: 0 4px 18px rgba(9,30,66,0.12);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+.container { width: 100%; max-width: 100%; margin: 0 auto; padding: 0 8px 60px; }
+.controls { display: flex; gap: 12px; align-items: center; margin: 14px 0 18px; flex-wrap: wrap; }
+.search { flex: 1; min-width: 120px; }
+.search input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #e6e9ef; font-size: 15px; outline: none; background: #fff; box-shadow: 0 2px 8px rgba(16,24,40,0.03) inset; }
+.categories { display: flex; gap: 8px; overflow-x: auto; padding: 6px 0; -webkit-overflow-scrolling: touch; }
+.cat-btn { background: var(--card); color: var(--muted); padding: 8px 12px; border-radius: 999px; border: 1px solid #eef2f6; cursor: pointer; font-weight: 700; white-space: nowrap; transition: all .18s; }
+.cat-btn.active { background: var(--brand); color: #fff; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(24,119,242,0.12); }
+.carousel-wrap { position: relative; margin-bottom: 18px; overflow: hidden; }
+.carousel-track { display: flex; transition: transform .45s ease-in-out; gap: 0; will-change: transform; }
+.carousel-slide { min-width: 100%; flex: 0 0 100%; border-radius: var(--radius); overflow: hidden; background: var(--card); display: flex; flex-direction: column; }
+.carousel-media { width: 100%; height: 240px; object-fit: cover; display: block; background: #f0f3f8; }
+.carousel-body { padding: 12px; text-align: center; }
+.carousel-title { font-weight: 800; color: var(--brand); font-size: 18px; margin: 6px 0; }
+.carousel-sub { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+.carousel-play { background: var(--brand); color: #fff; padding: 10px 18px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px rgba(24,119,242,0.12); }
+.carousel-controls { position: absolute; left: 8px; right: 8px; top: 50%; display: flex; justify-content: space-between; transform: translateY(-50%); pointer-events: none; }
+.ctrl { pointer-events: auto; background: rgba(0,0,0,0.3); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; }
+.dots { position: absolute; left: 50%; transform: translateX(-50%); bottom: 8px; display: flex; gap: 6px; }
+.dot { width: 8px; height: 8px; border-radius: 999px; background: rgba(0,0,0,0.15); cursor: pointer; transition: all .18s; }
+.dot.active { background: var(--brand); transform: scale(1.2); }
+.section-head { display: flex; align-items: center; justify-content: space-between; margin: 10px 0; }
+.section-title { font-weight: 800; font-size: 16px; color: #081122; }
+.hot-badge { background: linear-gradient(90deg,#ff9a2b,#ff3d70); color: white; padding: 3px 6px; border-radius: 999px; font-weight: 800; font-size: 11px; }
+.games-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 10px; margin-top: 8px; }
+.game-card { background: var(--card); border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 6px 20px rgba(12,28,52,0.06); transition: transform .12s; }
+.game-card:hover { transform: translateY(-4px); }
+.game-thumb { width: 100%; height: 140px; object-fit: cover; display: block; }
+.game-title { padding: 6px; text-align: center; font-weight: 700; color: #081122; font-size: 14px; }
+.play-small { position: absolute; left: 6px; top: 6px; background: var(--brand); color: #fff; border: none; padding: 6px 8px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 12px; }
+.bottom-loader { display: flex; align-items: center; justify-content: center; padding: 10px; color: var(--muted); font-weight: 700; }
+</style>
+</head>
+<body>
+<header>EduMateAI — Games Store</header>
+<div class="container">
+  <div class="controls">
+    <div class="search">
+      <input id="searchInput" placeholder="Search games by name..." autocomplete="off">
+    </div>
+  </div>
+
+  <div id="categories" class="categories"></div>
+
+  <div class="carousel-wrap">
+    <div id="carouselTrack" class="carousel-track" aria-live="polite"></div>
+    <div class="carousel-controls">
+      <button id="prevBtn" class="ctrl">‹</button>
+      <button id="nextBtn" class="ctrl">›</button>
+    </div>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-title">More Games</div>
+    <div style="font-size:12px;color:var(--muted)">Top 5 trending <span class="hot-badge">HOT</span></div>
+  </div>
+
+  <div id="gamesGrid" class="games-grid"></div>
+  <div id="bottomLoader" class="bottom-loader" style="display:none">Loading more games…</div>
+</div>
+
+<script>
+const PER_PAGE=20, BASE_FEED=`https://gamemonetize.com/feed.php?format=0&num=${PER_PAGE}&page=`;
+let currentPage=1, allGames=[], filtered=[], categories=new Set(), activeCategory='All', carouselIndex=0, isFetching=false, autoplayTimer=null;
+
+// IndexedDB setup
+let db;
+const request = indexedDB.open("EduMateAI", 1);
+request.onupgradeneeded = e => {
+  db = e.target.result;
+  if(!db.objectStoreNames.contains('games')){
+    db.createObjectStore('games', {keyPath: 'url'});
+  }
+};
+request.onsuccess = e => { db = e.target.result; init(); };
+request.onerror = e => { console.error("IndexedDB error", e); init(); };
+
+const carouselTrack=document.getElementById('carouselTrack'),
+      gamesGrid=document.getElementById('gamesGrid'),
+      categoriesWrap=document.getElementById('categories'),
+      searchInput=document.getElementById('searchInput'),
+      bottomLoader=document.getElementById('bottomLoader'),
+      dotsWrap=document.getElementById('dots');
+
+function el(tag,attrs={},children=''){
+  const d=document.createElement(tag);
+  Object.entries(attrs).forEach(([k,v])=>{
+    if(k==='class') d.className=v;
+    else if(k==='html') d.innerHTML=v;
+    else d.setAttribute(k,v);
+  });
+  if(typeof children==='string') d.innerHTML+=children;
+  return d;
+}
+
+function escapeTxt(s){return (s||'').toString().replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');}
+function safeOpen(url){
+  const win = window.open(url,'_blank');
+  if(!win){ alert('Unable to open game'); return; }
+  let loaded=false;
+  const timer = setTimeout(()=>{ if(!loaded) alert("Failed to load game in 30s. Check your connection."); }, 30000);
+  win.addEventListener('load',()=>{ loaded=true; clearTimeout(timer); });
+}
+
+// Fetch games
+async function fetchGamesPage(page){
+  try{
+    const res=await fetch(BASE_FEED+page);
+    const json=await res.clone().json().catch(async ()=>{
+      const text=await res.text();
+      const parser=new DOMParser();
+      const xml=parser.parseFromString(text,'text/xml');
+      return Array.from(xml.querySelectorAll('item')).map(it=>{
+        let title=it.querySelector('title')?.textContent||'';
+        let link=it.querySelector('link')?.textContent||'';
+        let img='';
+        const imgTag=it.querySelector('image, thumb, thumbnail, enclosure, media\\:content');
+        if(imgTag) img=imgTag.getAttribute?.('url')||imgTag.textContent||'';
+        if(!img){ const desc=it.querySelector('description')?.textContent||''; const m=desc.match(/<img[^>]+src=['"]([^'"]+)['"]/i); if(m) img=m[1]; }
+        const cat=it.querySelector('category')?.textContent||'Uncategorized';
+        return {title, url:link, thumb:img, category:cat};
+      });
+    });
+    return Array.isArray(json)?json:[];
+  }catch(e){ console.error(e); return []; }
+}
+
+function normalize(raw){ return {title:raw.title||'Untitled', url:raw.url||'', thumb:raw.thumb||'', category:raw.category||'Uncategorized'}; }
+
+function saveToDB(game){
+  if(!db) return;
+  const tx = db.transaction('games','readwrite');
+  tx.objectStore('games').put(game);
+}
+
+function getAllFromDB(){
+  return new Promise(resolve=>{
+    if(!db){ resolve([]); return; }
+    const tx = db.transaction('games','readonly');
+    const store = tx.objectStore('games');
+    const req = store.getAll();
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror = ()=>resolve([]);
+  });
+}
+
+// Build UI
+function buildCategories(){
+  categoriesWrap.innerHTML='';
+  const allBtn=el('button',{class:'cat-btn '+(activeCategory==='All'?'active':''), type:'button'},'All');
+  allBtn.addEventListener('click',()=>{activeCategory='All';applyFilters();buildCategories();});
+  categoriesWrap.appendChild(allBtn);
+  Array.from(categories).sort().forEach(cat=>{
+    if(!cat) return;
+    const b=el('button',{class:'cat-btn '+(activeCategory===cat?'active':''), type:'button'});
+    b.textContent=cat;
+    b.addEventListener('click',()=>{activeCategory=cat;applyFilters();buildCategories();});
+    categoriesWrap.appendChild(b);
+  });
+}
+
+function applyFilters(){
+  const q=(searchInput.value||'').trim().toLowerCase();
+  filtered=allGames.filter(g=>{
+    if(activeCategory!=='All' && (g.category||'Uncategorized')!==activeCategory) return false;
+    if(q && !((g.title||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  buildCarousel();
+  buildGrid();
+}
+
+function buildCarousel(){
+  carouselTrack.innerHTML=''; dotsWrap.innerHTML='';
+  const top=filtered.slice(0,5);
+  if(!top.length){ carouselTrack.appendChild(el('div',{class:'carousel-slide'},'<div style="padding:28px;text-align:center">No featured games</div>')); return; }
+  top.forEach((g,i)=>{
+    const slide=el('div',{class:'carousel-slide'});
+    slide.innerHTML=`<img class="carousel-media" src="${escapeTxt(g.thumb)}" loading="lazy">
+      <div class="carousel-body">
+      <div class="carousel-title">${escapeTxt(g.title)}</div>
+      <div class="carousel-sub">${escapeTxt(g.category||'')}</div>
+      <button class="carousel-play" data-url="${escapeTxt(g.url)}">▶ Play</button>
+      </div>`;
+    carouselTrack.appendChild(slide);
+    const dot=el('div',{class:'dot '+(i===0?'active':'')});
+    dot.addEventListener('click',()=>{carouselIndex=i;updateCarousel();resetAutoplay();});
+    dotsWrap.appendChild(dot);
+  });
+  carouselIndex=0;
+  carouselTrack.querySelectorAll('.carousel-play').forEach(btn=>btn.addEventListener('click',e=>safeOpen(e.currentTarget.dataset.url)));
+  updateCarousel(); resetAutoplay();
+}
+
+function updateCarousel(){
+  const len=carouselTrack.children.length||1;
+  carouselTrack.style.transform=`translateX(-${carouselIndex*100}%)`;
+  Array.from(dotsWrap.children).forEach((d,i)=>d.classList.toggle('active',i===carouselIndex));
+}
+
+function resetAutoplay(){
+  if(autoplayTimer) clearInterval(autoplayTimer);
+  autoplayTimer=setInterval(()=>{const len=carouselTrack.children.length||1; carouselIndex=(carouselIndex+1)%len; updateCarousel();},3000);
+}
+
+function buildGrid(){
+  gamesGrid.innerHTML='';
+  filtered.slice(5).forEach(g=>{
+    const card=el('div',{class:'game-card'});
+    const thumb=el('img',{class:'game-thumb',src:g.thumb,alt:g.title||'Game thumbnail',loading:'lazy'});
+    const btn=el('button',{class:'play-small',type:'button'}); btn.textContent='▶ Play'; btn.addEventListener('click',()=>safeOpen(g.url));
+    const title=el('div',{class:'game-title'}); title.textContent=g.title;
+    card.appendChild(thumb); card.appendChild(btn); card.appendChild(title);
+    gamesGrid.appendChild(card);
+  });
+}
+
+// Load more
+async function loadNext(){
+  if(isFetching) return;
+  isFetching=true; bottomLoader.style.display='flex';
+  const raw=await fetchGamesPage(currentPage);
+  const norm=raw.map(normalize);
+  const existing=new Set(allGames.map(a=>a.url));
+  norm.forEach(g=>{if(!existing.has(g.url)) {allGames.push(g); categories.add(g.category||'Uncategorized'); saveToDB(g); }});
+  currentPage++; applyFilters(); bottomLoader.style.display='none'; isFetching=false;
+}
+
+// Initialization
+async function init(){
+  const saved = await getAllFromDB();
+  if(saved.length){ allGames=saved; saved.forEach(g=>categories.add(g.category||'Uncategorized')); filtered=allGames.slice(); buildCategories(); buildCarousel(); buildGrid(); }
+  else{ loadNext().catch(()=>{}); }
+}
+
+// Event listeners
+document.getElementById('prevBtn').addEventListener('click',()=>{const len=carouselTrack.children.length||1; carouselIndex=(carouselIndex-1+len)%len; updateCarousel(); resetAutoplay();});
+document.getElementById('nextBtn').addEventListener('click',()=>{const len=carouselTrack.children.length||1; carouselIndex=(carouselIndex+1)%len; updateCarousel(); resetAutoplay();});
+window.addEventListener('scroll',()=>{if(window.innerHeight+window.scrollY>=document.body.offsetHeight-600 && !isFetching) loadNext();});
+searchInput.addEventListener('input',()=>setTimeout(applyFilters,200));
+</script>
+</body>
+  </html>

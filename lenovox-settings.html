@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings • Lenovox AI</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;font-family:'Inter',sans-serif;}
+  body{background:#f5f7fa;color:#1a1a1a;transition:0.3s;}
+  body.dark{background:#0f1419;color:#e0e0e0;}
+  .container{max-width:580px;margin:40px auto;background:white;padding:35px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1px solid #e5e7eb;}
+  body.dark .container{background:#1a1f2e;border-color:#2a3142;}
+  h2{text-align:center;font-size:28px;margin-bottom:30px;display:flex;gap:12px;justify-content:center;align-items:center;}
+  h2 i{color:#3b82f6;font-size:32px;}
+  .tabs{display:flex;gap:8px;margin-bottom:30px;background:#f0f1f3;padding:6px;border-radius:10px;}
+  .tab{flex:1;padding:10px 16px;cursor:pointer;border:none;border-radius:8px;font-weight:500;font-size:14px;color:#666;display:flex;justify-content:center;align-items:center;gap:6px;user-select:none;transition:0.2s;background:transparent;}
+  .tab i{font-size:16px;}
+  .tab.active{background:#3b82f6;color:#fff;box-shadow:0 4px 12px rgba(59,130,246,0.3);}
+  .tab-content{display:none;opacity:0;pointer-events:none;}
+  .tab-content.active{display:block;opacity:1;pointer-events:auto;animation:fadeIn 0.15s ease-in;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  input,select,textarea,button{width:100%;padding:12px 14px;margin-top:10px;border-radius:10px;border:1.5px solid #d1d5db;font-size:14px;transition:0.2s;font-family:inherit;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,0.1);background:#f8faff;}
+  input,select,textarea{background:#f9fafb;color:#1a1a1a;}
+  input:readonly{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;}
+  button{background:#3b82f6;color:white;border:none;margin-top:18px;cursor:pointer;font-weight:600;display:flex;justify-content:center;align-items:center;gap:8px;}
+  button:hover:not(:disabled){background:#2563eb;transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,0.3);}
+  button:disabled{background:#d1d5db;cursor:not-allowed;opacity:0.7;}
+  .logout{background:#ef4444;margin-top:30px;}
+  .logout:hover:not(:disabled){background:#dc2626;box-shadow:0 6px 20px rgba(239,68,68,0.3);}
+  .profile{text-align:center;margin-bottom:30px;}
+  .profile-wrapper{position:relative;width:140px;height:140px;margin:0 auto 16px;}
+  .profile img{width:100%;height:100%;border-radius:50%;border:3px solid #3b82f6;object-fit:cover;cursor:pointer;transition:0.2s;}
+  .profile img:hover{transform:scale(1.05);}
+  .profile-hint{font-size:13px;color:#888;display:flex;align-items:center;justify-content:center;gap:6px;}
+  label{display:block;margin-top:18px;font-size:13px;color:#555;font-weight:600;text-transform:uppercase;letter-spacing:0.3px;display:flex;align-items:center;gap:6px;}
+  label i{color:#3b82f6;font-size:14px;}
+  body.dark label{color:#b0b0b0;}
+  .lock-hint{font-size:12px;color:#ef4444;margin-top:6px;display:none;font-weight:600;display:flex;align-items:center;gap:4px;}
+  body.dark .lock-hint{color:#f87171;}
+  @media(max-width:600px){.container{margin:20px;padding:24px;}h2{font-size:24px;}.tab{font-size:12px;padding:8px 10px;}.tab i{display:none;}}
+  #supportList div{padding:10px;margin-bottom:8px;background:#f0f1f3;border-radius:10px;font-size:14px;}
+</style>
+</head>
+<body>
+<div class="container">
+  <h2><i class="fas fa-cog"></i> Settings</h2>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="personal"><i class="fas fa-user"></i> Personal</button>
+    <button class="tab" data-tab="app"><i class="fas fa-sliders-h"></i> App</button>
+    <button class="tab" data-tab="support"><i class="fas fa-headset"></i> Support</button>
+  </div>
+
+  <!-- PERSONAL TAB -->
+  <div id="content-personal" class="tab-content active">
+    <div class="profile">
+      <div class="profile-wrapper">
+        <img id="avatar" src="https://via.placeholder.com/140" alt="Profile Picture">
+      </div>
+      <input type="file" id="photoInput" accept="image/*" hidden>
+      <div class="profile-hint"><i class="fas fa-camera"></i> Tap to change profile picture</div>
+    </div>
+    <label for="uid"><i class="fas fa-id-card"></i> UID (Read-only)</label>
+    <input id="uid" readonly placeholder="UID">
+    <label for="username"><i class="fas fa-at"></i> Username</label>
+    <input id="username" readonly placeholder="Username">
+    <label for="name"><i class="fas fa-signature"></i> Full Name</label>
+    <input id="name" placeholder="Enter your full name">
+    <div id="name-lock-hint" class="lock-hint"><i class="fas fa-lock"></i> Name can only be changed once.</div>
+    <label for="age"><i class="fas fa-birthday-cake"></i> Age</label>
+    <input id="age" type="number" placeholder="Enter your age">
+    <div id="age-lock-hint" class="lock-hint"><i class="fas fa-lock"></i> Age can only be changed once.</div>
+    <button id="savePersonal"><i class="fas fa-save"></i> Save Personal Info</button>
+  </div>
+
+  <!-- App Tab -->
+  <div id="content-app" class="tab-content">
+    <label for="theme"><i class="fas fa-palette"></i> App Theme</label>
+    <select id="theme">
+      <option value="light">Light Mode</option>
+      <option value="dark">Dark Mode</option>
+    </select>
+    <button id="saveApp"><i class="fas fa-save"></i> Save App Settings</button>
+  </div>
+
+  <!-- Support Tab -->
+  <div id="content-support" class="tab-content">
+    <label for="supportMessage"><i class="fas fa-envelope"></i> Send Feedback</label>
+    <textarea id="supportMessage" rows="5" placeholder="Share your feedback, suggestions, or report issues..."></textarea>
+    <button id="sendSupport"><i class="fab fa-google"></i> Send via Gmail</button>
+    <label style="margin-top:25px;"><i class="fas fa-history"></i> Your Feedback History</label>
+    <div id="supportList"></div>
+  </div>
+
+  <button class="logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Log Out</button>
+</div>
+
+<!-- Toast Containers -->
+<div id="toastTop" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;"></div>
+<div id="toastBottom" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;"></div>
+
+<script type="module">
+import { watchAuth, logoutUser, updateDisplayName } from './auth.js';
+import { getSession, saveSession } from './session.js';
+
+// ===== TOAST FUNCTIONS =====
+function createToast(type,message){
+  const toast=document.createElement('div');
+  toast.style.padding="16px 22px";
+  toast.style.marginTop="10px";
+  toast.style.borderRadius="16px";
+  toast.style.color="white";
+  toast.style.fontWeight="600";
+  toast.style.display="flex";
+  toast.style.alignItems="center";
+  toast.style.gap="10px";
+  toast.style.boxShadow="0 20px 40px rgba(0,0,0,0.25)";
+  toast.style.animation="fadeIn 0.4s ease";
+  toast.style.backdropFilter="blur(10px)";
+  toast.style.cursor="pointer";
+  toast.innerHTML = (type==="success")?`✔ ${message}`:`✖ ${message}`;
+  toast.style.background = (type==="success")?"linear-gradient(135deg,#26d0ce,#1abc9c)":"linear-gradient(135deg,#ff6b6b,#ee5a6f)";
+  toast.addEventListener("click",()=>toast.remove());
+  return toast;
+}
+function showSuccessToast(msg="Success"){const t=createToast("success",msg);document.getElementById("toastBottom").appendChild(t);setTimeout(()=>t.remove(),2500);}
+function showErrorToast(msg="Error"){const t=createToast("error",msg);document.getElementById("toastTop").appendChild(t);setTimeout(()=>t.remove(),3000);}
+
+// ===== SELECTORS =====
+const uidInput=document.getElementById('uid');
+const usernameInput=document.getElementById('username');
+const nameInput=document.getElementById('name');
+const ageInput=document.getElementById('age');
+const avatar=document.getElementById('avatar');
+const photoInput=document.getElementById('photoInput');
+const savePersonalBtn=document.getElementById('savePersonal');
+const themeSelect=document.getElementById('theme');
+const supportMessage=document.getElementById('supportMessage');
+const supportList=document.getElementById('supportList');
+const sendSupportBtn=document.getElementById('sendSupport');
+const logoutBtn=document.getElementById('logoutBtn');
+
+let currentUser=null,userDataFromDB={},supportMessages=[];
+
+// ===== LOAD USER =====
+watchAuth(async(user)=>{
+  if(!user){window.location.href="Login.html";return;}
+  currentUser=user;
+  userDataFromDB=(await getSession(user.uid))||{};
+  uidInput.value=user.uid;
+  usernameInput.value=user.displayName||userDataFromDB.username||"user_"+user.uid.slice(0,6);
+  nameInput.value=userDataFromDB.fullName||user.displayName||"";
+  ageInput.value=userDataFromDB.age||"";
+  avatar.src=userDataFromDB.avatarUrl||"https://via.placeholder.com/140";
+  if((userDataFromDB.nameChangedCount||0)>=1){nameInput.readOnly=true;document.getElementById('name-lock-hint').style.display='flex';}
+  if((userDataFromDB.ageChangedCount||0)>=1){ageInput.readOnly=true;document.getElementById('age-lock-hint').style.display='flex';}
+});
+
+// ===== SAVE PERSONAL INFO =====
+savePersonalBtn.addEventListener('click',async()=>{
+  if(!currentUser)return;
+  savePersonalBtn.disabled=true;
+  savePersonalBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Saving...';
+  const updateData={...userDataFromDB,uid:currentUser.uid,username:usernameInput.value};
+
+  // Name
+  if(nameInput.value!==(userDataFromDB.fullName||"")){
+    if((userDataFromDB.nameChangedCount||0)>=1){showErrorToast("Name can only be changed once");savePersonalBtn.disabled=false;savePersonalBtn.innerHTML='<i class="fas fa-save"></i> Save Personal Info';return;}
+    updateData.fullName=nameInput.value;
+    updateData.nameChangedCount=(userDataFromDB.nameChangedCount||0)+1;
+    try{await updateDisplayName(nameInput.value);}catch(e){console.error(e);}
+  }
+
+  // Age
+  if(ageInput.value!==(userDataFromDB.age||"")){
+    if((userDataFromDB.ageChangedCount||0)>=1){showErrorToast("Age can only be changed once");savePersonalBtn.disabled=false;savePersonalBtn.innerHTML='<i class="fas fa-save"></i> Save Personal Info';return;}
+    updateData.age=ageInput.value;
+    updateData.ageChangedCount=(userDataFromDB.ageChangedCount||0)+1;
+  }
+
+  // Photo
+  if(photoInput.files[0]){
+    const reader=new FileReader();
+    reader.onload=(e)=>{updateData.avatarUrl=e.target.result;avatar.src=e.target.result;};
+    reader.readAsDataURL(photoInput.files[0]);
+  }
+
+  try{
+    await saveSession(currentUser.uid,updateData);
+    userDataFromDB=updateData;
+    showSuccessToast("Personal info updated");
+  }catch(err){console.error(err);showErrorToast("Failed to save");}
+  savePersonalBtn.disabled=false;
+  savePersonalBtn.innerHTML='<i class="fas fa-save"></i> Save Personal Info';
+});
+
+// ===== AVATAR =====
+avatar.addEventListener('click',()=>photoInput.click());
+photoInput.addEventListener('change',()=>{if(photoInput.files[0]){const reader=new FileReader();reader.onload=e=>avatar.src=e.target.result;reader.readAsDataURL(photoInput.files[0]);}});
+
+// ===== TABS =====
+const tabButtons=document.querySelectorAll('.tab');
+const tabContents=document.querySelectorAll('.tab-content');
+tabButtons.forEach(btn=>btn.addEventListener('click',()=>{
+  tabButtons.forEach(b=>b.classList.remove('active'));
+  tabContents.forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('content-'+btn.dataset.tab).classList.add('active');
+  sessionStorage.setItem('lastTab',btn.dataset.tab);
+}));
+const lastTab=sessionStorage.getItem('lastTab')||'personal';
+document.querySelector(`.tab[data-tab="${lastTab}"]`)?.click();
+
+// ===== SUPPORT MESSAGES =====
+function loadSupportMessages(){
+  const saved=localStorage.getItem('supportMessages');
+  supportMessages=saved?JSON.parse(saved):[];
+  displaySupportMessages();
+}
+function displaySupportMessages(){
+  supportList.innerHTML="";
+  if(supportMessages.length===0){supportList.innerHTML='<div style="padding:20px;text-align:center;color:#999;">No feedback sent yet.</div>';return;}
+  supportMessages.forEach(item=>{
+    const div=document.createElement('div');
+    div.innerHTML=`<span style="font-size:12px;color:#555;"><i class="fas fa-clock"></i> ${item.timestamp}</span><div>${item.message}</div>`;
+    supportList.appendChild(div);
+  });
+}
+sendSupportBtn.addEventListener('click',()=>{
+  const msg=supportMessage.value.trim();
+  if(!msg)return showErrorToast("Write a message first");
+  const item={id:Date.now(),message:msg,timestamp:new Date().toLocaleString()};
+  supportMessages.unshift(item);
+  localStorage.setItem('supportMessages',JSON.stringify(supportMessages));
+  displaySupportMessages();
+  supportMessage.value="";
+  showSuccessToast("Feedback sent");
+});
+loadSupportMessages();
+
+// ===== LOGOUT =====
+logoutBtn.addEventListener('click',async()=>{
+  try{await logoutUser();window.location.href="Login.html";}catch(err){console.error(err);}
+});
+</script>
+</body>
+</html>

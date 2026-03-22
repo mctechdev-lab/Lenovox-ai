@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>lenovox-ai - Ask & Imagine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- KaTeX for Math Formulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <!-- Highlight.js for Code Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        :root { --primary: #3b82f6; --bg: #020617; }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .glass { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .tab-content { 
+            display: none !important; 
+            height: 100%; 
+            flex-direction: column; 
+            position: relative; 
+        }
+        .tab-content.active { 
+            display: flex !important; 
+        }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; }
+        
+        /* Message Styling */
+        .ai-response h1 { font-size: 1.2rem; font-weight: 800; margin: 0.8rem 0 0.4rem; color: #60a5fa; border-bottom: 2px solid rgba(96, 165, 250, 0.3); padding-bottom: 0.3rem; }
+        .ai-response h2 { font-size: 1rem; font-weight: 700; margin: 0.6rem 0 0.3rem; color: #93c5fd; }
+        .ai-response h3 { font-size: 0.9rem; font-weight: 700; margin: 0.5rem 0 0.2rem; color: #bfdbfe; }
+        .ai-response p { margin-bottom: 0.6rem; line-height: 1.5; font-size: 0.9rem; }
+        .ai-response ul { margin-bottom: 0.6rem; padding-left: 1.2rem; list-style-type: disc; }
+        .ai-response ol { margin-bottom: 0.6rem; padding-left: 1.2rem; list-style-type: decimal; }
+        .ai-response li { margin-bottom: 0.3rem; line-height: 1.4; font-size: 0.9rem; }
+        
+        /* Code Block Styling */
+        .ai-response code { 
+            background: rgba(0, 0, 0, 0.4); 
+            padding: 0.2rem 0.4rem; 
+            border-radius: 0.3rem; 
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #fbbf24;
+        }
+        .ai-response pre { 
+            background: rgba(0, 0, 0, 0.6); 
+            padding: 0.8rem; 
+            border-radius: 0.4rem; 
+            overflow-x: auto; 
+            margin-bottom: 0.8rem;
+            border-left: 3px solid #3b82f6;
+            font-size: 0.8rem;
+        }
+        .ai-response pre code { 
+            background: none; 
+            padding: 0; 
+            color: #e2e8f0;
+        }
+        
+        /* KaTeX Formula Styling */
+        .katex-display { 
+            background: rgba(0, 0, 0, 0.3); 
+            padding: 0.8rem; 
+            border-radius: 0.4rem; 
+            margin: 0.8rem 0; 
+            overflow-x: auto;
+            font-size: 0.95rem;
+        }
+        .katex { font-size: 1em; }
+        
+        /* Blockquote Styling */
+        .ai-response blockquote {
+            border-left: 4px solid #3b82f6;
+            padding-left: 0.8rem;
+            margin: 0.8rem 0;
+            color: #cbd5e1;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+        
+        /* Copy Button */
+        .copy-btn {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            color: #60a5fa;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.3rem;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.4rem;
+        }
+        .copy-btn:hover {
+            background: rgba(59, 130, 246, 0.4);
+            border-color: rgba(59, 130, 246, 0.8);
+        }
+        
+        /* Scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Typing cursor */
+        .typing::after { content: "▋"; animation: blink 1s infinite; color: var(--primary); }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Animations */
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-slide-up { animation: slideUp 0.3s ease-out; }
+        
+        .hidden-suggestions { display: none !important; }
+
+        /* Loading Indicator */
+        .loading-dots {
+            display: inline-flex;
+            gap: 0.2rem;
+        }
+        .loading-dots span {
+            width: 0.4rem;
+            height: 0.4rem;
+            border-radius: 50%;
+            background: #3b82f6;
+            animation: bounce 1.4s infinite;
+        }
+        .loading-dots span:nth-child(1) { animation-delay: 0s; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce {
+            0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+            40% { opacity: 1; transform: translateY(-0.4rem); }
+        }
+
+        /* Scroll to Top Button */
+        #scroll-to-bottom {
+            position: fixed;
+            bottom: 90px;
+            right: 12px;
+            background: rgba(59, 130, 246, 0.8);
+            border: none;
+            color: white;
+            padding: 0.6rem;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            z-index: 30;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            width: 44px;
+            height: 44px;
+            align-items: center;
+            justify-content: center;
+        }
+        #scroll-to-bottom:hover {
+            background: rgba(59, 130, 246, 1);
+            transform: translateY(-2px);
+        }
+
+        /* Navigation */
+        nav { 
+            height: 56px; 
+            flex-shrink: 0;
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem;
+        }
+
+        /* Main Layout */
+        main {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Ask Section */
+        #ask-section {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            height: 100%;
+        }
+
+        /* Chat Messages Container */
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 0.8rem;
+            padding-bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        /* Input Area - FIXED at bottom */
+        #input-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.8rem;
+            z-index: 40;
+            width: 100%;
+        }
+
+        #input-area .max-w-4xl {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 0.5rem;
+        }
+
+        .input-label {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #60a5fa;
+            background: rgba(59, 130, 246, 0.1);
+            width: fit-content;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        #chat-input {
+            flex: 1;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            padding: 0.7rem 1rem;
+            color: #f8fafc;
+            font-size: 0.9rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        #chat-input:focus {
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        #chat-input::placeholder {
+            color: #64748b;
+        }
+
+        .send-btn {
+            background: #3b82f6;
+            border: none;
+            color: white;
+            padding: 0.7rem 1rem;
+            border-radius: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            height: 44px;
+        }
+
+        .send-btn:hover {
+            background: #2563eb;
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+        }
+
+        .send-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Suggestions */
+        #suggestions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            padding: 0.8rem;
+            max-width: 100%;
+        }
+
+        .suggestion-btn {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 0.6rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .suggestion-btn:hover {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <!-- Top Navigation Tabs -->
+    <nav class="glass">
+        <button onclick="switchTab('ask')" id="ask-btn" class="flex-1 py-2 rounded-xl font-bold transition-all bg-blue-600 text-white shadow-lg text-sm">Ask</button>
+        <button onclick="switchTab('imagine')" id="imagine-btn" class="flex-1 py-2 rounded-xl font-bold transition-all text-slate-400 hover:text-white text-sm">Imagine</button>
+        <button onclick="clearChatHistory()" class="px-3 py-2 rounded-lg hover:bg-slate-700 transition-all text-slate-400 hover:text-white text-lg">🗑️</button>
+    </nav>
+
+    <main>
+        <!-- ASK SECTION -->
+        <section id="ask-section" class="tab-content active">
+            <!-- Chat Messages Area -->
+            <div id="chat-messages" class="no-scrollbar">
+                <!-- Messages injected here -->
+            </div>
+
+            <!-- Scroll to Bottom Button -->
+            <button id="scroll-to-bottom" onclick="scrollToLatest()" title="Scroll to latest">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+            </button>
+
+            <!-- Bottom Area - Floating Suggestions -->
+            <div id="suggestions" class="absolute bottom-[90px] left-0 right-0 max-w-md mx-auto w-full px-2">
+                <button onclick="setPrompt('Explain the solar system')" class="suggestion-btn">☀️ Explain the solar system</button>
+                <button onclick="setPrompt('Solve for x: 2x + 10 = 20')" class="suggestion-btn">🔢 Solve for x: 2x + 10 = 20</button>
+                <button onclick="setPrompt('Write a story about a robot')" class="suggestion-btn">🤖 Write a story about a robot</button>
+            </div>
+
+            <!-- Input Bar - FIXED at bottom -->
+            <div id="input-area">
+                <div class="max-w-4xl">
+                    <label class="input-label">AI-TUTOR-V2</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="chat-input" placeholder="Type your question..." />
+                        <button onclick="sendMessage()" class="send-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </section>        <!-- IMAGINE SECTION -->
+        <section id="imagine-section" class="tab-content">
+            <div class="flex-grow overflow-y-auto p-4 space-y-6 no-scrollbar pb-[100px]">
+                <div class="text-center space-y-2 py-6">
+                    <h2 class="text-2xl font-black bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Imagine</h2>
+                    <p class="text-slate-400 text-xs">Visual inspiration for your studies.</p>
+                </div>
+                <div id="image-results" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+            
+            <div class="fixed bottom-0 left-0 w-full p-3 bg-slate-900/95 backdrop-blur-xl border-t border-white/10">
+                <div class="relative max-w-2xl mx-auto">
+                    <input type="text" id="image-input" placeholder="Search visuals..." 
+                           class="w-full bg-slate-800/50 border border-white/10 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all text-sm">
+                    <button onclick="generateImage()" class="absolute right-2 top-1.5 bg-purple-600 p-2 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+  </main>
+      <script>
+        // --- IndexedDB Logic ---
+        const DB_NAME = 'LenovoxDB';
+        const STORE_NAME = 'messages';
+        let db;
+
+        const request = indexedDB.open(DB_NAME, 1);
+        request.onupgradeneeded = (e) => {
+            db = e.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+            }
+        };
+        request.onsuccess = (e) => {
+            db = e.target.result;
+            cleanupOldMessages();
+            loadMessages();
+        };
+
+        function saveMessage(text, sender) {
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            store.add({ text, sender, timestamp: Date.now() });
+        }
+
+        function loadMessages() {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            const messages = [];
+            store.openCursor().onsuccess = (e) => {
+                const cursor = e.target.result;
+                if (cursor) {
+                    messages.push(cursor.value);
+                    cursor.continue();
+                } else {
+                    if(messages.length > 0) hideSuggestions();
+                    messages.forEach(m => renderMessage(m.text, m.sender, false));
+                    setTimeout(() => scrollToLatest(), 100);
+                }
+            };
+        }
+
+        function cleanupOldMessages() {
+            const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            store.openCursor().onsuccess = (e) => {
+                const cursor = e.target.result;
+                if (cursor && cursor.value.timestamp < thirtyDaysAgo) {
+                    store.delete(cursor.key);
+                    cursor.continue();
+                }
+            };
+        }
+
+        // --- UI & Chat Logic ---
+        function switchTab(tab) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+                el.style.display = 'none';
+            });
+            
+            // Show selected tab
+            const selectedTab = document.getElementById(tab + '-section');
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+                selectedTab.style.display = 'flex';
+            }
+            
+            // Update button styles
+            const isAsk = tab === 'ask';
+            const askBtn = document.getElementById('ask-btn');
+            const imagineBtn = document.getElementById('imagine-btn');
+            
+            if (isAsk) {
+                askBtn.className = "flex-1 py-2 rounded-xl font-bold transition-all bg-blue-600 text-white shadow-lg text-sm";
+                imagineBtn.className = "flex-1 py-2 rounded-xl font-bold transition-all text-slate-400 hover:text-white text-sm";
+            } else {
+                askBtn.className = "flex-1 py-2 rounded-xl font-bold transition-all text-slate-400 hover:text-white text-sm";
+                imagineBtn.className = "flex-1 py-2 rounded-xl font-bold transition-all bg-purple-600 text-white shadow-lg text-sm";
+            }
+        }
+
+        function hideSuggestions() {
+            document.getElementById('suggestions').classList.add('hidden-suggestions');
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+            input.focus();
+            
+            hideSuggestions();
+            renderMessage(text, 'user');
+            saveMessage(text, 'user');
+
+            const id = renderMessage('', 'ai', true);
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+                const data = await res.json();
+                typeText(id, data.reply);
+                saveMessage(data.reply, 'ai');
+            } catch (err) {
+                document.getElementById(id).innerText = "Connection error.";
+            }
+        }
+
+        function renderMessage(text, sender, isNewAI = false) {
+            const container = document.getElementById('chat-messages');
+            const id = 'msg-' + Math.random().toString(36).substr(2, 9);
+            const isUser = sender === 'user';
+            
+            const div = document.createElement('div');
+            div.className = `flex w-full ${isUser ? 'justify-end' : 'justify-start'}`;
+            
+            const messageContent = isNewAI ? 
+                '<div class="loading-dots"><span></span><span></span><span></span></div>' : 
+                (isUser ? text : formatAndRenderText(text));
+            
+            div.innerHTML = `
+                <div class="${isUser ? 'bg-blue-600 text-white rounded-2xl rounded-tr-none' : 'bg-slate-800/60 text-slate-100 rounded-2xl rounded-tl-none'} px-4 py-3 max-w-[85%] shadow-lg border border-white/5">
+                    <div id="${id}" class="ai-response">${messageContent}</div>
+                    ${!isUser && !isNewAI ? `<button class="copy-btn" onclick="copyToClipboard('${id}')">📋 Copy</button>` : ''}
+                </div>
+            `;
+            
+            container.appendChild(div);
+            scrollToLatest();
+            return id;
+        }
+
+        function typeText(id, text) {
+            const element = document.getElementById(id);
+            element.parentElement.querySelector('.copy-btn')?.remove();
+            
+            let i = 0;
+            element.innerHTML = '';
+            element.classList.add('typing');
+            
+            const interval = setInterval(() => {
+                if (i < text.length) {
+                    element.innerHTML = formatAndRenderText(text.substring(0, i + 1));
+                    i++;
+                    scrollToLatest();
+                } else {
+                    clearInterval(interval);
+                    element.classList.remove('typing');
+                    element.innerHTML = formatAndRenderText(text);
+                    
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'copy-btn';
+                    copyBtn.textContent = '📋 Copy';
+                    copyBtn.onclick = () => copyToClipboard(id);
+                    element.parentElement.appendChild(copyBtn);
+                }
+            }, 20);
+        }
+
+        function copyToClipboard(id) {
+            const element = document.getElementById(id);
+            const text = element.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = element.parentElement.querySelector('.copy-btn');
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy text');
+            });
+        }
+
+        function formatAndRenderText(text) {
+            marked.setOptions({
+                highlight: function(code, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        try {
+                            return hljs.highlight(code, { language: lang }).value;
+                        } catch (err) {}
+                    }
+                    return hljs.highlightAuto(code).value;
+                },
+                breaks: true,
+                gfm: true
+            });
+            
+            let html = marked.parse(text);
+            
+            // Display math: $$ ... $$
+            html = html.replace(/\$\$([\s\S]+?)\$\$/g, (match, formula) => {
+                try {
+                    return katex.renderToString(formula.trim(), { displayMode: true });
+                } catch (e) {
+                    return match;
+                }
+            });
+            
+            // Inline math: $ ... $
+            html = html.replace(/\$([^\$\n]+)\$/g, (match, formula) => {
+                try {
+                    return katex.renderToString(formula.trim(), { displayMode: false });
+                } catch (e) {
+                    return match;
+                }
+            });
+            
+            return html;
+        }
+
+        function scrollToLatest() {
+            const container = document.getElementById('chat-messages');
+            setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+            }, 0);
+        }
+
+        function clearChatHistory() {
+            if (confirm('Clear all chat history?')) {
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                store.clear();
+                
+                document.getElementById('chat-messages').innerHTML = '';
+                document.getElementById('suggestions').classList.remove('hidden-suggestions');
+            }
+        }
+
+        // Show/hide scroll button
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatMessages = document.getElementById('chat-messages');
+            const scrollBtn = document.getElementById('scroll-to-bottom');
+            
+            chatMessages.addEventListener('scroll', () => {
+                const isAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 100;
+                if (!isAtBottom && chatMessages.scrollTop > 100) {
+                    scrollBtn.style.display = 'flex';
+                } else {
+                    scrollBtn.style.display = 'none';
+                }
+            });
+        });
+
+        function setPrompt(t) { 
+            document.getElementById('chat-input').value = t; 
+            sendMessage(); 
+        }
+
+        async function generateImage() {
+            const query = document.getElementById('image-input').value;
+            const results = document.getElementById('image-results');
+            
+            results.innerHTML = '<div class="col-span-full text-center py-8"><div class="loading-dots"><span></span><span></span><span></span></div><p class="text-slate-500 mt-2 text-sm">Searching...</p></div>';
+            
+            try {
+                const res = await fetch('/api/image', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ query }) 
+                });
+                const data = await res.json();
+                results.innerHTML = '';
+                data.images.forEach(img => {
+                    const d = document.createElement('div');
+                    d.className = "bg-slate-800/40 rounded-2xl overflow-hidden shadow-lg border border-white/5 hover:border-white/20 transition-all";
+                    d.innerHTML = `<img src="${img.url}" class="w-full h-40 object-cover"><div class="p-3 text-xs text-slate-400">${img.description}</div>`;
+                    results.appendChild(d);
+                });
+            } catch (e) { 
+                results.innerHTML = '<div class="col-span-full text-center py-8 text-red-400 text-sm">Error loading images.</div>'; 
+            }
+        }
+
+        // --- Background Animation ---
+        const s = new THREE.Scene();
+        const c = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const r = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        r.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(r.domElement);
+        
+        const g = new THREE.IcosahedronGeometry(15, 1);
+        const m = new THREE.MeshBasicMaterial({ color: 0x3b82f6, wireframe: true, transparent: true, opacity: 0.1 });
+        const mesh = new THREE.Mesh(g, m);
+        s.add(mesh);
+        c.position.z = 40;
+        
+        function anim() { 
+            requestAnimationFrame(anim); 
+            mesh.rotation.x += 0.001; 
+            mesh.rotation.y += 0.001; 
+            r.render(s, c); 
+        }
+        anim();
+
+        document.getElementById('chat-input').addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
+    </script>
+</body>
+</html>

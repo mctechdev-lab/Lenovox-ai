@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduMateAI - Smart Tutor</title>
+<style>
+/* ===== Body & Live Background ===== */
+body {
+  margin:0; padding:0; font-family:'Arial', sans-serif; height:100vh;
+  color:#fff; overflow:hidden; display:flex; flex-direction:column; transition: background 0.5s;
+  background: linear-gradient(270deg,#0f2027,#203a43,#2c5364); /* default dark */
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+body.day {
+  background: linear-gradient(270deg,#a1c4fd,#c2e9fb);
+  color:#000;
+}
+@keyframes gradientBG { 
+  0%{background-position:0% 50%;} 
+  50%{background-position:100% 50%;} 
+  100%{background-position:0% 50%;} 
+}
+
+/* Floating dots */
+.dot {
+  position: absolute;
+  background: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: floatDots linear infinite;
+}
+@keyframes floatDots {
+  0% { transform: translateY(0) translateX(0); opacity: 0.5; }
+  50% { transform: translateY(-20px) translateX(15px); opacity: 1; }
+  100% { transform: translateY(0) translateX(0); opacity: 0.5; }
+}
+
+/* Day/Night Toggle */
+#toggleContainer { position: fixed; top:20px; right:20px; display:flex; align-items:center; gap:10px; z-index:1000; font-size:14px; user-select:none; }
+.toggle-switch { position: relative; width:50px; height:24px; }
+.toggle-switch input { display:none; }
+.slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#ccc; border-radius:24px; transition:0.4s; }
+.slider:before { position:absolute; content:""; height:20px; width:20px; left:2px; bottom:2px; background:white; border-radius:50%; transition:0.4s; }
+input:checked + .slider { background:#2196F3; }
+input:checked + .slider:before { transform:translateX(26px); }
+
+/* Landing Typing */
+#aiTypingSection { flex:1; display:flex; justify-content:center; align-items:center; text-align:center;
+padding:20px; font-size:22px; font-weight:bold; line-height:1.4; text-shadow:1px 1px 10px rgba(0,0,0,0.6); }
+
+/* Results Section */
+#resultsSection {
+  display:none;
+  flex-direction:column;
+  gap:15px;
+  width:90%;
+  max-width:600px;
+  margin:0 auto;
+  animation: fadeIn 0.6s;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.section { padding:15px 20px; border-radius:12px; background:rgba(255,255,255,0.9); color:#202124; box-shadow:0 4px 15px rgba(0,0,0,0.2); transition: transform 0.3s; }
+.section:hover { transform: translateY(-5px); }
+#videosContainer { display:flex; overflow-x:auto; gap:10px; padding-bottom:5px; }
+#videosContainer div { transition: transform 0.3s; cursor:pointer; }
+#videosContainer div:hover { transform: scale(1.05); }
+
+/* Search */
+#searchContainer { position:fixed; bottom:20px; width:90%; max-width:600px; display:flex; gap:10px; }
+#searchInput { flex:1; padding:12px 15px; font-size:16px; border:1px solid #dfe1e5; border-radius:24px; outline:none; }
+#searchBtn, #newSearchBtn { padding:12px 20px; border:none; background:#1fa2ff; color:#fff; font-weight:bold; font-size:16px; cursor:pointer; border-radius:24px; transition: all 0.3s ease; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+#searchBtn:hover, #newSearchBtn:hover { background:#12d8fa; transform: translateY(-2px); }
+
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+
+/* AI Thinking animation placeholder */
+#aiThinking p { margin:5px 0; }
+</style>
+</head>
+<body class="night">
+
+<!-- Floating Dots Container -->
+<div id="dotsContainer"></div>
+
+<!-- Day/Night Toggle -->
+<div id="toggleContainer">
+  <span>🌞/🌙</span>
+  <label class="toggle-switch">
+    <input type="checkbox" id="dayNightToggle">
+    <span class="slider"></span>
+  </label>
+</div>
+
+<!-- Landing Typing -->
+<div id="aiTypingSection"><span id="typingText"></span></div>
+
+<!-- AI Thinking -->
+<div id="aiThinking" style="display:none; text-align:center; margin-top:10px;">
+  <p>AI is thinking...</p>
+  <p style="opacity:0.6; font-size:14px;">Just wait a sec...</p>
+</div>
+
+<!-- Results Section -->
+<main id="resultsSection">
+  <div class="section" id="responseBox">
+    <h2>AI Response</h2>
+    <div id="aiAnswer"></div>
+  </div>
+
+  <div class="section" id="videoList">
+    <h2>Explanation Videos</h2>
+    <div id="videosContainer">Video thumbnails will appear here.</div>
+  </div>
+
+  <button id="newSearchBtn">New Search</button>
+</main>
+
+<!-- Search Bar -->
+<div id="searchContainer">
+  <input type="text" id="searchInput" placeholder="Type your work here...">
+  <button id="searchBtn">Send</button>
+</div>
+
+<script>
+// ===== Elements =====
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+const resultsSection = document.getElementById('resultsSection');
+const aiAnswer = document.getElementById('aiAnswer');
+const videosContainer = document.getElementById('videosContainer');
+const aiTypingSection = document.getElementById('aiTypingSection');
+const searchContainer = document.getElementById('searchContainer');
+const newSearchBtn = document.getElementById('newSearchBtn');
+const dayNightToggle = document.getElementById('dayNightToggle');
+const body = document.body;
+const typingText = document.getElementById('typingText');
+const dotsContainer = document.getElementById('dotsContainer');
+const aiThinkingDiv = document.getElementById("aiThinking");
+
+// ===== Floating Dots =====
+const numDots = 30;
+for(let i=0;i<numDots;i++){
+  const dot = document.createElement('div');
+  dot.className='dot';
+  const size = Math.random()*4+2;
+  dot.style.width = size+'px';
+  dot.style.height = size+'px';
+  dot.style.top = Math.random()*100+'%';
+  dot.style.left = Math.random()*100+'%';
+  dot.style.animationDuration = (Math.random()*10+5)+'s';
+  dotsContainer.appendChild(dot);
+}
+
+// ===== Label long AI responses =====
+function labelLongResponse(text) {
+  const lines = text.split(/\n|\. /).filter(Boolean);
+  let labeled = '';
+  lines.forEach((line,i) => labeled += `${i+1}. ${line.trim()}\n`);
+  return labeled;
+}
+
+// ===== Display AI response =====
+function typeAIResponse(text) {
+  aiAnswer.innerHTML = '';
+  text.split('\n').forEach(line => {
+    const p = document.createElement('p');
+    p.textContent = line;
+    aiAnswer.appendChild(p);
+  });
+}
+
+// ===== Day/Night Toggle =====
+dayNightToggle.addEventListener('change', () => {
+  body.className = dayNightToggle.checked ? 'night' : 'day';
+  const allTextElements = document.querySelectorAll(
+    'body, #aiTypingSection, #resultsSection, #searchContainer, .section, #videosContainer p, #aiAnswer, #typingText'
+  );
+  allTextElements.forEach(el => el.style.color = dayNightToggle.checked ? '#fff' : '#000');
+});
+
+// ===== Landing Typing =====
+const phrases=["Hello! 🤗 I am your Smart Tutor.","I can explain your work, answer questions, and provide helpful videos...","Type your question below and let's get started!","Let's brainstorm","Let's explore"];
+let phraseIndex=0,charIndex=0,deleting=false;
+function typeLanding(){
+  const current = phrases[phraseIndex];
+  if(!deleting){
+    typingText.textContent=current.slice(0,charIndex+1);
+    charIndex++;
+    if(charIndex===current.length){ deleting=true; setTimeout(typeLanding,1500); return; }
+  } else {
+    typingText.textContent=current.slice(0,charIndex-1);
+    charIndex--;
+    if(charIndex===0){ deleting=false; phraseIndex=(phraseIndex+1)%phrases.length; }
+  }
+  setTimeout(typeLanding,deleting?50:100);
+}
+typeLanding();
+
+// ===== Serverless API Search =====
+searchBtn.addEventListener('click', async () => {
+  const query = searchInput.value.trim();
+  if(!query) return;
+
+  aiTypingSection.style.display = 'none';
+  searchContainer.style.display = 'none';
+  resultsSection.style.display = 'flex';
+  aiAnswer.innerHTML = '';
+  videosContainer.innerHTML = '';
+  aiThinkingDiv.style.display = "block";
+
+  let dots = 0;
+  const anim = setInterval(() => {
+    dots = (dots+1)%4;
+    aiThinkingDiv.querySelector('p').textContent = "Thinking" + ".".repeat(dots);
+  },500);
+
+  try {
+    const resp = await fetch(`/api/getData?q=${encodeURIComponent(query)}`);
+    const data = await resp.json();
+    clearInterval(anim);
+    aiThinkingDiv.style.display = "none";
+
+    const aiText = data.ai_response?.choices?.[0]?.message?.content || "No response";
+    typeAIResponse(labelLongResponse(aiText));
+
+    videosContainer.innerHTML = '';
+    if(data.youtube_videos?.items){
+      data.youtube_videos.items.forEach(video => {
+        const div = document.createElement('div');
+        div.style.minWidth='250px';
+        div.style.marginRight='10px';
+        div.onclick = () => window.open(`https://www.youtube.com/watch?v=${video.id.videoId}`, "_blank");
+        div.innerHTML = `<img src="${video.snippet.thumbnails.medium.url}" style="width:100%;border-radius:5px;">
+          <p style="font-size:14px;color:#202124;margin:5px 0 0 0;">${video.snippet.title}</p>`;
+        videosContainer.appendChild(div);
+      });
+    } else videosContainer.textContent="No videos found / quota exceeded.";
+
+  } catch(err){
+    clearInterval(anim);
+    aiAnswer.textContent="Failed to load data.";
+    console.error(err);
+  }
+});
+
+newSearchBtn.addEventListener('click', ()=>{
+  resultsSection.style.display='none';
+  searchContainer.style.display='flex';
+  aiTypingSection.style.display='flex';
+  searchInput.value='';
+  aiAnswer.innerHTML='';
+  videosContainer.innerHTML='';
+  aiThinkingDiv.style.display="block";
+});
+</script>
+</body>
+  </html>

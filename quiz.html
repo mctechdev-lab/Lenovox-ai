@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lenovox AI — Smart Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root {
+    --primary: #4A90E2;
+    --secondary: #6FCF97;
+    --accent: #F2994A;
+    --bg: #F8FAFC;
+    --card-bg: #FFFFFF;
+    --text-main: #1E293B;
+    --text-sub: #64748B;
+    --success: #10B981;
+    --danger: #EF4444;
+    --3d-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.05);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { 
+    height: 100%; 
+    margin: 0; 
+    font-family: 'Quicksand', sans-serif; 
+    background: var(--bg); 
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { 
+    min-height: 100vh; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 20px; 
+  }
+
+  .container { 
+    width: 100%; 
+    max-width: 800px; 
+    background: var(--card-bg); 
+    border-radius: 28px; 
+    box-shadow: var(--3d-shadow); 
+    overflow: hidden; 
+    border: 1px solid rgba(0,0,0,0.02);
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  header { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    padding: 20px 30px; 
+    background: #FFFFFF; 
+    border-bottom: 1px solid #F1F5F9;
+  }
+
+  .brand { display: flex; gap: 15px; align-items: center; }
+  .logo { 
+    width: 50px; 
+    height: 50px; 
+    border-radius: 14px; 
+    background: linear-gradient(135deg, var(--primary), #357ABD); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    color: white; 
+    font-weight: 700; 
+    font-size: 1.2rem;
+    box-shadow: 0 8px 15px rgba(74, 144, 226, 0.3);
+  }
+  .brand-text .title { font-size: 1.2rem; font-weight: 700; color: var(--primary); }
+  .brand-text .small { font-size: 0.8rem; color: var(--text-sub); }
+
+  .controls { display: flex; gap: 15px; align-items: center; }
+  .back-btn {
+    background: #F1F5F9;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-main);
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .back-btn:hover { background: #E2E8F0; transform: translateX(-5px); }
+
+  main { padding: 30px; }
+
+  /* Landing Page */
+  .landing { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 20px; 
+    text-align: center; 
+    padding: 40px 20px;
+  }
+  h1 { margin: 0; font-size: 2rem; font-weight: 700; color: var(--text-main); }
+  .sub { color: var(--text-sub); max-width: 500px; font-size: 1.1rem; }
+  .liveText { font-weight: 600; color: var(--primary); min-height: 40px; font-size: 1.2rem; }
+  .btn { 
+    padding: 15px 30px; 
+    border-radius: 18px; 
+    border: none; 
+    cursor: pointer; 
+    font-weight: 700; 
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .btn-start { 
+    background: var(--success); 
+    color: white; 
+    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2); 
+  }
+  .btn-start:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(16, 185, 129, 0.3); }
+
+  /* Quiz Area */
+  .quizWrap { display: none; }
+  .meta { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 25px; 
+  }
+  .timer { 
+    font-weight: 700; 
+    color: #92400E; 
+    background: #FFF6E6; 
+    padding: 10px 20px; 
+    border-radius: 14px; 
+    border: 1px solid rgba(146,64,14,0.1); 
+  }
+  .progress { font-weight: 600; color: var(--text-sub); }
+
+  .card { 
+    background: #FFFFFF; 
+    padding: 30px; 
+    border-radius: 24px; 
+    box-shadow: var(--3d-shadow); 
+    margin-bottom: 20px;
+  }
+  .question { font-size: 1.4rem; font-weight: 700; color: var(--text-main); margin-bottom: 25px; line-height: 1.4; }
+  .options { display: grid; grid-template-columns: 1fr; gap: 15px; }
+  .opt { 
+    background: #F8FAFC; 
+    border: 2px solid #F1F5F9; 
+    padding: 18px; 
+    border-radius: 16px; 
+    cursor: pointer; 
+    text-align: left; 
+    font-weight: 600; 
+    font-size: 1.1rem;
+    transition: all 0.3s;
+  }
+  .opt:hover { 
+    border-color: var(--primary); 
+    background: #F0F7FF; 
+    transform: translateX(10px); 
+  }
+  .opt.selected { 
+    background: var(--primary); 
+    color: white; 
+    border-color: var(--primary); 
+    box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+  }
+
+  .controlsBottom { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-top: 30px; 
+  }
+
+  /* Results Area */
+  .results { display: none; text-align: center; }
+  .resultCard { background: white; padding: 30px; border-radius: 24px; box-shadow: var(--3d-shadow); }
+  .score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-weight: 700;
+    box-shadow: 0 10px 25px rgba(74, 144, 226, 0.4);
+  }
+  .reward-badge {
+    background: #FEF3C7;
+    color: #92400E;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #FDE68A;
+  }
+
+  footer { 
+    padding: 20px; 
+    background: #F8FAFC; 
+    border-top: 1px solid #F1F5F9; 
+    text-align: center; 
+    color: var(--text-sub); 
+    font-size: 0.9rem; 
+    font-weight: 600;
+  }
+
+  /* 3D LOADER */
+  #loaderOverlay { 
+    display:none; 
+    position:fixed; 
+    inset:0; 
+    background: rgba(255, 255, 255, 0.98); 
+    z-index: 9999; 
+    justify-content: center; 
+    align-items: center; 
+    flex-direction: column; 
+  }
+  .loader-3d {
+    width: 60px;
+    height: 60px;
+    border: 6px solid #F1F5F9;
+    border-top: 6px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+  @media (max-width: 600px) {
+    .container { border-radius: 0; }
+    .meta { flex-direction: column; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="container">
+      <header>
+        <div class="brand">
+          <button class="back-btn" onclick="window.location.href='userdashboard.html'">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+          <div class="logo">LX</div>
+          <div class="brand-text">
+            <div class="title">Lenovox AI</div>
+            <div class="small">Smart Student Quiz</div>
+          </div>
+        </div>
+        <div class="controls">
+          <label class="muteToggle" id="muteToggleLabel">
+            <input type="checkbox" id="muteToggle">
+            <span id="muteLabel"><i class="fas fa-volume-up"></i> Voice ON</span>
+          </label>
+        </div>
+      </header>
+
+      <main>
+        <!-- Landing -->
+        <section class="landing" id="landing">
+          <h1>Master Your Knowledge</h1>
+          <div class="liveText" id="liveText">Ready to learn?</div>
+          <p class="sub">Challenge yourself with 20 questions from our massive 2,000+ question bank. Earn <b>1 LNX coin</b> for every correct answer!</p>
+          <button class="btn btn-start" id="startBtn">Start Quiz & Earn Coins</button>
+        </section>
+
+        <!-- Quiz Area -->
+        <section class="quizWrap" id="quizWrap">
+          <div class="meta">
+            <div class="progress" id="progressText">Question 0 / 20</div>
+            <div class="timer" id="timer">Time: 25s</div>
+          </div>
+
+          <div class="card" id="cardArea">
+            <div class="question" id="questionText">Loading question...</div>
+            <div class="options" id="options"></div>
+
+            <div class="controlsBottom">
+              <span style="font-weight: 600; color: var(--text-sub);">Pick the best answer</span>
+              <div style="display:flex; gap:10px;">
+                <button class="btn" id="skipBtn" style="background:#E2E8F0; color:var(--text-main);">Skip</button>
+                <button class="btn" id="nextBtn" style="background:var(--primary); color:white;">Next</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Results Area -->
+        <section class="results" id="resultsArea">
+          <div class="resultCard">
+            <div class="score-circle">
+              <span id="finalScore">0</span>
+              <small>out of 20</small>
+            </div>
+            <div class="reward-badge">
+              <i class="fas fa-coins"></i> You earned <span id="earnedCoins">0</span> LNX Coins!
+            </div>
+            <h2 id="feedbackTitle">Great Job!</h2>
+            <p id="feedbackText" style="color:var(--text-sub); margin-bottom:25px;">You're becoming a master!</p>
+            <button class="btn btn-start" id="retryBtn">Try Again</button>
+            <button class="btn" onclick="window.location.href='userdashboard.html'" style="background:#E2E8F0; color:var(--text-main); margin-left:10px;">Back to Dashboard</button>
+          </div>
+        </section>
+      </main>
+
+      <footer>Lenovox AI • Earn while you learn • Fun 3D Interface</footer>
+    </div>
+  </div>
+
+  <!-- LOADER -->
+  <div id="loaderOverlay">
+    <div class="loader-3d"></div>
+    <p style="margin-top:20px; font-weight:700;">Saving your rewards...</p>
+  </div>
+
+<script type="module">
+  import { watchAuth } from './auth.js';
+  import { addReward } from './coinbase.js';
+  import { questions } from './questions.js';
+
+  const QUESTIONS_PER_QUIZ = 20;
+  const TIME_PER_QUESTION = 25;
+
+  let currentUserId = null;
+  let quizQuestions = [];
+  let currentIndex = 0;
+  let score = 0;
+  let timer = null;
+  let timeLeft = TIME_PER_QUESTION;
+  let selectedOption = null;
+
+  // UI Elements
+  const landing = document.getElementById('landing');
+  const quizWrap = document.getElementById('quizWrap');
+  const resultsArea = document.getElementById('resultsArea');
+  const questionText = document.getElementById('questionText');
+  const optionsEl = document.getElementById('options');
+  const progressText = document.getElementById('progressText');
+  const timerEl = document.getElementById('timer');
+  const nextBtn = document.getElementById('nextBtn');
+  const startBtn = document.getElementById('startBtn');
+  const retryBtn = document.getElementById('retryBtn');
+  const muteToggle = document.getElementById('muteToggle');
+  const muteLabel = document.getElementById('muteLabel');
+
+  // Initialize
+  watchAuth(user => {
+    if (user) currentUserId = user.uid;
+  });
+
+  // Typing Effect
+  const messages = ["Learn faster with Lenovox AI", "Earn 1 LNX for every correct answer", "2,000+ questions to master", "Let's start your journey!"];
+  let mi=0, ci=0, deleting=false;
+  function typeLoop() {
+    const msg = messages[mi];
+    const liveText = document.getElementById('liveText');
+    if (!deleting) {
+      liveText.textContent = msg.slice(0, ci++);
+      if (ci > msg.length) { deleting = true; setTimeout(typeLoop, 1500); return; }
+    } else {
+      liveText.textContent = msg.slice(0, ci--);
+      if (ci < 0) { deleting = false; mi = (mi + 1) % messages.length; }
+    }
+    setTimeout(typeLoop, deleting ? 50 : 100);
+  }
+  typeLoop();
+
+  // Mute Toggle
+  muteToggle.addEventListener('change', () => {
+    muteLabel.innerHTML = muteToggle.checked ? '<i class="fas fa-volume-mute"></i> Voice OFF' : '<i class="fas fa-volume-up"></i> Voice ON';
+  });
+
+  // Get Random Questions from Local Database
+  function getQuizQuestions() {
+    return questions.sort(() => 0.5 - Math.random()).slice(0, QUESTIONS_PER_QUIZ);
+  }
+
+  // Start Quiz
+  startBtn.onclick = async () => {
+    landing.style.display = 'none';
+    document.getElementById('loaderOverlay').style.display = 'flex';
+    quizQuestions = getQuizQuestions();
+    document.getElementById('loaderOverlay').style.display = 'none';
+    quizWrap.style.display = 'block';
+    showQuestion();
+  };
+
+  function showQuestion() {
+    if (currentIndex >= QUESTIONS_PER_QUIZ) return showResults();
+    
+    const q = quizQuestions[currentIndex];
+    questionText.textContent = q.q;
+    progressText.textContent = `Question ${currentIndex + 1} / ${QUESTIONS_PER_QUIZ}`;
+    
+    optionsEl.innerHTML = '';
+    selectedOption = null;
+    
+    q.options.forEach(opt => {
+      const btn = document.createElement('div');
+      btn.className = 'opt';
+      btn.textContent = opt;
+      btn.onclick = () => {
+        document.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedOption = opt;
+      };
+      optionsEl.appendChild(btn);
+    });
+
+    if (!muteToggle.checked) speak(q.q);
+    startTimer();
+  }
+
+  function startTimer() {
+    clearInterval(timer);
+    timeLeft = TIME_PER_QUESTION;
+    timerEl.textContent = `Time: ${timeLeft}s`;
+    timer = setInterval(() => {
+      timeLeft--;
+      timerEl.textContent = `Time: ${timeLeft}s`;
+      if (timeLeft <= 0) handleNext();
+    }, 1000);
+  }
+
+  async function handleNext() {
+    const q = quizQuestions[currentIndex];
+    if (selectedOption === q.answer) {
+      score++;
+      // IMPORTANT: Add 1 LNX Coin Reward to Coinbase
+      if (currentUserId) {
+        await addReward(currentUserId, 'Quiz Correct Answer', 1);
+      }
+    }
+    
+    currentIndex++;
+    if (currentIndex < QUESTIONS_PER_QUIZ) {
+      showQuestion();
+    } else {
+      showResults();
+    }
+  }
+
+  nextBtn.onclick = handleNext;
+  document.getElementById('skipBtn').onclick = handleNext;
+
+  async function showResults() {
+    clearInterval(timer);
+    quizWrap.style.display = 'none';
+    resultsArea.style.display = 'block';
+    
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('earnedCoins').textContent = score;
+    
+    if (score > 15) {
+      document.getElementById('feedbackTitle').textContent = "Excellent Work!";
+      document.getElementById('feedbackText').textContent = "You're a Lenovox AI Master! Your coins have been added to your dashboard.";
+    } else if (score > 10) {
+      document.getElementById('feedbackTitle').textContent = "Great Job!";
+      document.getElementById('feedbackText').textContent = "Well done! Keep practicing to earn even more coins.";
+    } else {
+      document.getElementById('feedbackTitle').textContent = "Keep Trying!";
+      document.getElementById('feedbackText').textContent = "Practice makes perfect. Try again to boost your score and coins!";
+    }
+  }
+
+  retryBtn.onclick = () => {
+    currentIndex = 0;
+    score = 0;
+    resultsArea.style.display = 'none';
+    landing.style.display = 'flex';
+  };
+
+  function speak(text) {
+    if (window.speechSynthesis) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      speechSynthesis.speak(utterance);
+    }
+  }
+</script>
+</body>
+          </html>
