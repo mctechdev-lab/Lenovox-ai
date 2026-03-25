@@ -1,1086 +1,323 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Lenovox-ai – Join the Universe</title>
-
-  <!-- Font Awesome for Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --space-bg: #03030b;
-      --nebula-purple: rgba(93, 63, 211, 0.4);
-      --nebula-blue: rgba(0, 210, 255, 0.3);
-      --accent-blue: #00d2ff;
-      --accent-purple: #9d50bb;
-      --glass: rgba(255, 255, 255, 0.05);
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body, html {
-      width: 100%;
-      min-height: 100vh;
-      font-family: 'Inter', sans-serif;
-      background-color: var(--space-bg);
-      color: white;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* UNIVERSE BACKGROUND */
-    .universe-bg {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -2;
-      background: radial-gradient(circle at 50% 50%, #0a0a1a 0%, #03030b 100%);
-    }
-
-    .nebula {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: 
-        radial-gradient(circle at 20% 30%, var(--nebula-purple) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, var(--nebula-blue) 0%, transparent 50%);
-      z-index: -1;
-      filter: blur(80px);
-      opacity: 0.6;
-    }
-
-    #star-canvas {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    /* MASCOT STYLES */
-    .mascot {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 100px;
-      height: 100px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 60px;
-      box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
-      animation: mascotFloat 3s ease-in-out infinite;
-      z-index: 100;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .mascot:hover {
-      transform: scale(1.1);
-      box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
-    }
-
-    @keyframes mascotFloat {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
-    }
-
-    @keyframes mascotBounce {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-    }
-
-    /* LOGO SECTION */
-    .logo-container {
-      text-align: center;
-      margin-bottom: 40px;
-      animation: fadeInDown 1s ease-out;
-    }
-
-    .logo {
-      font-size: 42px;
-      font-weight: 900;
-      letter-spacing: -1px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
-    }
-
-    .circle {
-      width: 16px;
-      height: 16px;
-      background: linear-gradient(135deg, #ffb347, #ffcc33);
-      border-radius: 50%;
-      box-shadow: 0 0 15px #ffcc33;
-      animation: circlePulse 2s ease-in-out infinite;
-    }
-
-    @keyframes circlePulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-    }
-
-    .typing-text {
-      font-size: 18px;
-      font-weight: 500;
-      color: #aaa;
-      min-height: 24px;
-      margin-top: 10px;
-    }
-
-    /* FORM & BUTTONS CONTAINER */
-    .auth-card {
-      width: 100%;
-      max-width: 400px;
-      padding: 40px 30px;
-      background: var(--glass);
-      backdrop-filter: blur(20px);
-      border-radius: 30px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      animation: fadeInUp 0.8s ease-out;
-    }
-
-    .auth-card h2 {
-      text-align: center;
-      font-size: 24px;
-      font-weight: 800;
-      margin-bottom: 10px;
-      background: linear-gradient(90deg, #fff, var(--accent-blue));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    /* BUTTONS */
-    .btn {
-      width: 100%;
-      padding: 16px;
-      border-radius: 16px;
-      border: none;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      text-decoration: none;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.2);
-      transition: left 0.5s ease;
-    }
-
-    .btn:hover::before {
-      left: 100%;
-    }
-
-    .btn-google {
-      background: white;
-      color: #000;
-    }
-
-    .btn-email {
-      background: rgba(255, 255, 255, 0.08);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .btn-login {
-      background: transparent;
-      color: #aaa;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      margin-top: 10px;
-    }
-
-    .btn:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 10px 20px rgba(0, 210, 255, 0.2);
-    }
-
-    .btn-icon { width: 22px; height: 22px; }
-
-    /* FORM STYLES */
-    #landingButtons {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      animation: fadeIn 0.5s ease-out;
-    }
-
-    #emailFormContainer { 
-      display: none;
-      flex-direction: column;
-      gap: 15px;
-      animation: slideInForm 0.5s ease-out;
-    }
-
-    #emailFormContainer.active {
-      display: flex;
-    }
-
-    #landingButtons.hidden {
-      display: none;
-    }
-
-    .input-group {
-      position: relative;
-      width: 100%;
-    }
-
-    .input-group i {
-      position: absolute;
-      left: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #666;
-      transition: 0.3s;
-      z-index: 2;
-    }
-
-    .password-toggle {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #666;
-      transition: 0.3s;
-      z-index: 3;
-      font-size: 18px;
-    }
-
-    .password-toggle:hover {
-      color: var(--accent-blue);
-    }
-
-    input {
-      width: 100%;
-      padding: 15px 50px 15px 45px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-      color: white;
-      font-size: 15px;
-      outline: none;
-      transition: 0.3s;
-    }
-
-    input:focus {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: var(--accent-blue);
-      box-shadow: 0 0 15px rgba(0, 210, 255, 0.3), inset 0 0 10px rgba(0, 210, 255, 0.1);
-    }
-
-    input:focus + i { 
-      color: var(--accent-blue);
-    }
-
-    .btn-submit {
-      background: linear-gradient(90deg, #00d2ff, #3a7bd5);
-      color: white;
-      margin-top: 10px;
-      box-shadow: 0 10px 20px rgba(0, 210, 255, 0.3);
-      position: relative;
-    }
-
-    .btn-submit.loading {
-      pointer-events: none;
-      opacity: 0.8;
-    }
-
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-top: 3px solid white;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-right: 8px;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .back-link {
-      text-align: center;
-      font-size: 14px;
-      color: #666;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: 0.3s;
-    }
-
-    .back-link:hover { 
-      color: #fff;
-    }
-
-    /* TERMS CHECKBOX STYLES */
-    .terms-container {
-      margin: 20px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      font-size: 14px;
-      color: #aaa;
-      transition: 0.3s;
-    }
-
-    .checkbox-label:hover {
-      color: #fff;
-    }
-
-    .checkbox-label input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      padding: 0;
-      margin: 0;
-      cursor: pointer;
-      accent-color: var(--accent-blue);
-      border-radius: 4px;
-    }
-
-    .checkbox-label input[type="checkbox"]:hover {
-      accent-color: #00f2fe;
-    }
-
-    .policy-link {
-      color: var(--accent-blue);
-      text-decoration: none;
-      font-weight: 600;
-      transition: 0.3s;
-      border-bottom: 1px solid transparent;
-    }
-
-    .policy-link:hover {
-      border-bottom-color: var(--accent-blue);
-      color: #00f2fe;
-    }
-
-    .terms-error {
-      background: rgba(255, 107, 107, 0.1);
-      border-left: 3px solid #ff6b6b;
-      padding: 10px;
-      border-radius: 6px;
-    }
-
-    /* ========== TOAST CONTAINER ========== */
-    .toast-container {
-      position: fixed;
-      top: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9999;
-      pointer-events: none;
-    }
-
-    /* ========== TOAST STYLES ========== */
-    .toast {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 18px 28px;
-      border-radius: 20px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1);
-      pointer-events: auto;
-      cursor: pointer;
-      min-width: 320px;
-      max-width: 420px;
-      font-weight: 600;
-      font-size: 16px;
-      white-space: nowrap;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      position: relative;
-      overflow: hidden;
-      transform-style: preserve-3d;
-      animation: slideInTop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-      margin-bottom: 15px;
-    }
-
-    /* ERROR TOAST */
-    .toast.error {
-      background: linear-gradient(135deg, rgba(255, 107, 107, 0.95) 0%, rgba(238, 90, 111, 0.95) 100%);
-      color: white;
-    }
-
-    .toast.error::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-      animation: shine 3s ease-in-out infinite;
-    }
-
-    .toast.error .icon {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
-      border: 2.5px solid rgba(255, 255, 255, 0.6);
-      color: white;
-      box-shadow: 
-        0 8px 24px rgba(0, 0, 0, 0.25),
-        inset 0 1px 2px rgba(255, 255, 255, 0.4),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    /* SUCCESS TOAST */
-    .toast.success {
-      background: linear-gradient(135deg, rgba(38, 208, 206, 0.95) 0%, rgba(26, 188, 156, 0.95) 100%);
-      color: white;
-    }
-
-    .toast.success::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-      animation: shine 3s ease-in-out infinite;
-    }
-
-    .toast.success .icon {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
-      border: 2.5px solid rgba(255, 255, 255, 0.6);
-      color: white;
-      box-shadow: 
-        0 8px 24px rgba(0, 0, 0, 0.25),
-        inset 0 1px 2px rgba(255, 255, 255, 0.4),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    /* ICON STYLES - 3D EFFECT */
-    .icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      font-weight: 700;
-      flex-shrink: 0;
-      position: relative;
-      animation: iconBounce3D 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
-      transform-style: preserve-3d;
-    }
-
-    .icon::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent 60%);
-      pointer-events: none;
-    }
-
-    /* TEXT */
-    .toast-text {
-      flex: 1;
-      text-align: left;
-      animation: textFadeIn 0.6s ease 0.15s both;
-      font-weight: 500;
-      letter-spacing: 0.3px;
-    }
-
-    /* CLOSE BUTTON */
-    .toast-close {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 16px;
-      flex-shrink: 0;
-      opacity: 0;
-      animation: fadeIn 0.6s ease 0.2s both;
-    }
-    
-    .toast:hover .toast-close {
-      background: rgba(255, 255, 255, 0.35);
-      transform: scale(1.1);
-    }
-
-    /* CONFETTI STYLES */
-    .confetti {
-      position: fixed;
-      width: 10px;
-      height: 10px;
-      pointer-events: none;
-      z-index: 9998;
-    }
-
-    /* ========== ANIMATIONS ========== */
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes slideInForm {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes slideInTop {
-      from {
-        opacity: 0;
-        transform: translateY(-40px) rotateX(20deg);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) rotateX(0deg);
-      }
-    }
-
-    @keyframes iconBounce3D {
-      0% {
-        transform: scale(0.2) rotateZ(-30deg) rotateX(45deg);
-        opacity: 0;
-      }
-      50% {
-        transform: scale(1.15) rotateZ(10deg) rotateX(0deg);
-      }
-      100% {
-        transform: scale(1) rotateZ(0deg) rotateX(0deg);
-        opacity: 1;
-      }
-    }
-
-    @keyframes textFadeIn {
-      from {
-        opacity: 0;
-        transform: translateX(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    @keyframes shine {
-      0%, 100% {
-        transform: translate(0, 0);
-      }
-      50% {
-        transform: translate(20px, 20px);
-      }
-    }
-
-    @keyframes fadeOut {
-      from {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-      to {
-        opacity: 0;
-        transform: translateY(-20px) scale(0.95);
-      }
-    }
-
-    @keyframes confettiFall {
-      to {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
-      }
-    }
-
-    .toast.removing {
-      animation: fadeOut 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
-    }
-
-    /* Responsive */
-    @media (max-width: 600px) {
-      .toast {
-        min-width: 280px;
-        max-width: 85vw;
-        font-size: 15px;
-        padding: 16px 20px;
-        gap: 12px;
-      }
-
-      .icon {
-        width: 48px;
-        height: 48px;
-        font-size: 24px;
-      }
-
-      .auth-card {
-        padding: 35px;
-      }
-
-      .logo {
-        font-size: 32px;
-      }
-
-      .mascot {
-        width: 80px;
-        height: 80px;
-        font-size: 50px;
-        bottom: 20px;
-        right: 20px;
-      }
-
-      .btn {
-        padding: 14px;
-        font-size: 15px;
-      }
-
-      input {
-        padding: 12px 45px 12px 40px;
-        font-size: 14px;
-      }
-
-      .checkbox-label {
-        font-size: 13px;
-      }
-
-      .checkbox-label input[type="checkbox"] {
-        width: 16px;
-        height: 16px;
-      }
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lenovox AI — Create Account</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03030b;--blue:#00d2ff;--purple:#9d50bb;--gold:#ffcc33;--green:#10b981;--red:#ef4444;--border:rgba(255,255,255,0.09);--text:#e8eaf6;--muted:#8892a4}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;min-height:100vh;font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 0}
+.univ{position:fixed;inset:0;z-index:-3;background:radial-gradient(circle at 50% 40%,#0d0d2b 0%,#03030b 70%)}
+.nebula{position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 78% 18%,rgba(0,210,255,.32) 0%,transparent 50%),radial-gradient(circle at 22% 78%,rgba(93,63,211,.42) 0%,transparent 52%),radial-gradient(circle at 60% 62%,rgba(157,80,187,.2) 0%,transparent 45%);filter:blur(72px);opacity:.8}
+#star-canvas{position:fixed;inset:0;z-index:-1;pointer-events:none}
+#confettiCanvas{position:fixed;inset:0;z-index:9998;pointer-events:none}
+
+.scene{perspective:1000px;padding:20px;width:100%;display:flex;justify-content:center}
+.auth-card{width:100%;max-width:470px;padding:42px 36px;background:linear-gradient(145deg,rgba(14,14,42,.95),rgba(5,5,18,.97));backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:28px;border:1px solid var(--border);box-shadow:0 0 0 1px rgba(0,210,255,.07),0 32px 72px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.06);transform-style:preserve-3d;animation:cardRise .7s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes cardRise{from{opacity:0;transform:translateY(50px) scale(.93)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* LOGO */
+.logo-wrap{text-align:center;margin-bottom:20px}
+.logo{font-family:'Orbitron',monospace;font-size:1.9rem;font-weight:900;letter-spacing:3px;background:linear-gradient(90deg,#ffffff 30%,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:inline-flex;align-items:center;gap:10px}
+.logo-dot{width:13px;height:13px;border-radius:50%;background:linear-gradient(135deg,#ffb347,var(--gold));box-shadow:0 0 18px var(--gold);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{transform:scale(1);box-shadow:0 0 18px var(--gold)}50%{transform:scale(1.35);box-shadow:0 0 32px var(--gold),0 0 60px rgba(255,204,51,.3)}}
+
+/* PAGE HEADER */
+.page-header{text-align:center;margin-bottom:20px}
+.page-title{font-family:'Orbitron',monospace;font-size:1.05rem;font-weight:700;background:linear-gradient(90deg,#fff,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:5px}
+.page-sub{font-size:.82rem;color:var(--muted);font-weight:600}
+
+/* REWARD BANNER */
+.reward-banner{display:flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(135deg,rgba(255,204,51,.13),rgba(255,179,71,.07));border:1px solid rgba(255,204,51,.28);border-radius:13px;padding:10px 16px;margin-bottom:18px;font-size:.82rem;font-weight:700;color:var(--gold)}
+.reward-banner i{font-size:1rem}
+.ref-banner{display:none;align-items:center;gap:8px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);border-radius:11px;padding:8px 14px;margin-bottom:14px;font-size:.78rem;font-weight:700;color:#6ee7b7}
+
+/* INPUTS */
+.inp-group{display:flex;flex-direction:column;gap:6px;margin-bottom:13px}
+.inp-label{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;display:flex;align-items:center;gap:6px}
+.inp-label i{font-size:.7rem}
+.inp-wrap{position:relative}
+.inp-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;pointer-events:none;z-index:2;transition:.3s}
+.form-input{width:100%;padding:13px 46px 13px 44px;background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:13px;color:#fff;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:600;outline:none;transition:all .3s;-webkit-appearance:none;appearance:none}
+.form-input::placeholder{color:rgba(136,146,164,.5)}
+.form-input:focus{background:rgba(0,210,255,.08);border-color:rgba(0,210,255,.55);box-shadow:0 0 0 3px rgba(0,210,255,.12)}
+.inp-wrap:focus-within .inp-icon{color:var(--blue)}
+.pw-eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:.88rem;padding:4px;transition:.25s;z-index:3}
+.pw-eye:hover{color:var(--blue)}
+
+/* STRENGTH */
+.str-bars{display:flex;gap:4px;margin-top:8px}
+.str-bar{flex:1;height:3px;border-radius:999px;background:rgba(255,255,255,.07);transition:background .35s}
+.str-label{font-size:.7rem;color:var(--muted);margin-top:4px;font-weight:700;display:flex;align-items:center;gap:5px}
+.str-label i{font-size:.65rem}
+
+/* FIELD ERROR */
+.ferr{display:none;margin-top:5px;padding:7px 12px;background:rgba(239,68,68,.12);border-left:3px solid var(--red);border-radius:8px;font-size:.76rem;color:#fca5a5;font-weight:600;animation:errIn .3s ease}
+.ferr.show{display:flex;align-items:center;gap:7px}
+@keyframes errIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+
+/* TERMS */
+.terms-row{display:flex;align-items:flex-start;gap:10px;margin:14px 0 16px}
+.terms-chk{width:17px;height:17px;border-radius:4px;border:1.5px solid var(--border);background:rgba(255,255,255,.05);cursor:pointer;flex-shrink:0;margin-top:2px;accent-color:var(--blue)}
+.terms-text{font-size:.78rem;color:var(--muted);line-height:1.55}
+.terms-text a{color:var(--blue);text-decoration:none;font-weight:700}
+.terms-text a:hover{text-decoration:underline}
+
+/* BUTTONS */
+.btn{width:100%;padding:14px;border:none;border-radius:15px;font-family:'Nunito',sans-serif;font-size:.97rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:all .3s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.btn i{font-size:.93rem}
+.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.11) 0%,transparent 55%)}
+.btn:hover{transform:translateY(-3px)}
+.btn:active{transform:translateY(1px) scale(.98)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none !important}
+.btn-primary{background:linear-gradient(135deg,#00d2ff,#3a7bd5);color:#fff;box-shadow:0 8px 28px rgba(0,210,255,.32),0 2px 0 rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.14)}
+.btn-primary:hover{box-shadow:0 14px 38px rgba(0,210,255,.44)}
+.btn-google{background:#ffffff;color:#1a1a1a;box-shadow:0 6px 22px rgba(0,0,0,.32),0 2px 0 #ccc}
+.btn-google:hover{box-shadow:0 10px 28px rgba(0,0,0,.4)}
+.btn-group{display:flex;flex-direction:column;gap:11px}
+.g-icon{width:19px;height:19px;flex-shrink:0}
+.divider{display:flex;align-items:center;gap:12px;margin:16px 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider span{font-size:.72rem;color:var(--muted);font-weight:700;letter-spacing:.5px;white-space:nowrap}
+.auth-footer{text-align:center;margin-top:18px;font-size:.83rem;color:var(--muted)}
+.auth-footer a{color:var(--blue);font-weight:700;text-decoration:none}
+.auth-footer a:hover{text-decoration:underline}
+.spinner{width:17px;height:17px;border:2.5px solid rgba(255,255,255,.22);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SUCCESS OVERLAY */
+#successOverlay{position:fixed;inset:0;z-index:9999;background:rgba(3,3,11,.94);display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;animation:fadeOv .35s ease}
+@keyframes fadeOv{from{opacity:0}to{opacity:1}}
+.success-circle{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;box-shadow:0 0 60px rgba(16,185,129,.5),0 0 120px rgba(16,185,129,.25);animation:scIn .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes scIn{from{transform:scale(0)}to{transform:scale(1)}}
+.success-circle i{font-size:2.8rem;color:#fff;animation:ckIn .4s .3s ease both}
+@keyframes ckIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+.suc-title{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;color:#fff;text-align:center;animation:fuP .5s .4s ease both}
+.suc-sub{font-size:.92rem;color:rgba(255,255,255,.6);text-align:center;animation:fuP .5s .5s ease both}
+.bar-wrap{width:240px;height:4px;background:rgba(255,255,255,.1);border-radius:999px;overflow:hidden;animation:fuP .5s .6s ease both}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:999px;width:0%;transition:width 2.1s linear}
+@keyframes fuP{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* MASCOT */
+.mascot{position:fixed;bottom:26px;right:26px;width:68px;height:68px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 36px rgba(102,126,234,.48);animation:mF 3.2s ease-in-out infinite;z-index:300;cursor:pointer;border:2px solid rgba(255,255,255,.14)}
+.mascot i{font-size:1.9rem;color:#fff}
+@keyframes mF{0%,100%{transform:translateY(0)}50%{transform:translateY(-13px)}}
+.mbubble{position:fixed;bottom:108px;right:26px;background:rgba(8,8,30,.97);border:1px solid rgba(0,210,255,.25);border-radius:14px;padding:10px 14px;font-size:.76rem;font-weight:700;color:#fff;max-width:178px;line-height:1.55;z-index:300;box-shadow:0 8px 28px rgba(0,0,0,.45)}
+.mbubble::after{content:'';position:absolute;bottom:-7px;right:26px;border:7px solid transparent;border-top-color:rgba(8,8,30,.97)}
+
+/* TOASTS */
+#toasts{position:fixed;top:18px;right:18px;z-index:10000;display:flex;flex-direction:column;gap:9px;max-width:320px}
+.toast{padding:12px 16px;border-radius:13px;font-size:.83rem;font-weight:700;display:flex;align-items:center;gap:9px;backdrop-filter:blur(16px);border:1px solid;animation:tIn .4s cubic-bezier(.34,1.56,.64,1)}
+.toast i{font-size:1rem;flex-shrink:0}.toast span{flex:1}
+.toast.success{background:rgba(16,185,129,.16);border-color:rgba(16,185,129,.32);color:#6ee7b7}
+.toast.error{background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.32);color:#fca5a5}
+.toast.removing{animation:tOut .35s ease forwards}
+@keyframes tIn{from{opacity:0;transform:translateX(42px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tOut{to{opacity:0;transform:translateX(42px)}}
+.t-close{margin-left:auto;cursor:pointer;opacity:.55;font-size:.9rem;background:none;border:none;color:inherit;padding:0 0 0 6px}
+
+@media(max-width:500px){.auth-card{padding:28px 18px;margin:10px}.logo{font-size:1.65rem}}
+</style>
 </head>
 <body>
+<div class="univ"></div><div class="nebula"></div>
+<canvas id="star-canvas"></canvas>
+<canvas id="confettiCanvas"></canvas>
+<div id="toasts"></div>
 
-  <div class="universe-bg"></div>
-  <div class="nebula"></div>
-  <canvas id="star-canvas"></canvas>
+<!-- SUCCESS OVERLAY -->
+<div id="successOverlay">
+  <div class="success-circle"><i class="fas fa-check"></i></div>
+  <div class="suc-title">Account Created!</div>
+  <div class="suc-sub">Welcome to Lenovox — 300 LNX added! 🎁</div>
+  <div class="bar-wrap"><div class="bar-fill" id="barFill"></div></div>
+  <div style="font-size:.78rem;color:rgba(255,255,255,.35)">Taking you inside...</div>
+</div>
 
-  <!-- TOAST CONTAINER -->
-  <div class="toast-container" id="toastContainer"></div>
+<!-- MASCOT -->
+<div class="mascot" id="mascot" onclick="toggleBubble()"><i class="fas fa-robot"></i></div>
+<div class="mbubble" id="mbubble" style="display:none">🚀 Join free and get 300 LNX coins instantly!</div>
 
-  <!-- MASCOT -->
-  <div class="mascot" id="mascot">👽</div>
+<div class="scene">
+<div class="auth-card" id="authCard">
 
-  <div class="logo-container">
-    <div class="logo">Lenovox-ai<span class="circle"></span></div>
-    <div class="typing-text" id="typingText"></div>
+  <div class="logo-wrap"><div class="logo"><div class="logo-dot"></div>LENOVOX</div></div>
+
+  <div class="page-header">
+    <div class="page-title">Create Your Account</div>
+    <div class="page-sub">Join the AI-powered learning universe today</div>
   </div>
 
-  <div class="auth-card">
-    <!-- INITIAL BUTTONS -->
-    <div id="landingButtons" style="display: flex; flex-direction: column; gap: 15px;">
-      <h2>Join the Adventure</h2>
-      <button id="googleBtn" class="btn btn-google">
-        <img src="https://i.postimg.cc/NfzPJPrf/sq-google-g-logo-update-dezeen-2364-col-0.jpg" alt="Google" class="btn-icon" />
-        Continue with Google
-      </button>
-      <button id="emailBtn" class="btn btn-email">
-        <i class="fas fa-envelope"></i>
-        Sign up with Email
-      </button>
-      <button id="loginBtn" class="btn btn-login">Already have an account? Log In</button>
+  <div class="reward-banner">
+    <i class="fas fa-coins"></i>
+    Sign up now &amp; get <strong style="color:var(--gold);margin:0 4px">300 LNX Coins FREE</strong>
+    <i class="fas fa-gift"></i>
+  </div>
+
+  <div class="ref-banner" id="refBanner">
+    <i class="fas fa-link"></i>
+    <span id="refText">Joining via referral</span>
+  </div>
+
+  <div class="inp-group">
+    <label class="inp-label"><i class="fas fa-user"></i> Full Name</label>
+    <div class="inp-wrap">
+      <i class="fas fa-user inp-icon"></i>
+      <input class="form-input" type="text" id="signupName" placeholder="Your full name" autocomplete="name">
     </div>
+    <div class="ferr" id="nameError"><i class="fas fa-circle-exclamation"></i><span></span></div>
+  </div>
 
-    <!-- EMAIL SIGNUP FORM -->
-    <div id="emailFormContainer">
-      <h2>Create Your Profile</h2>
-      <form id="signupForm">
-        <div class="input-group">
-          <input type="text" id="fullName" placeholder="Full Name" required />
-          <i class="fas fa-user"></i>
-        </div>
-        <div class="input-group">
-          <input type="email" id="email" placeholder="Email Address" required />
-          <i class="fas fa-at"></i>
-        </div>
-        <div class="input-group">
-          <input type="password" id="password" placeholder="Password" required />
-          <i class="fas fa-lock"></i>
-          <span class="password-toggle" id="togglePassword1">
-            <i class="fas fa-eye"></i>
-          </span>
-        </div>
-        <div class="input-group">
-          <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
-          <i class="fas fa-shield-alt"></i>
-          <span class="password-toggle" id="togglePassword2">
-            <i class="fas fa-eye"></i>
-          </span>
-        </div>
+  <div class="inp-group">
+    <label class="inp-label"><i class="fas fa-envelope"></i> Email Address</label>
+    <div class="inp-wrap">
+      <i class="fas fa-at inp-icon"></i>
+      <input class="form-input" type="email" id="signupEmail" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="ferr" id="emailError"><i class="fas fa-circle-exclamation"></i><span></span></div>
+  </div>
 
-        <!-- TERMS, PRIVACY & CONDITIONS CHECKBOXES -->
-        <div class="terms-container">
-          <label class="checkbox-label">
-            <input type="checkbox" id="acceptTerms" required />
-            <span>I accept the <a href="terms.html" target="_blank" class="policy-link">Terms & Conditions</a></span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" id="acceptPrivacy" required />
-            <span>I accept the <a href="privacy.html" target="_blank" class="policy-link">Privacy Policy</a></span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" id="acceptPolicy" required />
-            <span>I accept the <a href="terms.html" target="_blank" class="policy-link">Terms & Conditions</a></span>
-          </label>
-          <div class="terms-error" id="termsError" style="display: none; color: #ff6b6b; font-size: 13px; margin-top: 10px;">
-            <i class="fas fa-exclamation-circle"></i> You must accept all terms to continue
-          </div>
-        </div>
+  <div class="inp-group">
+    <label class="inp-label"><i class="fas fa-lock"></i> Password</label>
+    <div class="inp-wrap">
+      <i class="fas fa-lock inp-icon"></i>
+      <input class="form-input" type="password" id="signupPassword" placeholder="Min. 6 characters" autocomplete="new-password" oninput="checkStrength(this.value)">
+      <button class="pw-eye" type="button" id="togglePw"><i class="fas fa-eye"></i></button>
+    </div>
+    <div class="str-bars"><div class="str-bar" id="sb1"></div><div class="str-bar" id="sb2"></div><div class="str-bar" id="sb3"></div><div class="str-bar" id="sb4"></div></div>
+    <div class="str-label" id="strLabel"></div>
+    <div class="ferr" id="passwordError"><i class="fas fa-circle-exclamation"></i><span></span></div>
+  </div>
 
-        <button type="submit" class="btn btn-submit" id="submitBtn">Create Account</button>
-      </form>
-      <div class="back-link" id="backBtn">← Go Back</div>
+  <div class="inp-group">
+    <label class="inp-label"><i class="fas fa-link"></i> Referral Code <span style="font-size:.68rem;text-transform:none;letter-spacing:0;margin-left:4px;font-weight:600;opacity:.6">(optional)</span></label>
+    <div class="inp-wrap">
+      <i class="fas fa-hashtag inp-icon"></i>
+      <input class="form-input" type="text" id="refCode" placeholder="LNX-XXXXXX" style="text-transform:uppercase;letter-spacing:1px;padding-left:44px">
     </div>
   </div>
 
-  <!-- IMPORT MODULAR AUTH -->
-  <script type="module">
-    // IMPORT FROM YOUR auth.js (FIREBASE)
-    import { signUpUser, googleLoginUser } from './auth.js';
+  <div class="terms-row">
+    <input type="checkbox" class="terms-chk" id="termsChk">
+    <div class="terms-text">
+      I agree to Lenovox's <a href="terms.html" target="_blank">Terms of Service</a> and <a href="privacy.html" target="_blank">Privacy Policy</a>
+    </div>
+  </div>
 
-    // UI ELEMENTS
-    const typingEl = document.getElementById("typingText");
-    const landingButtons = document.getElementById("landingButtons");
-    const emailFormContainer = document.getElementById("emailFormContainer");
-    const toastContainer = document.getElementById("toastContainer");
-    const signupForm = document.getElementById("signupForm");
-    const submitBtn = document.getElementById("submitBtn");
-    const mascot = document.getElementById("mascot");
-    const passwordInput = document.getElementById("password");
-    const confirmPasswordInput = document.getElementById("confirmPassword");
-    const togglePassword1 = document.getElementById("togglePassword1");
-    const togglePassword2 = document.getElementById("togglePassword2");
+  <div class="btn-group">
+    <button class="btn btn-primary" id="btnSignup">
+      <i class="fas fa-rocket"></i> <span>Create Account — Free</span>
+    </button>
+  </div>
 
-    // ========== TYPING EFFECT ==========
-    const words = [
-      "Welcome to Lenovox-ai!", "Your Smart Study Buddy", "Learn Faster • Play Smarter",
-      "Ready to Crush Your Goals?", "Welcome, Future Legend 🌟"
-    ];
-    let wordIndex = 0, charIndex = 0, deleting = false;
-    function typeEffect() {
-      const currentWord = words[wordIndex];
-      if(!deleting){
-        typingEl.textContent = currentWord.slice(0, charIndex++);
-        if(charIndex > currentWord.length) setTimeout(()=>deleting=true,1500);
-      } else {
-        typingEl.textContent = currentWord.slice(0, charIndex--);
-        if(charIndex===0){ deleting=false; wordIndex=(wordIndex+1)%words.length; }
-      }
-      setTimeout(typeEffect, deleting?40:70);
-    }
-    typeEffect();
+  <div class="divider"><span>OR SIGN UP WITH</span></div>
 
-    // ========== PASSWORD TOGGLE FUNCTIONALITY ==========
-    function togglePasswordVisibility(inputId, toggleId) {
-      const input = document.getElementById(inputId);
-      const toggle = document.getElementById(toggleId);
-      const icon = toggle.querySelector('i');
+  <button class="btn btn-google" id="btnGoogle">
+    <img class="g-icon" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+    Continue with Google
+  </button>
 
-      toggle.addEventListener('click', () => {
-        if (input.type === 'password') {
-          input.type = 'text';
-          icon.classList.remove('fa-eye');
-          icon.classList.add('fa-eye-slash');
-        } else {
-          input.type = 'password';
-          icon.classList.remove('fa-eye-slash');
-          icon.classList.add('fa-eye');
-        }
-      });
-    }
+  <div class="auth-footer">
+    Already have an account? <a href="login.html">Sign In</a>
+  </div>
 
-    togglePasswordVisibility('password', 'togglePassword1');
-    togglePasswordVisibility('confirmPassword', 'togglePassword2');
+</div>
+</div>
 
-    // ========== TOAST NOTIFICATION SYSTEM ==========
-    function createToast(message, type = 'success') {
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
+<script type="module">
+import { signUpUser, googleLoginUser } from './auth.js';
 
-      const icon = document.createElement('div');
-      icon.className = 'icon';
-      icon.innerHTML = type === 'success' ? '✓' : '✕';
+// URL referral
+const p=new URLSearchParams(location.search),ref=p.get('ref');
+if(ref){document.getElementById('refCode').value=ref.toUpperCase();const b=document.getElementById('refBanner');b.style.display='flex';document.getElementById('refText').textContent=`Referred by: ${ref.toUpperCase()}`;}
 
-      const text = document.createElement('div');
-      text.className = 'toast-text';
-      text.textContent = message;
+// STARS
+const sc=document.getElementById('star-canvas'),sx=sc.getContext('2d');let stars=[];
+function initS(){sc.width=innerWidth;sc.height=innerHeight;stars=Array.from({length:150},()=>({x:Math.random()*sc.width,y:Math.random()*sc.height,s:Math.random()*1.9,o:Math.random()*.75+.2,sp:Math.random()*.04+.008}));}
+function drawS(){sx.clearRect(0,0,sc.width,sc.height);stars.forEach(s=>{sx.fillStyle=`rgba(255,255,255,${s.o})`;sx.beginPath();sx.arc(s.x,s.y,s.s,0,Math.PI*2);sx.fill();s.y-=s.sp;if(s.y<0){s.y=sc.height;s.x=Math.random()*sc.width;}});requestAnimationFrame(drawS);}
+window.onresize=initS;initS();drawS();
 
-      const closeBtn = document.createElement('div');
-      closeBtn.className = 'toast-close';
-      closeBtn.innerHTML = '×';
-      closeBtn.onclick = () => {
-        toast.classList.add('removing');
-        setTimeout(() => toast.remove(), 400);
-      };
+// 3D TILT
+const card=document.getElementById('authCard');
+document.querySelector('.scene').addEventListener('mousemove',e=>{const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`rotateY(${x*11}deg) rotateX(${-y*9}deg)`;});
+document.querySelector('.scene').addEventListener('mouseleave',()=>{card.style.transform='';});
 
-      toast.appendChild(icon);
-      toast.appendChild(text);
-      toast.appendChild(closeBtn);
-      toastContainer.appendChild(toast);
+// CONFETTI
+const cc=document.getElementById('confettiCanvas'),cx=cc.getContext('2d');
+const COLS=['#ff3d70','#00d2ff','#ffcc33','#10b981','#9d50bb','#ff9500','#00ff88','#ff6b6b','#4ecdc4','#fff'];
+let particles=[];
+function launchConfetti(){
+  cc.width=innerWidth;cc.height=innerHeight;particles=[];
+  for(let i=0;i<240;i++){particles.push({x:Math.random()*cc.width,y:Math.random()*cc.height*.3-60,vx:(Math.random()-.5)*9,vy:Math.random()*6+3,color:COLS[Math.floor(Math.random()*COLS.length)],w:Math.random()*11+4,h:Math.random()*5+3,rot:Math.random()*360,rv:(Math.random()-.5)*8,alpha:1,life:0,maxLife:120+Math.random()*80,shape:Math.random()>.5?'rect':'circle'});}
+  animC();
+}
+function animC(){
+  cx.clearRect(0,0,cc.width,cc.height);let alive=false;
+  particles.forEach(p=>{p.life++;p.vy+=.12;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.rot+=p.rv;p.alpha=Math.max(0,1-p.life/p.maxLife);if(p.alpha>0)alive=true;cx.save();cx.globalAlpha=p.alpha;cx.fillStyle=p.color;cx.translate(p.x,p.y);cx.rotate(p.rot*Math.PI/180);if(p.shape==='circle'){cx.beginPath();cx.arc(0,0,p.w/2,0,Math.PI*2);cx.fill();}else cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore();});
+  if(alive)requestAnimationFrame(animC);else cx.clearRect(0,0,cc.width,cc.height);
+}
 
-      // Play sound effect
-      playNotificationSound();
+// SUCCESS OVERLAY
+function showSuccess(name){
+  document.getElementById('successOverlay').style.display='flex';
+  launchConfetti();
+  setTimeout(()=>{document.getElementById('barFill').style.width='100%';},120);
+  setTimeout(()=>{window.location.href='appskeleton.html';},2600);
+}
 
-      // Auto remove after 5 seconds
-      setTimeout(() => {
-        if (toast.parentElement) {
-          toast.classList.add('removing');
-          setTimeout(() => toast.remove(), 400);
-        }
-      }, 5000);
-    }
+// TOAST
+function toast(msg,type='success'){const el=document.createElement('div');el.className=`toast ${type}`;const ic=type==='success'?'fas fa-circle-check':'fas fa-circle-exclamation';el.innerHTML=`<i class="${ic}"></i><span>${msg}</span><button class="t-close" onclick="this.parentElement.classList.add('removing');setTimeout(()=>this.parentElement.remove(),350)"><i class="fas fa-xmark"></i></button>`;document.getElementById('toasts').appendChild(el);setTimeout(()=>{if(el.parentElement){el.classList.add('removing');setTimeout(()=>el.remove(),350);}},5000);}
 
-    // ========== SOUND EFFECTS ==========
-    function playNotificationSound() {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
+// MASCOT
+const bubs=["Get 300 FREE LNX coins on signup! 🪙","Use Google for instant sign-up ⚡","Have a referral code? Use it for bonus! 🎁","Join 50,000+ students worldwide 🌍"];let bi=0;
+window.toggleBubble=()=>{const b=document.getElementById('mbubble');if(b.style.display==='none'){b.innerHTML=`<i class="fas fa-comment-dots" style="color:var(--blue);margin-right:5px"></i>${bubs[bi%bubs.length]}`;bi++;b.style.display='block';}else b.style.display='none';};
 
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
+// PASSWORD STRENGTH
+const sCols=['#ef4444','#f97316','#eab308','#10b981'];
+const sLabels=[['fas fa-face-tired','Weak'],['fas fa-face-meh','Fair'],['fas fa-face-smile','Good'],['fas fa-face-grin-stars','Strong']];
+window.checkStrength=v=>{
+  let s=0;if(v.length>=6)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+  [1,2,3,4].forEach(i=>{document.getElementById('sb'+i).style.background=i<=s?sCols[s-1]:'rgba(255,255,255,.07)';});
+  const lbl=document.getElementById('strLabel');
+  if(v.length&&s>0){lbl.innerHTML=`<i class="${sLabels[s-1][0]}" style="color:${sCols[s-1]}"></i><span style="color:${sCols[s-1]}">${sLabels[s-1][1]}</span>`;}
+  else lbl.innerHTML='';
+};
 
-      oscillator.frequency.value = 800;
-      oscillator.type = 'sine';
+document.getElementById('togglePw').onclick=()=>{const i=document.getElementById('signupPassword'),ic=document.querySelector('#togglePw i');i.type=i.type==='password'?'text':'password';ic.className=i.type==='password'?'fas fa-eye':'fas fa-eye-slash';};
 
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+function setLoad(id,on){const b=document.getElementById(id);if(!b)return;if(on){b._o=b.innerHTML;b.innerHTML='<div class="spinner"></div><span>Creating...</span>';b.disabled=true;}else{b.innerHTML=b._o;b.disabled=false;}}
+function fErr(id,msg){const e=document.getElementById(id+'Error');if(!e)return;e.querySelector('span').textContent=msg;e.classList.add('show');}
+function clrErr(){document.querySelectorAll('.ferr').forEach(e=>e.classList.remove('show'));}
 
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.1);
-    }
+// SIGNUP
+document.getElementById('btnSignup').onclick=async()=>{
+  clrErr();
+  const name=document.getElementById('signupName').value.trim();
+  const email=document.getElementById('signupEmail').value.trim();
+  const password=document.getElementById('signupPassword').value;
+  const referredBy=document.getElementById('refCode').value.trim()||null;
+  const terms=document.getElementById('termsChk').checked;
+  if(!name){fErr('name','Please enter your full name.');return;}
+  if(!email){fErr('email','Please enter your email address.');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){fErr('email','Please enter a valid email format.');return;}
+  if(password.length<6){fErr('password','Password must be at least 6 characters.');return;}
+  if(!terms){toast('Please accept the Terms of Service.','error');return;}
+  setLoad('btnSignup',true);
+  const r=await signUpUser({email,password,name,referredBy});
+  setLoad('btnSignup',false);
+  if(r.success){showSuccess(name);}
+  else{toast(r.error,'error');if(r.error.toLowerCase().includes('email'))fErr('email',r.error);}
+};
 
-    // ========== CONFETTI EFFECT ==========
-    function createConfetti() {
-      const confettiCount = 50;
-      for (let i = 0; i < confettiCount; i++) {
-        const confetti = document.createElement('div');
-        confetti.className = 'confetti';
-        confetti.style.left = Math.random() * window.innerWidth + 'px';
-        confetti.style.top = '-10px';
-        confetti.style.background = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7'][Math.floor(Math.random() * 5)];
-        confetti.style.animation = `confettiFall ${2 + Math.random() * 1}s linear forwards`;
-        document.body.appendChild(confetti);
-
-        setTimeout(() => confetti.remove(), 3000);
-      }
-    }
-
-    // ========== MASCOT REACTIONS ==========
-    function mascotReact() {
-      mascot.style.animation = 'none';
-      setTimeout(() => {
-        mascot.style.animation = 'mascotBounce 0.6s ease';
-      }, 10);
-    }
-
-    // ========== FORM NAVIGATION ==========
-    document.getElementById("emailBtn").onclick = () => {
-      landingButtons.classList.add('hidden');
-      emailFormContainer.classList.add('active');
-      mascotReact();
-    };
-
-    document.getElementById("backBtn").onclick = () => {
-      emailFormContainer.classList.remove('active');
-      landingButtons.classList.remove('hidden');
-      mascotReact();
-    };
-
-    document.getElementById("loginBtn").onclick = () => {
-      window.location.href = "login.html";
-    };
-
-    // ========== SIGNUP LOGIC (FIREBASE) ==========
-    signupForm.onsubmit = async (e) => {
-      e.preventDefault();
-      const fullName = document.getElementById('fullName').value;
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-      const acceptTerms = document.getElementById('acceptTerms').checked;
-      const acceptPrivacy = document.getElementById('acceptPrivacy').checked;
-      const acceptPolicy = document.getElementById('acceptPolicy').checked;
-      const termsError = document.getElementById('termsError');
-
-      if (!acceptTerms || !acceptPrivacy || !acceptPolicy) {
-        termsError.style.display = 'block';
-        createToast('You must accept all terms to continue', 'error');
-        mascotReact();
-        return;
-      } else {
-        termsError.style.display = 'none';
-      }
-
-      if(password !== confirmPassword) {
-        createToast('Passwords do not match!', 'error');
-        mascotReact();
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.classList.add('loading');
-      submitBtn.innerHTML = '<span class="spinner"></span>Launching...';
-
-      try {
-        // CALLING THE IMPORTED FUNCTION FROM auth.js (FIREBASE)
-        const result = await signUpUser({ email, password, fullName });
-        
-        if(result.success) {
-          createToast(`Welcome to the Universe, ${fullName}! 🚀`, 'success');
-          createConfetti();
-          mascotReact();
-          // Clear form
-          signupForm.reset();
-          setTimeout(() => { window.location.href = "index.html"; }, 2000);
-        } else {
-          // Handle Firebase error codes
-          let errorMessage = result.error || "Signup failed";
-          
-          if (result.error === 'auth/email-already-in-use') {
-            errorMessage = "This email is already registered!";
-          } else if (result.error === 'auth/weak-password') {
-            errorMessage = "Password is too weak. Use at least 6 characters.";
-          } else if (result.error === 'auth/invalid-email') {
-            errorMessage = "Invalid email address.";
-          }
-          
-          createToast(errorMessage, 'error');
-          mascotReact();
-        }
-      } catch (err) {
-        createToast("Error: " + err.message, 'error');
-        mascotReact();
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('loading');
-        submitBtn.innerHTML = "Create Account";
-      }
-    };
-
-    // ========== GOOGLE LOGIN LOGIC (FIREBASE) ==========
-    document.getElementById("googleBtn").onclick = async () => {
-      submitBtn.disabled = true;
-      submitBtn.classList.add('loading');
-      submitBtn.innerHTML = '<span class="spinner"></span>Launching...';
-
-      try {
-        const result = await googleLoginUser();
-        if(result.success) {
-          createToast(`Welcome back, ${result.name}! 🌟`, 'success');
-          createConfetti();
-          mascotReact();
-          setTimeout(() => { window.location.href = "index.html"; }, 2000);
-        } else {
-          let errorMessage = result.error || "Google login failed";
-          
-          if (result.error === "Login cancelled. Please try again.") {
-            errorMessage = "Login cancelled. Please try again.";
-          }
-          
-          createToast(errorMessage, 'error');
-          mascotReact();
-        }
-      } catch (err) {
-        createToast(err.message, 'error');
-        mascotReact();
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('loading');
-        submitBtn.innerHTML = "Create Account";
-      }
-    };
-
-    // ========== STARFIELD BACKGROUND SCRIPT ==========
-    const canvas = document.getElementById('star-canvas');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-
-    function initStars() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      stars = [];
-      for (let i = 0; i < 100; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: Math.random() * 2,
-          opacity: Math.random(),
-          speed: Math.random() * 0.05
-        });
-      }
-    }
-
-    function drawStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      stars.forEach(s => {
-        ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        ctx.fill();
-        s.y -= s.speed;
-        if (s.y < 0) s.y = canvas.height;
-      });
-      requestAnimationFrame(drawStars);
-    }
-
-    // Mouse tracking for interactive starfield
-    document.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
-    window.onresize = initStars;
-    initStars();
-    drawStars();
-
-  </script>
+// GOOGLE
+document.getElementById('btnGoogle').onclick=async()=>{
+  const r=await googleLoginUser();
+  if(r.success){showSuccess(r.user?.displayName||'friend');}
+  else toast(r.error,'error');
+};
+</script>
 </body>
 </html>

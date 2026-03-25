@@ -1,204 +1,206 @@
-// auth.js — single source of truth for authentication
+// ============================================================
+// auth.js — Lenovox Platform · New Firebase Project
+// Handles: Email/Password, Google, Phone OTP, Session, Firestore
+// ============================================================
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
   sendPasswordResetEmail,
   updateProfile,
   signOut,
-  deleteUser,
   onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import { saveSession, clearSession, getSession } from "./session.js";
-
-/* ======================
-   FIREBASE CONFIG
-====================== */
+// ─── Firebase Config (NEW PROJECT) ───────────────────────────
 const firebaseConfig = {
-  apiKey: "AIzaSyDnANsKUAZ1giXXdo-fKkFneMuKh0l0FCg",
-  authDomain: "edumateai-6544b.firebaseapp.com",
-  projectId: "edumateai-6544b",
-  storageBucket: "edumateai-6544b.appspot.com",
-  messagingSenderId: "445949748647",
-  appId: "1:445949748647:web:40bee0e792098333fa4282"
+  apiKey: "AIzaSyBT4Be5OU9m8U2zx9PpvfHVfyuggtq2Wb8",
+  authDomain: "lenovox-ai.firebaseapp.com",
+  projectId: "lenovox-ai",
+  storageBucket: "lenovox-ai.firebasestorage.app",
+  messagingSenderId: "824794636900",
+  appId: "1:824794636900:web:249c980e24a49d0a39f571"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+const db = getFirestore(app);
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
-// Set custom parameters for Google Auth (optional but professional)
-provider.setCustomParameters({
-  prompt: 'select_account'
-});
-
-/* ======================
-   SIGN UP (EMAIL)
-====================== */
-export async function signUpUser({ email, password, fullName }) {
-  try {
-    const res = await createUserWithEmailAndPassword(auth, email, password);
-
-    // Update the profile with the full name immediately
-    if (fullName) {
-      await updateProfile(res.user, { displayName: fullName });
-    }
-
-    // FIXED: Pass uid as first parameter, data object as second
-    await saveSession(res.user.uid, {
-      email: res.user.email,
-      name: fullName || res.user.displayName || "",
-      photoURL: res.user.photoURL || "",
-      provider: "password",
-      timestamp: Date.now()
+// ─── Create User Profile in Firestore ────────────────────────
+async function createUserProfile(user, extras = {}) {
+  const ref = doc(db, "users", user.uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    await setDoc(ref, {
+      uid: user.uid,
+      name: user.displayName || extras.name || "Lenovox User",
+      email: user.email || "",
+      phone: user.phoneNumber || "",
+      photoURL: user.photoURL || "",
+      country: extras.country || "",
+      plan: "free",
+      planExpiry: null,
+      lnxBalance: 300,
+      dailyLNX: 300,
+      lastClaim: null,
+      referralCode: generateReferralCode(user.uid),
+      referredBy: extras.referredBy || null,
+      createdAt: serverTimestamp(),
+      lastLogin: serverTimestamp()
     });
 
-    return { success: true, user: res.user };
-  } catch (error) {
-    console.error("Signup Error:", error);
-    return { success: false, error: error.code || error.message };
+    // Create wallet
+    await setDoc(doc(db, "wallets", user.uid), {
+      uid: user.uid,
+      balance: 300,
+      totalEarned: 300,
+      totalSpent: 0,
+      lastUpdated: serverTimestamp()
+    });
+  } else {
+    // Just update last login
+    await updateDoc(ref, { lastLogin: serverTimestamp() });
   }
 }
 
-/* ======================
-   LOGIN (EMAIL)
-====================== */
+function generateReferralCode(uid) {
+  return "LNX-" + uid.substring(0, 6).toUpperCase();
+}
+
+// ─── Sign Up (Email/Password) ─────────────────────────────────
+export async function signUpUser({ email, password, name, referredBy }) {
+  try {
+    const res = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(res.user, { displayName: name });
+    await createUserProfile(res.user, { name, referredBy });
+    return { success: true, user: res.user };
+  } catch (err) {
+    return { success: false, error: friendlyError(err.code) };
+  }
+}
+
+// ─── Login (Email/Password) ───────────────────────────────────
 export async function loginUser({ email, password }) {
   try {
     const res = await signInWithEmailAndPassword(auth, email, password);
-
-    // FIXED: Pass uid as first parameter, data object as second
-    await saveSession(res.user.uid, {
-      email: res.user.email,
-      name: res.user.displayName || "",
-      photoURL: res.user.photoURL || "",
-      provider: "password",
-      timestamp: Date.now()
-    });
-
+    await createUserProfile(res.user);
     return { success: true, user: res.user };
-  } catch (error) {
-    console.error("Login Error:", error);
-    return { success: false, error: error.code || error.message };
+  } catch (err) {
+    return { success: false, error: friendlyError(err.code) };
   }
 }
 
-/* ======================
-   GOOGLE LOGIN / SIGNUP (POPUP MODE)
-====================== */
+// ─── Google Sign-In ───────────────────────────────────────────
 export async function googleLoginUser() {
   try {
-    // Uses Popup instead of Redirect for professional UI
-    const res = await signInWithPopup(auth, provider);
-
-    // FIXED: Pass uid as first parameter, data object as second
-    await saveSession(res.user.uid, {
-      email: res.user.email,
-      name: res.user.displayName || "",
-      photoURL: res.user.photoURL || "",
-      provider: "google",
-      timestamp: Date.now()
-    });
-
-    return { success: true, user: res.user, name: res.user.displayName };
-  } catch (error) {
-    console.error("Google Auth Error:", error);
-    // Handle case where user closes the popup
-    if (error.code === 'auth/popup-closed-by-user') {
-      return { success: false, error: "Login cancelled. Please try again." };
+    const res = await signInWithPopup(auth, googleProvider);
+    await createUserProfile(res.user);
+    return { success: true, user: res.user };
+  } catch (err) {
+    if (err.code === 'auth/popup-closed-by-user') {
+      return { success: false, error: "Login cancelled." };
     }
-    return { success: false, error: error.code || error.message };
+    return { success: false, error: friendlyError(err.code) };
   }
 }
 
-/* ======================
-   RESET PASSWORD
-====================== */
+// ─── Phone OTP — Step 1: Send Code ───────────────────────────
+export async function sendPhoneOTP(phoneNumber, recaptchaContainerId) {
+  try {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, recaptchaContainerId, {
+        size: 'invisible',
+        callback: () => {}
+      });
+    }
+    const result = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier);
+    window.confirmationResult = result;
+    return { success: true };
+  } catch (err) {
+    window.recaptchaVerifier = null;
+    return { success: false, error: friendlyError(err.code) };
+  }
+}
+
+// ─── Phone OTP — Step 2: Verify Code ─────────────────────────
+export async function verifyPhoneOTP(code) {
+  try {
+    if (!window.confirmationResult) throw new Error("No OTP session found.");
+    const res = await window.confirmationResult.confirm(code);
+    await createUserProfile(res.user);
+    return { success: true, user: res.user };
+  } catch (err) {
+    return { success: false, error: "Invalid OTP code. Please try again." };
+  }
+}
+
+// ─── Password Reset ───────────────────────────────────────────
 export async function resetPassword(email) {
   try {
     await sendPasswordResetEmail(auth, email);
     return { success: true };
-  } catch (error) {
-    return { success: false, error: error.code || error.message };
+  } catch (err) {
+    return { success: false, error: friendlyError(err.code) };
   }
 }
 
-/* ======================
-   UPDATE DISPLAY NAME (Settings)
-====================== */
-export async function updateDisplayName(name) {
-  if (!auth.currentUser) throw new Error("No user logged in");
-  await updateProfile(auth.currentUser, { displayName: name });
-
-  // FIXED: Pass uid as first parameter, data object as second
-  await saveSession(auth.currentUser.uid, {
-    email: auth.currentUser.email,
-    name: auth.currentUser.displayName || "",
-    photoURL: auth.currentUser.photoURL || "",
-    provider: auth.currentUser.providerData[0]?.providerId || "password",
-    timestamp: Date.now()
-  });
-
-  return { success: true };
-}
-
-/* ======================
-   LOGOUT
-====================== */
+// ─── Logout ───────────────────────────────────────────────────
 export async function logoutUser() {
   try {
     await signOut(auth);
-    // FIXED: Pass current user's uid to clearSession
-    if (auth.currentUser) {
-      await clearSession(auth.currentUser.uid);
-    }
     return { success: true };
-  } catch (error) {
-    console.error("Logout Error:", error);
-    return { success: false, error: error.code || error.message };
+  } catch (err) {
+    return { success: false, error: err.message };
   }
 }
 
-/* ======================
-   DELETE ACCOUNT (optional)
-====================== */
-export async function deleteUserAccount() {
-  if (!auth.currentUser) throw new Error("No user logged in");
-  const uid = auth.currentUser.uid;
-  
-  try {
-    await deleteUser(auth.currentUser);
-    await clearSession(uid);
-    return { success: true };
-  } catch (error) {
-    console.error("Delete Account Error:", error);
-    return { success: false, error: error.code || error.message };
-  }
-}
-
-/* ======================
-   WATCH AUTH STATE
-====================== */
+// ─── Watch Auth State ─────────────────────────────────────────
 export function watchAuth(callback) {
   return onAuthStateChanged(auth, callback);
 }
 
-/* ======================
-   GET CURRENT USER SESSION
-====================== */
-export async function getCurrentUser() {
-  if (!auth.currentUser) return null;
-  return await getSession(auth.currentUser.uid);
+// ─── Get User Profile from Firestore ─────────────────────────
+export async function getUserProfile(uid) {
+  const snap = await getDoc(doc(db, "users", uid));
+  return snap.exists() ? snap.data() : null;
 }
 
-/* ======================
-   GET CURRENT USER FROM FIREBASE
-====================== */
+// ─── Get Current Firebase User ────────────────────────────────
 export function getCurrentFirebaseUser() {
   return auth.currentUser;
+}
+
+// ─── Export db for other modules ─────────────────────────────
+export { db, auth };
+
+// ─── Friendly Error Messages ──────────────────────────────────
+function friendlyError(code) {
+  const map = {
+    'auth/email-already-in-use': 'This email is already registered.',
+    'auth/invalid-email': 'Please enter a valid email address.',
+    'auth/weak-password': 'Password must be at least 6 characters.',
+    'auth/user-not-found': 'No account found with this email.',
+    'auth/wrong-password': 'Incorrect password. Please try again.',
+    'auth/too-many-requests': 'Too many attempts. Please wait a moment.',
+    'auth/invalid-verification-code': 'Invalid OTP code.',
+    'auth/invalid-phone-number': 'Please enter a valid phone number.',
+    'auth/network-request-failed': 'Network error. Check your connection.',
+  };
+  return map[code] || 'Something went wrong. Please try again.';
 }
