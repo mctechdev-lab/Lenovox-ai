@@ -3,408 +3,651 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lenovox | 3D Student Dashboard</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<title>Lenovox — Home</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  /* ===== 3D STUDENT THEME ===== */
-  :root {
-    --primary: #4A90E2;
-    --secondary: #6FCF97;
-    --accent: #F2994A;
-    --bg: #FFFFFF;
-    --card-bg: #FFFFFF;
-    --shadow: rgba(0, 0, 0, 0.08);
-    --3d-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.05);
-  }
+:root{
+  --bg:#03030b;--card:rgba(11,11,30,.92);--card2:rgba(16,16,40,.96);
+  --blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--orange:#ff9500;
+  --purple:#9d50bb;--pink:#ff3d70;--red:#ef4444;
+  --border:rgba(255,255,255,0.07);--text:#e8eaf6;--muted:#8892a4;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;-webkit-font-smoothing:antialiased}
+body{overflow-x:hidden;padding-bottom:88px}
 
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { 
-    font-family: 'Quicksand', sans-serif; 
-    background-color: #F8FAFC; 
-    color: #334155;
-    overflow-x: hidden;
-    padding-bottom: 100px;
-  }
+.bg-glow{position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 8%,rgba(0,210,255,.06) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 35% at 85% 85%,rgba(157,80,187,.05) 0%,transparent 70%)}
 
-  .dashboard-container {
-    padding: 25px;
-    max-width: 900px;
-    margin: 0 auto;
-    animation: fadeIn 0.8s ease-out;
-  }
+.page{max-width:540px;margin:0 auto;padding:0 16px}
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+/* ── TOP BAR ── */
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:20px 0 12px}
+.tb-left{display:flex;flex-direction:column;gap:3px}
+.greeting-row{font-size:.72rem;color:var(--muted);font-weight:700;letter-spacing:.3px;display:flex;align-items:center;gap:5px}
+.greeting-row i{font-size:.7rem;color:var(--gold)}
+.name-row{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;color:#fff;display:flex;align-items:center;gap:8px}
+.name-row i{color:var(--gold);font-size:.9rem}
+.tb-right{display:flex;align-items:center;gap:10px}
+.notif-btn{width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:.25s}
+.notif-btn i{color:var(--muted);font-size:.95rem}
+.notif-btn:hover{border-color:rgba(0,210,255,.2)}
+.notif-badge{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg)}
+.avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--blue),#3a7bd5);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;color:#fff;box-shadow:0 0 18px rgba(0,210,255,.28);cursor:pointer;border:2px solid rgba(0,210,255,.3);flex-shrink:0;text-transform:uppercase}
 
-  /* ===== 3D HEADER ===== */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-    background: var(--bg);
-    padding: 20px;
-    border-radius: 24px;
-    box-shadow: var(--3d-shadow);
-    border: 1px solid rgba(0,0,0,0.02);
-  }
-  .header h1 { font-size: 1rem; font-weight: 600; color: #94A3B8; margin-bottom: 4px; }
-  .header span { font-size: 1.4rem; font-weight: 700; color: #1E293B; }
-  .user-avatar {
-    width: 55px;
-    height: 55px;
-    border-radius: 18px;
-    background: linear-gradient(135deg, var(--primary), #357ABD);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    box-shadow: 0 10px 20px rgba(74, 144, 226, 0.3);
-    font-size: 1.5rem;
-  }
+/* ── BALANCE CARD — OPAY STYLE ── */
+.balance-card{
+  background:linear-gradient(135deg,#0a2a4a,#061828);
+  border:1px solid rgba(0,210,255,.2);border-radius:22px;
+  padding:22px 20px;margin-bottom:14px;position:relative;overflow:hidden}
+.balance-card::before{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:rgba(0,210,255,.06);pointer-events:none}
+.balance-card::after{content:'';position:absolute;bottom:-40px;left:-30px;width:120px;height:120px;border-radius:50%;background:rgba(58,123,213,.05);pointer-events:none}
+.bc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.bc-left-label{display:flex;align-items:center;gap:6px;font-size:.72rem;color:rgba(255,255,255,.5);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+.bc-left-label i{font-size:.72rem;color:var(--blue)}
+.bc-live-pill{display:flex;align-items:center;gap:5px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.22);border-radius:999px;padding:3px 10px;font-size:.67rem;font-weight:700;color:var(--green)}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:ldot 1.4s ease-in-out infinite}
+@keyframes ldot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+.bc-amount-wrap{margin-bottom:4px}
+.bc-amount{font-family:'Orbitron',monospace;font-size:2.6rem;font-weight:900;color:#fff;transition:all .4s;line-height:1}
+.bc-ticker{font-family:'Orbitron',monospace;font-size:.78rem;font-weight:700;color:rgba(0,210,255,.7);margin-left:6px}
+.bc-naira{font-size:.8rem;color:rgba(255,255,255,.4);margin-bottom:18px;display:flex;align-items:center;gap:4px;font-weight:600}
+.bc-naira i{color:var(--gold);font-size:.75rem}
+.bc-actions{display:flex;gap:10px}
+.bca{flex:1;padding:11px 0;border:none;border-radius:13px;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:6px}
+.bca i{font-size:.8rem}
+.bca-primary{background:linear-gradient(135deg,var(--blue),#2d6dc7);color:#fff;box-shadow:0 6px 18px rgba(0,210,255,.22)}
+.bca-primary:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,210,255,.34)}
+.bca-ghost{background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text)}
+.bca-ghost:hover{background:rgba(255,255,255,.11)}
 
-  /* ===== 3D BALANCE CARD ===== */
-  .balance-card {
-    background: linear-gradient(135deg, #1E293B, #334155);
-    color: #fff;
-    border-radius: 28px;
-    padding: 30px;
-    margin-bottom: 35px;
-    position: relative;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    overflow: hidden;
-    transition: transform 0.3s ease;
-  }
-  .balance-card:hover { transform: translateY(-5px); }
-  .balance-card::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 200px;
-    height: 200px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 50%;
-  }
-  .balance-card h2 { font-size: 0.9rem; opacity: 0.7; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1.5px; }
-  .balance-amount {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 2.4rem;
-    font-weight: 700;
-  }
-  .balance-amount i { cursor: pointer; font-size: 1.4rem; opacity: 0.8; transition: 0.2s; }
-  .balance-amount i:hover { opacity: 1; transform: scale(1.1); }
-  .history-btn {
-    margin-top: 20px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    background: rgba(255,255,255,0.1);
-    padding: 10px 20px;
-    border-radius: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    backdrop-filter: blur(5px);
-    transition: 0.3s;
-  }
-  .history-btn:hover { background: rgba(255,255,255,0.2); }
+/* ── DAILY CLAIM ── */
+.claim-card{
+  background:linear-gradient(135deg,rgba(255,204,51,.1),rgba(255,149,0,.07));
+  border:1px solid rgba(255,204,51,.22);border-radius:18px;
+  padding:14px 16px;margin-bottom:18px;
+  display:flex;align-items:center;gap:12px}
+.claim-icon-wrap{width:46px;height:46px;border-radius:13px;
+  background:linear-gradient(135deg,rgba(255,204,51,.18),rgba(255,149,0,.12));
+  border:1px solid rgba(255,204,51,.28);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.claim-icon-wrap i{color:var(--gold);font-size:1.25rem}
+.claim-body{flex:1;min-width:0}
+.claim-title{font-weight:800;font-size:.88rem;color:#fff}
+.claim-sub{font-size:.73rem;color:var(--muted);font-weight:600;margin-top:1px}
+.claim-sub b{color:var(--gold)}
+.claim-countdown{font-family:'Orbitron',monospace;font-size:.7rem;color:var(--orange);font-weight:700;margin-top:3px;display:none}
+.btn-claim{padding:10px 16px;border:none;border-radius:11px;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:all .3s;flex-shrink:0;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-claim i{font-size:.78rem}
+.btn-claim.ready{background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;box-shadow:0 5px 16px rgba(255,204,51,.28)}
+.btn-claim.ready:hover{transform:translateY(-2px);box-shadow:0 9px 22px rgba(255,204,51,.4)}
+.btn-claim.claimed{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted);cursor:not-allowed}
 
-  /* ===== 3D GRID CARDS ===== */
-  .grid { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 20px; 
-    margin-bottom: 35px;
-  }
-  .card { 
-    background: var(--bg); 
-    border-radius: 24px; 
-    padding: 15px; 
-    box-shadow: var(--3d-shadow);
-    text-align: center; 
-    cursor: pointer; 
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
-    border: 1px solid rgba(0,0,0,0.02);
-  }
-  .card:hover { 
-    transform: translateY(-12px) scale(1.02);
-    box-shadow: 0 30px 60px rgba(0,0,0,0.12);
-  }
-  .card img { 
-    width: 100%; 
-    border-radius: 20px; 
-    height: 120px; 
-    object-fit: cover; 
-    margin-bottom: 12px;
-  }
-  .card-title { font-size: 1rem; font-weight: 700; color: #1E293B; margin-bottom: 4px; }
-  .card-desc { font-size: 0.75rem; color: #64748B; line-height: 1.4; padding: 0 2px; }
+/* ── QUICK ACTIONS ── */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-label{font-size:.72rem;font-weight:800;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:6px}
+.sec-label i{font-size:.72rem;color:var(--blue)}
+.sec-more{font-size:.76rem;font-weight:700;color:var(--blue);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:'Nunito',sans-serif}
+.sec-more i{font-size:.7rem}
 
-  /* ===== 3D NEWS SECTION (20 ITEMS) ===== */
-  .news-section { margin-top: 35px; }
-  .news-section h2 { font-size: 1.3rem; margin-bottom: 20px; font-weight: 700; color: #1E293B; }
-  .news-item {
-    display: flex;
-    align-items: center; 
-    background: var(--bg);
-    padding: 15px;
-    margin-bottom: 18px;
-    border-radius: 20px;
-    box-shadow: var(--3d-shadow);
-    cursor: pointer;
-    transition: 0.3s;
-    border: 1px solid rgba(0,0,0,0.02);
-  }
-  .news-item:hover { 
-    transform: scale(1.02);
-    background: #F1F5F9;
-  }
-  .news-thumb { width: 85px; height: 65px; object-fit: cover; border-radius: 14px; margin-right: 18px; }
-  .news-title { font-size: 1rem; font-weight: 600; color: #334155; flex: 1; }
+.actions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+.ac{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:15px 8px 13px;text-align:center;cursor:pointer;transition:all .28s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.ac:hover{transform:translateY(-5px);border-color:rgba(0,210,255,.22);box-shadow:0 14px 36px rgba(0,0,0,.35)}
+.ac:active{transform:translateY(-1px) scale(.97)}
+.ac-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;margin:0 auto 9px}
+.ac-name{font-size:.75rem;font-weight:800;color:#fff;line-height:1.3}
+.ac-hint{font-size:.63rem;color:var(--muted);margin-top:2px;font-weight:600}
+.ac-badge{position:absolute;top:7px;right:7px;padding:1px 6px;border-radius:5px;font-size:.58rem;font-weight:800;letter-spacing:.2px}
+.ab-hot{background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+.ab-new{background:rgba(16,185,129,.18);border:1px solid rgba(16,185,129,.28);color:#6ee7b7}
+.ab-earn{background:rgba(255,204,51,.16);border:1px solid rgba(255,204,51,.28);color:var(--gold)}
 
-  /* ===== 3D LOADING CIRCLE ===== */
-  #loaderOverlay { 
-    display:none; 
-    position:fixed; 
-    inset:0; 
-    background: rgba(255, 255, 255, 0.95); 
-    z-index: 9999; 
-    justify-content: center; 
-    align-items: center; 
-    flex-direction: column; 
-  }
-  .loader-3d {
-    width: 80px;
-    height: 80px;
-    border: 8px solid #F1F5F9;
-    border-top: 8px solid var(--primary);
-    border-radius: 50%;
-    animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-    box-shadow: 0 10px 30px rgba(74, 144, 226, 0.2);
-  }
-  @keyframes spin {
-    0% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(180deg) scale(1.1); }
-    100% { transform: rotate(360deg) scale(1); }
-  }
-  #loaderMessage { color: #1E293B; font-size: 1.1rem; margin-top: 25px; font-weight: 700; }
+/* ── PLAN + REF ROW ── */
+.mini-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+.mini-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:.25s}
+.mini-card:hover{border-color:rgba(0,210,255,.18);transform:translateY(-2px)}
+.mini-card-top{display:flex;align-items:center;gap:8px}
+.mini-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.mini-title{font-size:.8rem;font-weight:800;color:#fff}
+.mini-sub{font-size:.68rem;color:var(--muted);font-weight:600}
+.mini-action{font-size:.72rem;font-weight:800;color:var(--blue);display:flex;align-items:center;gap:4px;margin-top:2px}
+.mini-action i{font-size:.65rem}
 
-  /* ===== RESPONSIVE ===== */
-  @media(max-width:600px){
-    .grid { grid-template-columns: 1fr; }
-    .balance-amount { font-size: 2rem; }
-    .dashboard-container { padding: 20px; }
-  }
+/* ── NEWS SECTION ── */
+.news-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;margin-bottom:22px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.news-scroll::-webkit-scrollbar{display:none}
+.news-card{flex-shrink:0;width:220px;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:all .25s}
+.news-card:hover{transform:translateY(-3px);border-color:rgba(0,210,255,.18)}
+.news-img{width:100%;height:110px;object-fit:cover;display:block;background:linear-gradient(135deg,rgba(0,210,255,.1),rgba(157,80,187,.1))}
+.news-img-placeholder{width:100%;height:110px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(0,210,255,.08),rgba(157,80,187,.06))}
+.news-img-placeholder i{font-size:2rem;color:rgba(0,210,255,.3)}
+.news-body{padding:10px 12px}
+.news-cat{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--blue);margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.news-cat i{font-size:.6rem}
+.news-title-text{font-size:.78rem;font-weight:700;color:#fff;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.news-time{font-size:.64rem;color:var(--muted);margin-top:5px;display:flex;align-items:center;gap:4px}
+.news-time i{font-size:.6rem}
+.news-shimmer{flex-shrink:0;width:220px;border-radius:16px;overflow:hidden;background:var(--card);border:1px solid var(--border)}
+.sh{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:sh 1.4s infinite;border-radius:6px}
+@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── TRANSACTIONS — OPAY STYLE ── */
+.tx-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.tx-date-group{margin-bottom:6px}
+.tx-date-label{font-size:.68rem;font-weight:800;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.8px;padding:0 2px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.tx-date-label i{font-size:.62rem}
+.tx-item{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:13px 14px;margin-bottom:8px;
+  cursor:pointer;transition:all .22s;position:relative;overflow:hidden}
+.tx-item::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.tx-item.credit::after{background:var(--green)}
+.tx-item.debit::after{background:var(--red)}
+.tx-item:hover{background:var(--card2);border-color:rgba(0,210,255,.1);transform:translateX(2px)}
+.tx-icon-wrap{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.tx-middle{flex:1;min-width:0}
+.tx-name{font-size:.85rem;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tx-ref{font-size:.68rem;color:var(--muted);margin-top:1px;display:flex;align-items:center;gap:4px}
+.tx-ref i{font-size:.6rem}
+.tx-right{text-align:right;flex-shrink:0}
+.tx-amt{font-family:'Orbitron',monospace;font-size:.88rem;font-weight:700}
+.tx-amt.credit{color:var(--green)}
+.tx-amt.debit{color:var(--red)}
+.tx-bal{font-size:.65rem;color:var(--muted);margin-top:2px}
+.tx-empty{text-align:center;padding:30px 20px;color:var(--muted)}
+.tx-empty i{font-size:2rem;margin-bottom:10px;display:block;color:rgba(0,210,255,.18)}
+.tx-empty p{font-size:.82rem;font-weight:600}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+.stat-c{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:13px 10px;text-align:center}
+.stat-c-icon{font-size:1rem;margin-bottom:5px;display:block}
+.stat-c-val{font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;color:#fff;display:block;margin-bottom:2px}
+.stat-c-lbl{font-size:.63rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+
+/* VIEW ALL TX BUTTON */
+.view-all-btn{width:100%;padding:12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:13px;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:.25s;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:4px;margin-bottom:22px}
+.view-all-btn i{font-size:.78rem}
+.view-all-btn:hover{border-color:rgba(0,210,255,.2);color:var(--blue)}
+
+/* TOAST */
+#toasts{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:300px}
+.toast{padding:11px 14px;border-radius:12px;font-size:.81rem;font-weight:700;display:flex;align-items:center;gap:8px;backdrop-filter:blur(16px);border:1px solid;animation:tIn .4s cubic-bezier(.34,1.56,.64,1)}
+.toast i{font-size:.92rem;flex-shrink:0}.toast span{flex:1}
+.toast.success{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.28);color:#6ee7b7}
+.toast.error{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.28);color:#fca5a5}
+.toast.info{background:rgba(0,210,255,.13);border-color:rgba(0,210,255,.25);color:#a5f3ff}
+.toast.removing{animation:tOut .3s ease forwards}
+@keyframes tIn{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tOut{to{opacity:0;transform:translateX(36px)}}
+.tx{margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;opacity:.5;padding:0 0 0 6px;font-size:.85rem}
+.tx:hover{opacity:1}
+
+/* CONFETTI */
+#claimCanvas{position:fixed;inset:0;z-index:9998;pointer-events:none}
+
+@media(max-width:360px){.actions-grid{grid-template-columns:repeat(2,1fr)}.mini-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<div class="bg-glow"></div>
+<canvas id="claimCanvas"></canvas>
+<div id="toasts"></div>
 
-<div class="dashboard-container">
+<div class="page">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div>
-      <h1>Welcome Back,</h1>
-      <span id="userName">Loading...</span>
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="tb-left">
+      <div class="greeting-row"><i class="fas fa-sun" id="greetIcon"></i><span id="greetText">Good morning</span></div>
+      <div class="name-row"><span id="userName">Loading...</span><i class="fas fa-hand-wave"></i></div>
     </div>
-    <div class="user-avatar" id="userInitial">
-      <i class="fas fa-user"></i>
+    <div class="tb-right">
+      <div class="notif-btn" onclick="navParent('settings')">
+        <i class="fas fa-bell"></i>
+        <div class="notif-badge" id="notifBadge"></div>
+      </div>
+      <div class="avatar" id="avatarEl" onclick="navParent('settings')"></div>
     </div>
   </div>
 
   <!-- BALANCE CARD -->
   <div class="balance-card">
-    <h2>My Balance</h2>
-    <div class="balance-amount">
-      <span id="balanceAmount">0.00 LNX</span>
-      <i class="fas fa-eye" id="toggleBalance"></i>
+    <div class="bc-header">
+      <div class="bc-left-label"><i class="fas fa-coins"></i> LNX Balance</div>
+      <div class="bc-live-pill"><div class="live-dot"></div> LIVE</div>
     </div>
-    <div class="history-btn" id="viewHistory">
-      <i class="fas fa-receipt"></i> View History
+    <div class="bc-amount-wrap">
+      <span class="bc-amount" id="lnxBal">—</span>
+      <span class="bc-ticker">LNX</span>
     </div>
-  </div>
-
-  <!-- TOOLS GRID -->
-  <div class="grid">
-    <div class="card" onclick="startLoader('https://edumateai-smarttutor01.vercel.app/')">
-      <img src="https://i.postimg.cc/qq5CRVDM/file-00000000197871f494a6abf3eb579e17.png">
-      <div class="card-title">Smart Tutor</div>
-      <div class="card-desc">Interactive 3D lessons to help you learn faster and better!</div>
-    </div>
-
-    <div class="card" onclick="startLoader('https://quiz-generator-pink.vercel.app/')">
-      <img src="https://i.ibb.co/1tDvHSsX/file-000000006c6871f4a2d165b66d383516.png">
-      <div class="card-title">Quiz Master</div>
-      <div class="card-desc">Challenge yourself with fun quizzes and earn rewards.</div>
+    <div class="bc-naira"><i class="fas fa-naira-sign"></i><span id="nairaVal">—</span></div>
+    <div class="bc-actions">
+      <button class="bca bca-primary" onclick="navParent('ai')">
+        <i class="fas fa-robot"></i> Use AI
+      </button>
+      <button class="bca bca-ghost" onclick="scrollToTx()">
+        <i class="fas fa-clock-rotate-left"></i> History
+      </button>
+      <button class="bca bca-ghost" onclick="navParent('settings')">
+        <i class="fas fa-arrow-up-from-bracket"></i> Top Up
+      </button>
     </div>
   </div>
 
-  <!-- NEWS SECTION (20 EDUCATIONAL ITEMS) -->
-  <div class="news-section">
-    <h2>What's New</h2>
-    <ul id="newsList" style="list-style: none; padding: 0;">
-      <p>Loading educational updates...</p>
-    </ul>
+  <!-- DAILY CLAIM -->
+  <div class="claim-card">
+    <div class="claim-icon-wrap"><i class="fas fa-gift"></i></div>
+    <div class="claim-body">
+      <div class="claim-title">Daily LNX Reward</div>
+      <div class="claim-sub">Claim <b id="claimAmt">300</b> LNX every 24 hours</div>
+      <div class="claim-countdown" id="claimCountdown"></div>
+    </div>
+    <button class="btn-claim ready" id="claimBtn" onclick="handleClaim()">
+      <i class="fas fa-hand-holding-heart"></i> Claim
+    </button>
   </div>
 
-</div>
+  <!-- QUICK ACTIONS -->
+  <div class="sec-header">
+    <div class="sec-label"><i class="fas fa-grid-2"></i> Quick Actions</div>
+  </div>
+  <div class="actions-grid">
+    <div class="ac" onclick="navParent('ai')">
+      <div class="ac-badge ab-hot">HOT</div>
+      <div class="ac-icon" style="background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.2)"><i class="fas fa-robot" style="color:var(--blue)"></i></div>
+      <div class="ac-name">AI Tutor</div>
+      <div class="ac-hint">Ask anything</div>
+    </div>
+    <div class="ac" onclick="goTo('quiz.html')">
+      <div class="ac-badge ab-earn">+LNX</div>
+      <div class="ac-icon" style="background:rgba(255,204,51,.1);border:1px solid rgba(255,204,51,.2)"><i class="fas fa-graduation-cap" style="color:var(--gold)"></i></div>
+      <div class="ac-name">Smart Quiz</div>
+      <div class="ac-hint">1 LNX per answer</div>
+    </div>
+    <div class="ac" onclick="navParent('gaming')">
+      <div class="ac-icon" style="background:rgba(255,61,112,.1);border:1px solid rgba(255,61,112,.2)"><i class="fas fa-gamepad" style="color:var(--pink)"></i></div>
+      <div class="ac-name">Games</div>
+      <div class="ac-hint">Play & earn</div>
+    </div>
+    <div class="ac" onclick="goTo('ranking.html')">
+      <div class="ac-badge ab-new">NEW</div>
+      <div class="ac-icon" style="background:rgba(255,204,51,.1);border:1px solid rgba(255,204,51,.2)"><i class="fas fa-trophy" style="color:var(--gold)"></i></div>
+      <div class="ac-name">Rankings</div>
+      <div class="ac-hint">Leaderboard</div>
+    </div>
+    <div class="ac" onclick="goTo('referral.html')">
+      <div class="ac-badge ab-earn">+600</div>
+      <div class="ac-icon" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2)"><i class="fas fa-share-nodes" style="color:var(--green)"></i></div>
+      <div class="ac-name">Referral</div>
+      <div class="ac-hint">Earn per friend</div>
+    </div>
+    <div class="ac" onclick="goTo('smart tutor.html')">
+      <div class="ac-icon" style="background:rgba(157,80,187,.1);border:1px solid rgba(157,80,187,.2)"><i class="fas fa-brain" style="color:#c084fc"></i></div>
+      <div class="ac-name">Smart Tutor</div>
+      <div class="ac-hint">Deep study</div>
+    </div>
+  </div>
 
-<!-- 3D LOADER -->
-<div id="loaderOverlay">
-  <div class="loader-3d"></div>
-  <p id="loaderMessage">Getting things ready...</p>
-</div>
+  <!-- PLAN + REFERRAL ROW -->
+  <div class="mini-row">
+    <div class="mini-card" onclick="navParent('settings')">
+      <div class="mini-card-top">
+        <div class="mini-icon" style="background:rgba(157,80,187,.12);border:1px solid rgba(157,80,187,.22)"><i class="fas fa-shield-halved" style="color:#c084fc"></i></div>
+        <div>
+          <div class="mini-title" id="planLabel">Free Plan</div>
+          <div class="mini-sub">Current tier</div>
+        </div>
+      </div>
+      <div class="mini-action"><i class="fas fa-arrow-up"></i> Upgrade Plan</div>
+    </div>
+    <div class="mini-card" onclick="shareRef()">
+      <div class="mini-card-top">
+        <div class="mini-icon" style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.22)"><i class="fas fa-link" style="color:var(--green)"></i></div>
+        <div>
+          <div class="mini-title" id="refCodeLabel">LNX-——</div>
+          <div class="mini-sub">Your referral code</div>
+        </div>
+      </div>
+      <div class="mini-action"><i class="fas fa-share-nodes"></i> Share & Earn</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="sec-header">
+    <div class="sec-label"><i class="fas fa-chart-simple"></i> Stats</div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-c">
+      <span class="stat-c-icon"><i class="fas fa-fire" style="color:var(--orange)"></i></span>
+      <span class="stat-c-val" id="statStreak">—</span>
+      <div class="stat-c-lbl">Streak</div>
+    </div>
+    <div class="stat-c">
+      <span class="stat-c-icon"><i class="fas fa-arrow-trend-up" style="color:var(--green)"></i></span>
+      <span class="stat-c-val" id="statEarned">—</span>
+      <div class="stat-c-lbl">Earned</div>
+    </div>
+    <div class="stat-c">
+      <span class="stat-c-icon"><i class="fas fa-paper-plane" style="color:var(--blue)"></i></span>
+      <span class="stat-c-val" id="statSpent">—</span>
+      <div class="stat-c-lbl">Spent</div>
+    </div>
+  </div>
+
+  <!-- NEWS SECTION -->
+  <div class="sec-header">
+    <div class="sec-label"><i class="fas fa-newspaper"></i> News & Tips</div>
+    <button class="sec-more" id="newsMoreBtn"><i class="fas fa-arrow-right"></i></button>
+  </div>
+  <div class="news-scroll" id="newsScroll">
+    <!-- shimmer placeholders -->
+    <div class="news-shimmer">
+      <div style="height:110px" class="sh"></div>
+      <div style="padding:10px 12px;display:flex;flex-direction:column;gap:6px">
+        <div class="sh sh-block" style="width:50%;height:10px"></div>
+        <div class="sh sh-block" style="height:12px"></div>
+        <div class="sh sh-block" style="width:70%;height:12px"></div>
+      </div>
+    </div>
+    <div class="news-shimmer">
+      <div style="height:110px" class="sh"></div>
+      <div style="padding:10px 12px;display:flex;flex-direction:column;gap:6px">
+        <div class="sh sh-block" style="width:50%;height:10px"></div>
+        <div class="sh sh-block" style="height:12px"></div>
+        <div class="sh sh-block" style="width:70%;height:12px"></div>
+      </div>
+    </div>
+    <div class="news-shimmer">
+      <div style="height:110px" class="sh"></div>
+      <div style="padding:10px 12px;display:flex;flex-direction:column;gap:6px">
+        <div class="sh sh-block" style="width:50%;height:10px"></div>
+        <div class="sh sh-block" style="height:12px"></div>
+        <div class="sh sh-block" style="width:70%;height:12px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSACTIONS — OPAY STYLE -->
+  <div class="tx-header" id="txSection">
+    <div class="sec-label"><i class="fas fa-arrow-right-arrow-left"></i> Transactions</div>
+    <button class="sec-more" onclick="loadMoreTx()"><i class="fas fa-arrow-right"></i></button>
+  </div>
+  <div id="txContainer"></div>
+  <button class="view-all-btn" onclick="loadMoreTx()">
+    <i class="fas fa-list"></i> View All Transactions
+  </button>
+
+</div><!-- /page -->
 
 <script type="module">
-  import { watchAuth, getCurrentUser } from './auth.js';
-  import { addOrUpdateAccount, importBalance, importTransactions } from './coinbase.js';
+import { watchAuth, getUserProfile, db } from './auth.js';
+import {
+  doc, onSnapshot, collection, query,
+  orderBy, limit, getDocs, updateDoc,
+  serverTimestamp, increment, addDoc
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-  let currentUserId = null;
-  let userBalance = 0;
-  let isHidden = false; // Default: balance is VISIBLE (unhidden) - eye icon shows without slash
+// ─── GLOBALS ─────────────────────────────────────────────────
+let _uid = null, _txLimit = 10, _unsubTx = null;
 
-  // Listen for reward updates from other files (quiz.html, games.html, etc.)
-  window.addEventListener('coinbaseUpdate', (e) => {
-    if (e.detail.userId === currentUserId) {
-      userBalance = e.detail.balance;
-      updateBalanceUI();
-      // Optional: Show a notification when a reward is received
-      if (e.detail.reward) {
-        console.log(`🎉 ${e.detail.reward}: +${e.detail.amount} LNX`);
-      }
+// ─── HELPERS ─────────────────────────────────────────────────
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  const ic = { success:'fas fa-circle-check', error:'fas fa-circle-exclamation', info:'fas fa-circle-info' };
+  el.innerHTML = `<i class="${ic[type]||ic.info}"></i><span>${msg}</span><button class="tx" onclick="this.parentElement.classList.add('removing');setTimeout(()=>this.parentElement.remove(),300)"><i class="fas fa-xmark"></i></button>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => { if (el.parentElement) { el.classList.add('removing'); setTimeout(() => el.remove(), 300); } }, 4500);
+}
+
+window.goTo = p => { window.location.href = p; };
+window.navParent = name => {
+  if (window.parent && window.parent.navigateTo) window.parent.navigateTo(name);
+  else window.location.href = 'appskeleton.html';
+};
+window.scrollToTx = () => document.getElementById('txSection').scrollIntoView({ behavior: 'smooth' });
+window.shareRef = () => {
+  const code = document.getElementById('refCodeLabel').textContent;
+  const url = `${location.origin}/signup.html?ref=${code}`;
+  if (navigator.share) navigator.share({ title: 'Join Lenovox AI', text: 'Join me on Lenovox and get 300 LNX free!', url });
+  else navigator.clipboard.writeText(url).then(() => toast('Referral link copied!', 'info'));
+};
+
+// ─── GREETING ────────────────────────────────────────────────
+(function() {
+  const h = new Date().getHours();
+  const map = [
+    [5,  12, 'Good morning',   'fas fa-sun'],
+    [12, 17, 'Good afternoon', 'fas fa-cloud-sun'],
+    [17, 21, 'Good evening',   'fas fa-sunset'],
+    [21, 24, 'Good night',     'fas fa-moon'],
+    [0,  5,  'Night owl',      'fas fa-moon']
+  ];
+  const [,, txt, icon] = map.find(([a,b]) => h >= a && h < b) || map[0];
+  document.getElementById('greetText').textContent = txt;
+  document.getElementById('greetIcon').className = icon;
+})();
+
+// ─── CONFETTI ────────────────────────────────────────────────
+const cc = document.getElementById('claimCanvas'), cx = cc.getContext('2d');
+const COLS = ['#ff3d70','#00d2ff','#ffcc33','#10b981','#9d50bb','#ff9500','#4ecdc4','#fff','#ffd700'];
+let parts = [];
+function launchConfetti() {
+  cc.width = innerWidth; cc.height = innerHeight; parts = [];
+  for (let i = 0; i < 180; i++) {
+    parts.push({ x: Math.random()*cc.width, y: Math.random()*cc.height*.35-50,
+      vx:(Math.random()-.5)*9, vy:Math.random()*6+2,
+      color:COLS[Math.floor(Math.random()*COLS.length)],
+      w:Math.random()*11+4, h:Math.random()*5+2,
+      rot:Math.random()*360, rv:(Math.random()-.5)*8,
+      alpha:1, life:0, maxLife:110+Math.random()*70,
+      shape:Math.random()>.5?'rect':'circle' });
+  }
+  animConf();
+}
+function animConf() {
+  cx.clearRect(0,0,cc.width,cc.height); let alive = false;
+  parts.forEach(p => {
+    p.life++; p.vy+=.11; p.vx*=.99; p.x+=p.vx; p.y+=p.vy; p.rot+=p.rv;
+    p.alpha = Math.max(0,1-p.life/p.maxLife);
+    if (p.alpha>0) alive=true;
+    cx.save(); cx.globalAlpha=p.alpha; cx.fillStyle=p.color;
+    cx.translate(p.x,p.y); cx.rotate(p.rot*Math.PI/180);
+    if (p.shape==='circle'){cx.beginPath();cx.arc(0,0,p.w/2,0,Math.PI*2);cx.fill();}
+    else cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+    cx.restore();
+  });
+  if (alive) requestAnimationFrame(animConf);
+  else cx.clearRect(0,0,cc.width,cc.height);
+}
+
+// ─── COUNTDOWN TIMER ─────────────────────────────────────────
+let cdInterval = null;
+function startCountdown(nextMs) {
+  const btn = document.getElementById('claimBtn');
+  const cd  = document.getElementById('claimCountdown');
+  btn.className = 'btn-claim claimed'; btn.innerHTML = '<i class="fas fa-check"></i> Claimed'; btn.disabled = true;
+  cd.style.display = 'block';
+  function tick() {
+    const diff = nextMs - Date.now();
+    if (diff <= 0) {
+      cd.style.display = 'none'; clearInterval(cdInterval);
+      btn.className = 'btn-claim ready'; btn.innerHTML = '<i class="fas fa-hand-holding-heart"></i> Claim'; btn.disabled = false;
+      return;
     }
+    const h = String(Math.floor(diff/3600000)).padStart(2,'0');
+    const m = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+    const s = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+    cd.textContent = `Next claim in ${h}:${m}:${s}`;
+  }
+  tick(); clearInterval(cdInterval); cdInterval = setInterval(tick, 1000);
+}
+
+// ─── DAILY CLAIM ─────────────────────────────────────────────
+window.handleClaim = async () => {
+  if (!_uid) return;
+  const profile = await getUserProfile(_uid);
+  if (!profile) return;
+  const lastMs = profile.lastClaim ? profile.lastClaim.toMillis() : 0;
+  const cooldown = 24*60*60*1000;
+  if (Date.now() - lastMs < cooldown) { toast('Already claimed today! Come back later.','info'); startCountdown(lastMs+cooldown); return; }
+  const rewards = { free:300, starter:500, standard:700, pro:1000, elite:2000 };
+  const amt = rewards[profile.plan] || 300;
+  try {
+    await updateDoc(doc(db,'users',_uid), { lnxBalance:increment(amt), lastClaim:serverTimestamp() });
+    await updateDoc(doc(db,'wallets',_uid), { balance:increment(amt), totalEarned:increment(amt) });
+    await addDoc(collection(db,'wallets',_uid,'transactions'), {
+      type:'Daily Reward', amount:amt, timestamp:serverTimestamp(), date:new Date().toLocaleString()
+    });
+    launchConfetti();
+    toast(`+${amt} LNX claimed! Keep grinding 🔥`, 'success');
+    startCountdown(Date.now()+cooldown);
+  } catch(e) { toast('Claim failed. Try again.','error'); }
+};
+
+// ─── NEWS ─────────────────────────────────────────────────────
+const STATIC_NEWS = [
+  { cat:'Platform', icon:'fas fa-bolt', title:'New AI model tier launched — Pro users get GPT-4o access', time:'2 hours ago', img:'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&q=75' },
+  { cat:'Earn', icon:'fas fa-coins', title:'Double LNX weekend is live — earn 2x on all quiz answers', time:'5 hours ago', img:'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=400&q=75' },
+  { cat:'Gaming', icon:'fas fa-gamepad', title:'10 new games added to the arcade — play and earn LNX today', time:'1 day ago', img:'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&q=75' },
+  { cat:'Community', icon:'fas fa-users', title:'Lenovox MeetUp beta launching soon — sign up for early access', time:'2 days ago', img:'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&q=75' },
+  { cat:'Tips', icon:'fas fa-lightbulb', title:'How to climb from Bronze to Diamond rank in 7 days', time:'3 days ago', img:'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&q=75' },
+];
+function renderNews() {
+  const el = document.getElementById('newsScroll');
+  el.innerHTML = STATIC_NEWS.map(n => `
+    <div class="news-card">
+      <img class="news-img" src="${n.img}" alt="${n.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="news-img-placeholder" style="display:none"><i class="${n.icon}"></i></div>
+      <div class="news-body">
+        <div class="news-cat"><i class="${n.icon}"></i>${n.cat}</div>
+        <div class="news-title-text">${n.title}</div>
+        <div class="news-time"><i class="fas fa-clock"></i>${n.time}</div>
+      </div>
+    </div>`).join('');
+}
+setTimeout(renderNews, 600);
+
+// ─── TRANSACTIONS — OPAY STYLE ───────────────────────────────
+const TX_CONFIG = {
+  'Daily Reward':        { icon:'fas fa-gift',            bg:'rgba(255,204,51,.12)',  border:'rgba(255,204,51,.2)',  ic:'var(--gold)',   type:'credit' },
+  'Quiz Correct Answer': { icon:'fas fa-graduation-cap',  bg:'rgba(0,210,255,.1)',    border:'rgba(0,210,255,.18)', ic:'var(--blue)',   type:'credit' },
+  'Game Reward':         { icon:'fas fa-gamepad',          bg:'rgba(255,61,112,.1)',   border:'rgba(255,61,112,.18)',ic:'var(--pink)',   type:'credit' },
+  'Referral Reward':     { icon:'fas fa-share-nodes',      bg:'rgba(16,185,129,.1)',   border:'rgba(16,185,129,.18)',ic:'var(--green)',  type:'credit' },
+  'Ad Reward':           { icon:'fas fa-play-circle',      bg:'rgba(255,149,0,.1)',    border:'rgba(255,149,0,.18)', ic:'var(--orange)', type:'credit' },
+  'AI Usage':            { icon:'fas fa-robot',            bg:'rgba(157,80,187,.1)',   border:'rgba(157,80,187,.18)',ic:'#c084fc',       type:'debit'  },
+  'Image Generation':    { icon:'fas fa-image',            bg:'rgba(255,61,112,.1)',   border:'rgba(255,61,112,.18)',ic:'var(--pink)',   type:'debit'  },
+  'Premium Feature':     { icon:'fas fa-unlock',           bg:'rgba(0,210,255,.1)',    border:'rgba(0,210,255,.18)', ic:'var(--blue)',   type:'debit'  },
+  default:               { icon:'fas fa-coins',            bg:'rgba(0,210,255,.08)',   border:'rgba(0,210,255,.14)', ic:'var(--blue)',   type:'credit' }
+};
+
+function groupByDate(txs) {
+  const groups = {};
+  txs.forEach(tx => {
+    const d = tx.timestamp ? new Date(tx.timestamp.toMillis()) : new Date();
+    const today = new Date(); today.setHours(0,0,0,0);
+    const yd = new Date(today); yd.setDate(yd.getDate()-1);
+    let label;
+    if (d >= today) label = 'Today';
+    else if (d >= yd) label = 'Yesterday';
+    else label = d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    if (!groups[label]) groups[label] = [];
+    groups[label].push(tx);
+  });
+  return groups;
+}
+
+function renderTx(txs) {
+  const container = document.getElementById('txContainer');
+  if (!txs.length) {
+    container.innerHTML = `<div class="tx-empty"><i class="fas fa-inbox"></i><p>No transactions yet. Start earning LNX!</p></div>`;
+    return;
+  }
+  const groups = groupByDate(txs);
+  container.innerHTML = Object.entries(groups).map(([date, items]) => `
+    <div class="tx-date-group">
+      <div class="tx-date-label"><i class="fas fa-calendar-day"></i>${date}</div>
+      ${items.map(tx => {
+        const cfg = TX_CONFIG[tx.type] || TX_CONFIG.default;
+        const isCredit = tx.amount >= 0;
+        const txType = isCredit ? 'credit' : 'debit';
+        const sign = isCredit ? '+' : '';
+        const time = tx.timestamp ? new Date(tx.timestamp.toMillis()).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
+        return `
+          <div class="tx-item ${txType}">
+            <div class="tx-icon-wrap" style="background:${cfg.bg};border:1px solid ${cfg.border}">
+              <i class="${cfg.icon}" style="color:${cfg.ic}"></i>
+            </div>
+            <div class="tx-middle">
+              <div class="tx-name">${tx.type || 'Transaction'}</div>
+              <div class="tx-ref"><i class="fas fa-clock"></i>${time}</div>
+            </div>
+            <div class="tx-right">
+              <div class="tx-amt ${txType}">${sign}${Math.abs(tx.amount)} LNX</div>
+              <div class="tx-bal">LNX</div>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>`).join('');
+}
+
+function subscribeTx() {
+  if (_unsubTx) _unsubTx();
+  const q = query(collection(db,'wallets',_uid,'transactions'), orderBy('timestamp','desc'), limit(_txLimit));
+  _unsubTx = onSnapshot(q, snap => renderTx(snap.docs.map(d => d.data())));
+}
+
+window.loadMoreTx = () => { _txLimit += 10; subscribeTx(); };
+
+// ─── AUTH & DATA ──────────────────────────────────────────────
+watchAuth(async user => {
+  if (!user) { window.location.replace('login.html'); return; }
+  _uid = user.uid;
+
+  const initial = user.displayName || user.email?.split('@')[0] || 'User';
+  document.getElementById('userName').textContent = initial.split(' ')[0];
+  document.getElementById('avatarEl').textContent = initial[0].toUpperCase();
+
+  // LIVE WALLET
+  onSnapshot(doc(db,'wallets',_uid), snap => {
+    if (!snap.exists()) return;
+    const d = snap.data();
+    const bal = d.balance||0;
+    document.getElementById('lnxBal').textContent = bal.toLocaleString();
+    document.getElementById('nairaVal').textContent = `≈ ₦${(bal*0.124).toFixed(2)} Naira`;
+    document.getElementById('statEarned').textContent = (d.totalEarned||0).toLocaleString();
+    document.getElementById('statSpent').textContent = (d.totalSpent||0).toLocaleString();
   });
 
-  // Initialize Dashboard with Real Auth
-  async function init() {
-    // Watch for auth changes
-    watchAuth(async (user) => {
-      if (user) {
-        currentUserId = user.uid;
-        const name = user.displayName || "Student";
-        document.getElementById('userName').textContent = name;
-        document.getElementById('userInitial').innerHTML = name.charAt(0).toUpperCase();
-        
-        // Sync with Coinbase System
-        await addOrUpdateAccount({ id: user.uid, name: name, balance: 500 });
-        userBalance = await importBalance(user.uid);
-        updateBalanceUI();
-        loadEducationalNews();
-      } else {
-        // Fallback to session or redirect to login
-        const session = getCurrentUser();
-        if (session) {
-          currentUserId = session.uid;
-          document.getElementById('userName').textContent = session.name;
-          document.getElementById('userInitial').innerHTML = session.name.charAt(0).toUpperCase();
-          userBalance = await importBalance(session.uid);
-          updateBalanceUI();
-          loadEducationalNews();
-        }
-      }
-    });
+  // LIVE PROFILE
+  onSnapshot(doc(db,'users',_uid), snap => {
+    if (!snap.exists()) return;
+    const p = snap.data();
+    const name = p.name || initial;
+    document.getElementById('userName').textContent = name.split(' ')[0];
+    document.getElementById('avatarEl').textContent = name[0].toUpperCase();
+    const planMap = { free:'Free Plan', starter:'Starter Plan', standard:'Standard Plan', pro:'Pro Plan', elite:'Elite Plan' };
+    document.getElementById('planLabel').textContent = planMap[p.plan]||'Free Plan';
+    document.getElementById('refCodeLabel').textContent = p.referralCode||'LNX-——';
+    document.getElementById('claimAmt').textContent = ({ free:300, starter:500, standard:700, pro:1000, elite:2000 }[p.plan]||300).toLocaleString();
 
-    // Global Coinbase Listener for real-time updates
-    window.addEventListener('coinbaseUpdate', (e) => {
-      if (e.detail.userId === currentUserId) {
-        userBalance = e.detail.balance;
-        updateBalanceUI();
-      }
-    });
-  }
+    // Streak proxy
+    const lastMs = p.lastClaim ? p.lastClaim.toMillis() : 0;
+    const daysSince = Math.floor((Date.now()-lastMs)/86400000);
+    document.getElementById('statStreak').textContent = daysSince === 0 ? '1' : daysSince === 1 ? '1' : '—';
 
-  function updateBalanceUI() {
-    const el = document.getElementById('balanceAmount');
-    el.textContent = isHidden ? "••••••" : `${userBalance.toLocaleString()} LNX`;
-  }
-
-  // Toggle Balance Visibility
-  // Default: eye icon (no slash) = balance is VISIBLE
-  // Click: eye-slash icon = balance is HIDDEN
-  document.getElementById('toggleBalance').addEventListener('click', (e) => {
-    isHidden = !isHidden;
-    if (isHidden) {
-      // Balance is now hidden - show eye-slash icon
-      e.target.classList.remove('fa-eye');
-      e.target.classList.add('fa-eye-slash');
-    } else {
-      // Balance is now visible - show eye icon (no slash)
-      e.target.classList.remove('fa-eye-slash');
-      e.target.classList.add('fa-eye');
-    }
-    updateBalanceUI();
+    // Claim state
+    if (Date.now()-lastMs < 24*60*60*1000) startCountdown(lastMs+24*60*60*1000);
   });
 
-  // View Transaction History
-  document.getElementById('viewHistory').addEventListener('click', async () => {
-    window.open('history.html', '_blank');
-  });
-
-  // 3D Loader
-  window.startLoader = function(url) {
-    const overlay = document.getElementById('loaderOverlay');
-    overlay.style.display = 'flex';
-    
-    setTimeout(() => { document.getElementById("loaderMessage").textContent = "🚀 Almost there..."; }, 1500);
-    setTimeout(() => { window.location.href = url; }, 2500);
-  };
-
-  // Load 20 Educational News Items
-  async function loadEducationalNews() {
-    const container = document.getElementById("newsList");
-    try {
-      // Attempt to fetch educational news from API
-      const res = await fetch("/api/getnews?category=education&limit=20");
-      const articles = await res.json();
-      renderNews(articles.slice(0, 20));
-    } catch (err) {
-      // Fallback: 20 Professional Educational News Items
-      const educationalNews = [
-        { title: "AI Revolutionizes Personalized Learning: How Machine Learning Adapts to Student Needs", urlToImage: "https://picsum.photos/seed/edu1/85/65" },
-        { title: "The Future of STEM Education: Interactive 3D Learning Environments Transform Classrooms", urlToImage: "https://picsum.photos/seed/edu2/85/65" },
-        { title: "Coding for Kids: Why Programming Skills Are Essential in the Digital Age", urlToImage: "https://picsum.photos/seed/edu3/85/65" },
-        { title: "Virtual Reality in Education: Immersive Experiences Enhance Student Engagement", urlToImage: "https://picsum.photos/seed/edu4/85/65" },
-        { title: "Critical Thinking Skills: Preparing Students for Tomorrow's Challenges", urlToImage: "https://picsum.photos/seed/edu5/85/65" },
-        { title: "Online Learning Trends 2025: Hybrid Education Models Gain Momentum", urlToImage: "https://picsum.photos/seed/edu6/85/65" },
-        { title: "Gamification in Education: How Game-Based Learning Boosts Student Motivation", urlToImage: "https://picsum.photos/seed/edu7/85/65" },
-        { title: "Digital Literacy: Essential Skills for Students in a Connected World", urlToImage: "https://picsum.photos/seed/edu8/85/65" },
-        { title: "The Power of Collaborative Learning: Building Teamwork in Virtual Classrooms", urlToImage: "https://picsum.photos/seed/edu9/85/65" },
-        { title: "Mental Health in Education: Supporting Student Wellbeing Through Technology", urlToImage: "https://picsum.photos/seed/edu10/85/65" },
-        { title: "Adaptive Learning Systems: How AI Personalizes Education for Every Student", urlToImage: "https://picsum.photos/seed/edu11/85/65" },
-        { title: "Global Classrooms: Breaking Borders Through International Online Learning", urlToImage: "https://picsum.photos/seed/edu12/85/65" },
-        { title: "Cybersecurity Awareness: Teaching Students to Protect Their Digital Identity", urlToImage: "https://picsum.photos/seed/edu13/85/65" },
-        { title: "Data Science for Students: Unlocking Insights Through Analytics and Big Data", urlToImage: "https://picsum.photos/seed/edu14/85/65" },
-        { title: "Blockchain in Education: Securing Credentials and Transforming Verification", urlToImage: "https://picsum.photos/seed/edu15/85/65" },
-        { title: "Environmental Education: Preparing the Next Generation of Eco-Warriors", urlToImage: "https://picsum.photos/seed/edu16/85/65" },
-        { title: "Microlearning: How Bite-Sized Education Fits Modern Student Lifestyles", urlToImage: "https://picsum.photos/seed/edu17/85/65" },
-        { title: "Emotional Intelligence in Schools: Building Empathy and Social Skills", urlToImage: "https://picsum.photos/seed/edu18/85/65" },
-        { title: "Quantum Computing Basics: Introducing Students to Next-Gen Technology", urlToImage: "https://picsum.photos/seed/edu19/85/65" },
-        { title: "Inclusive Education: Technology Solutions for Students with Diverse Learning Needs", urlToImage: "https://picsum.photos/seed/edu20/85/65" }
-      ];
-      renderNews(educationalNews);
-    }
-  }
-
-  function renderNews(articles) {
-    const container = document.getElementById("newsList");
-    container.innerHTML = "";
-    articles.slice(0, 20).forEach(item => {
-      const li = document.createElement("li");
-      li.className = "news-item";
-      const thumb = item.urlToImage || "https://via.placeholder.com/85x65?text=News";
-      li.innerHTML = `<img class="news-thumb" src="${thumb}"><div class="news-title">${item.title}</div>`;
-      li.onclick = () => { if(item.url) window.open(item.url, "_blank"); };
-      container.appendChild(li);
-    });
-  }
-
-  init();
+  // TRANSACTIONS
+  subscribeTx();
+});
 </script>
-
 </body>
 </html>
