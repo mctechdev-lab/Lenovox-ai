@@ -2,147 +2,113 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
 <title>Lenovox</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#03030b;--nav-bg:rgba(8,8,22,0.97);--blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--border:rgba(255,255,255,0.07);--nav-h:68px}
+:root{--bg:#03030b;--nav-bg:rgba(8,8,22,.97);--blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--border:rgba(255,255,255,.07);--nav-h:64px}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',sans-serif}
-.app-shell{display:flex;flex-direction:column;height:100vh;width:100%}
-.content-window{flex:1;position:relative;overflow:hidden;background:var(--bg)}
-.section{position:absolute;inset:0;display:none;opacity:0;transition:opacity .22s ease}
-.section.active{display:block;opacity:1}
-iframe{width:100%;height:100%;border:none;display:block;background:var(--bg)}
-
-/* LOADER */
-.skeleton-loader{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:5;gap:14px}
-.sk-logo{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;background:linear-gradient(90deg,#fff,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:skP 1.5s ease-in-out infinite}
+.shell{display:flex;flex-direction:column;width:100%;position:fixed;inset:0}
+.content-window{flex:1;position:relative;overflow:hidden;min-height:0}
+/* KEY FIX: sections hidden = no pointer events */
+.section{position:absolute;inset:0;display:none;opacity:0;pointer-events:none;transition:opacity .2s ease}
+.section.active{display:block;opacity:1;pointer-events:all}
+/* KEY FIX: iframe must always be interactive */
+iframe{width:100%;height:100%;border:none;display:block;pointer-events:all;touch-action:auto}
+/* KEY FIX: skeleton sits on top but NEVER blocks the iframe below */
+.sk{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;z-index:10;transition:opacity .32s ease;pointer-events:none}
+.sk.done{opacity:0;display:none}
+.sk-logo{font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;background:linear-gradient(90deg,#fff,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:skP 1.5s ease-in-out infinite}
 @keyframes skP{0%,100%{opacity:.4}50%{opacity:1}}
-.sk-rings{position:relative;width:44px;height:44px}
-.sk-rings div{position:absolute;inset:0;border:3px solid transparent;border-radius:50%;animation:skS 1.1s cubic-bezier(.5,0,.5,1) infinite}
+.sk-rings{position:relative;width:40px;height:40px}
+.sk-rings div{position:absolute;inset:0;border:3px solid transparent;border-radius:50%;animation:skR 1.1s cubic-bezier(.5,0,.5,1) infinite}
 .sk-rings div:nth-child(1){border-top-color:var(--blue);animation-delay:-.45s}
 .sk-rings div:nth-child(2){border-top-color:var(--gold);animation-delay:-.3s}
 .sk-rings div:nth-child(3){border-top-color:var(--green);animation-delay:-.15s}
-@keyframes skS{0%{transform:rotateX(35deg) rotateY(-45deg) rotateZ(0)}100%{transform:rotateX(35deg) rotateY(-45deg) rotateZ(360deg)}}
-
-/* NAVIGATION */
-.nav{height:var(--nav-h);background:var(--nav-bg);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);display:flex;justify-content:space-around;align-items:center;border-top:1px solid var(--border);padding:0 6px;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -12px 40px rgba(0,0,0,.5);z-index:9999;position:relative}
-.nav-item{flex:1;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;color:rgba(255,255,255,.28);transition:all .35s cubic-bezier(.34,1.56,.64,1);position:relative;gap:4px;-webkit-user-select:none;user-select:none}
-.nav-icon-wrap{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .35s cubic-bezier(.34,1.56,.64,1);background:rgba(255,255,255,.04);box-shadow:2px 2px 6px rgba(0,0,0,.3),-1px -1px 4px rgba(255,255,255,.04)}
-.nav-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;transition:color .3s}
+@keyframes skR{0%{transform:rotateX(35deg) rotateY(-45deg) rotateZ(0)}100%{transform:rotateX(35deg) rotateY(-45deg) rotateZ(360deg)}}
+/* NAV */
+.nav{height:var(--nav-h);background:var(--nav-bg);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);display:flex;justify-content:space-around;align-items:center;border-top:1px solid var(--border);padding:0 4px;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -10px 36px rgba(0,0,0,.55);z-index:9999;flex-shrink:0}
+.nav-item{flex:1;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;color:rgba(255,255,255,.3);transition:all .32s cubic-bezier(.34,1.56,.64,1);position:relative;gap:3px;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.nav-icon-wrap{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .32s cubic-bezier(.34,1.56,.64,1);background:rgba(255,255,255,.04)}
+.nav-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
 .nav-item.active{color:var(--blue)}
-.nav-item.active .nav-icon-wrap{transform:translateY(-8px) scale(1.1);background:rgba(0,210,255,.14);color:var(--blue);box-shadow:0 10px 24px rgba(0,210,255,.2),0 3px 0 rgba(0,210,255,.5),inset 0 1px 0 rgba(255,255,255,.08)}
-.nav-item.center-btn{flex:0 0 68px;margin-top:-20px}
-.nav-item.center-btn .nav-icon-wrap{width:54px;height:54px;border-radius:17px;font-size:22px;background:linear-gradient(145deg,#ff5e5e,#ff2d55);color:#fff;border:3px solid rgba(8,8,22,1);box-shadow:0 8px 20px rgba(255,45,85,.38),0 3px 0 #a80028,inset 0 2px 4px rgba(255,255,255,.22)}
-.nav-item.center-btn.active .nav-icon-wrap{transform:translateY(2px) scale(.97);box-shadow:0 3px 10px rgba(255,45,85,.28),0 1px 0 #a80028}
-.notif-dot{position:absolute;top:8px;right:50%;margin-right:-18px;width:7px;height:7px;border-radius:50%;background:#ef4444;border:1.5px solid var(--bg);animation:dotB 2s ease-in-out infinite}
-@keyframes dotB{0%,100%{opacity:1}50%{opacity:.35}}
-
+.nav-item.active .nav-icon-wrap{transform:translateY(-6px) scale(1.1);background:rgba(0,210,255,.14);color:var(--blue);box-shadow:0 8px 22px rgba(0,210,255,.22),0 3px 0 rgba(0,210,255,.45)}
+.nav-item.center-btn{flex:0 0 64px;margin-top:-18px}
+.nav-item.center-btn .nav-icon-wrap{width:52px;height:52px;border-radius:16px;font-size:21px;background:linear-gradient(145deg,#ff5e5e,#ff2d55);color:#fff;border:3px solid rgba(8,8,22,1);box-shadow:0 8px 18px rgba(255,45,85,.38),0 3px 0 #a80028}
+.nav-item.center-btn.active .nav-icon-wrap{transform:translateY(1px) scale(.97)}
+.notif-dot{position:absolute;top:8px;right:50%;margin-right:-18px;width:6px;height:6px;border-radius:50%;background:#ef4444;border:1.5px solid var(--bg);animation:dotB 2s ease-in-out infinite}
+@keyframes dotB{0%,100%{opacity:1}50%{opacity:.3}}
 /* AUTH GUARD */
-#authGuard{position:fixed;inset:0;z-index:99999;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;transition:opacity .5s ease}
-.guard-logo{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;background:linear-gradient(90deg,#fff,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:10px}
-.guard-dot{width:14px;height:14px;border-radius:50%;background:var(--gold);box-shadow:0 0 20px var(--gold);animation:gdot 1.5s ease-in-out infinite}
-@keyframes gdot{0%,100%{transform:scale(1);box-shadow:0 0 20px var(--gold)}50%{transform:scale(1.4);box-shadow:0 0 36px var(--gold),0 0 60px rgba(255,204,51,.3)}}
-.guard-rings{position:relative;width:40px;height:40px}
-.guard-rings div{position:absolute;inset:0;border:2.5px solid transparent;border-radius:50%;animation:skS .9s cubic-bezier(.5,0,.5,1) infinite}
+#authGuard{position:fixed;inset:0;z-index:99999;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;transition:opacity .45s ease}
+.guard-logo{font-family:'Orbitron',monospace;font-size:1.9rem;font-weight:900;background:linear-gradient(90deg,#fff,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:10px}
+.guard-dot{width:13px;height:13px;border-radius:50%;background:var(--gold);box-shadow:0 0 18px var(--gold);animation:gdot 1.5s ease-in-out infinite}
+@keyframes gdot{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+.guard-rings{position:relative;width:38px;height:38px}
+.guard-rings div{position:absolute;inset:0;border:2.5px solid transparent;border-radius:50%;animation:skR .9s cubic-bezier(.5,0,.5,1) infinite}
 .guard-rings div:nth-child(1){border-top-color:var(--blue);animation-delay:-.4s}
 .guard-rings div:nth-child(2){border-top-color:var(--gold);animation-delay:-.27s}
 .guard-rings div:nth-child(3){border-top-color:var(--green);animation-delay:-.13s}
-.guard-text{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase}
-
-/* MEETUP SCREEN */
-#sec-meetup{background:linear-gradient(135deg,#0d0230,#1a0545);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:32px}
-.meetup-icon-wrap{width:90px;height:90px;border-radius:28px;background:linear-gradient(135deg,#5856d6,#af52de);display:flex;align-items:center;justify-content:center;font-size:2.4rem;color:#fff;box-shadow:0 16px 48px rgba(88,86,214,.4);margin-bottom:20px;animation:mF 3s ease-in-out infinite}
-@keyframes mF{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.meetup-title{font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:8px}
-.meetup-sub{color:rgba(255,255,255,.55);font-size:.88rem;margin-bottom:24px;max-width:260px;line-height:1.75}
-.meetup-feats{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);border-radius:20px;padding:20px 26px;text-align:left;display:flex;flex-direction:column;gap:11px;margin-bottom:22px;width:100%;max-width:300px}
-.mf{display:flex;align-items:center;gap:10px;font-size:.84rem;color:rgba(255,255,255,.8);font-weight:700}
-.mf i{font-size:.9rem;color:#af52de;width:18px;text-align:center}
-.meetup-badge{background:rgba(255,255,255,.1);color:#fff;padding:10px 24px;border-radius:50px;font-weight:800;font-size:.83rem;border:1px solid rgba(255,255,255,.18);display:inline-flex;align-items:center;gap:8px}
-.meetup-badge i{color:var(--gold)}
-
-@media(max-width:400px){.nav-label{display:none}.nav-item.center-btn .nav-icon-wrap{width:50px;height:50px;font-size:20px}}
+.guard-text{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.28);letter-spacing:1px;text-transform:uppercase}
+@media(max-width:380px){.nav-label{display:none}.nav-item.center-btn .nav-icon-wrap{width:48px;height:48px;font-size:19px}}
 </style>
 </head>
 <body>
 
-<!-- AUTH GUARD -->
 <div id="authGuard">
   <div class="guard-logo"><div class="guard-dot"></div>LENOVOX</div>
   <div class="guard-rings"><div></div><div></div><div></div></div>
   <div class="guard-text">Loading Your Universe...</div>
 </div>
 
-<div class="app-shell" id="appShell" style="visibility:hidden">
-  <main class="content-window">
+<div class="shell" id="appShell" style="visibility:hidden">
+  <div class="content-window">
 
-    <!-- DASHBOARD -->
     <div id="sec-dashboard" class="section active">
-      <div class="skeleton-loader" id="sk-dashboard">
-        <div class="sk-logo">LENOVOX</div>
-        <div class="sk-rings"><div></div><div></div><div></div></div>
-      </div>
-      <iframe src="userdashboard.html" onload="hideLoader('sk-dashboard')"></iframe>
+      <div class="sk" id="sk-dashboard"><div class="sk-logo">LENOVOX</div><div class="sk-rings"><div></div><div></div><div></div></div></div>
+      <iframe src="userdashboard.html" onload="hideLoader('sk-dashboard')" allow="camera;microphone"></iframe>
     </div>
 
-    <!-- AI BUDDY -->
     <div id="sec-ai" class="section">
-      <div class="skeleton-loader" id="sk-ai">
-        <div class="sk-logo">LENOVOX</div>
-        <div class="sk-rings"><div></div><div></div><div></div></div>
-      </div>
-      <iframe src="ai-chat-bot-assitant.html" onload="hideLoader('sk-ai')" loading="lazy"></iframe>
+      <div class="sk" id="sk-ai"><div class="sk-logo">LENOVOX</div><div class="sk-rings"><div></div><div></div><div></div></div></div>
+      <iframe src="ai-chat-bot-assitant.html" loading="lazy" onload="hideLoader('sk-ai')" allow="camera;microphone"></iframe>
     </div>
 
-    <!-- GAMING -->
     <div id="sec-gaming" class="section">
-      <div class="skeleton-loader" id="sk-gaming">
-        <div class="sk-logo">LENOVOX</div>
-        <div class="sk-rings"><div></div><div></div><div></div></div>
-      </div>
-      <iframe src="gaming-section.html" onload="hideLoader('sk-gaming')" loading="lazy"></iframe>
+      <div class="sk" id="sk-gaming"><div class="sk-logo">LENOVOX</div><div class="sk-rings"><div></div><div></div><div></div></div></div>
+      <iframe src="gaming-section.html" loading="lazy" onload="hideLoader('sk-gaming')"></iframe>
     </div>
 
-    <!-- MEETUP -->
     <div id="sec-meetup" class="section">
-      <div class="skeleton-loader" id="sk-meetup">
-        <div class="sk-logo">LENOVOX</div>
-        <div class="sk-rings"><div></div><div></div><div></div></div>
-      </div>
-      <iframe src="meetup.html" onload="hideLoader('sk-meetup')" loading="lazy"></iframe>
+      <div class="sk" id="sk-meetup"><div class="sk-logo">LENOVOX</div><div class="sk-rings"><div></div><div></div><div></div></div></div>
+      <iframe src="meetup.html" loading="lazy" onload="hideLoader('sk-meetup')" allow="camera;microphone"></iframe>
     </div>
 
-    <!-- SETTINGS -->
     <div id="sec-settings" class="section">
-      <div class="skeleton-loader" id="sk-settings">
-        <div class="sk-logo">LENOVOX</div>
-        <div class="sk-rings"><div></div><div></div><div></div></div>
-      </div>
-      <iframe src="lenovox-settings.html" onload="hideLoader('sk-settings')" loading="lazy"></iframe>
+      <div class="sk" id="sk-settings"><div class="sk-logo">LENOVOX</div><div class="sk-rings"><div></div><div></div><div></div></div></div>
+      <iframe src="lenovox-settings.html" loading="lazy" onload="hideLoader('sk-settings')"></iframe>
     </div>
 
-  </main>
+  </div>
 
   <nav class="nav">
-    <div class="nav-item active" data-sec="dashboard">
+    <div class="nav-item active" data-sec="dashboard" onclick="navigateTo('dashboard')">
       <div class="nav-icon-wrap"><i class="fas fa-house"></i></div>
       <span class="nav-label">Home</span>
     </div>
-    <div class="nav-item" data-sec="ai">
+    <div class="nav-item" data-sec="ai" onclick="navigateTo('ai')">
       <div class="nav-icon-wrap"><i class="fas fa-robot"></i></div>
       <span class="nav-label">AI</span>
     </div>
-    <div class="nav-item center-btn" data-sec="gaming">
+    <div class="nav-item center-btn" data-sec="gaming" onclick="navigateTo('gaming')">
       <div class="nav-icon-wrap"><i class="fas fa-gamepad"></i></div>
     </div>
-    <div class="nav-item" data-sec="meetup">
+    <div class="nav-item" data-sec="meetup" onclick="navigateTo('meetup')">
       <div class="nav-icon-wrap"><i class="fas fa-earth-africa"></i></div>
       <span class="nav-label">MeetUp</span>
     </div>
-    <div class="nav-item" data-sec="settings">
+    <div class="nav-item" data-sec="settings" onclick="navigateTo('settings')">
       <div class="nav-icon-wrap"><i class="fas fa-sliders"></i></div>
       <span class="nav-label">More</span>
     </div>
@@ -155,50 +121,65 @@ import { watchAuth } from './auth.js';
 const guard = document.getElementById('authGuard');
 const shell = document.getElementById('appShell');
 
-// AUTH GUARD
+// AUTH
 watchAuth(user => {
   if (!user) { window.location.replace('login.html'); return; }
   setTimeout(() => {
     guard.style.opacity = '0';
-    setTimeout(() => { guard.style.display = 'none'; shell.style.visibility = 'visible'; }, 480);
-  }, 500);
+    setTimeout(() => { guard.style.display = 'none'; shell.style.visibility = 'visible'; }, 450);
+  }, 350);
 });
 
-// NAVIGATION
-const navItems = document.querySelectorAll('.nav-item');
-const sections  = document.querySelectorAll('.section');
+// HIDE SKELETON — called by iframe onload
+window.hideLoader = id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('done');
+};
 
-function propagateTheme() {
+// THEME — pushes data-theme into every iframe doc
+function pushTheme() {
   const t = localStorage.getItem('lenovox_theme') || 'dark';
-  const attr = t === 'dark' ? '' : t === 'light' ? 'light' : 'dim';
-  document.documentElement.setAttribute('data-theme', attr);
+  const attr = t === 'light' ? 'light' : t === 'dim' ? 'dim' : '';
   document.querySelectorAll('iframe').forEach(f => {
     try { f.contentDocument?.documentElement?.setAttribute('data-theme', attr); } catch {}
   });
 }
+window.addEventListener('storage', e => { if (e.key === 'lenovox_theme') pushTheme(); });
 
-window.addEventListener('storage', e => { if (e.key === 'lenovox_theme') propagateTheme(); });
-propagateTheme();
+// NAVIGATION
+window.navigateTo = name => {
+  document.querySelectorAll('.nav-item').forEach(n =>
+    n.classList.toggle('active', n.dataset.sec === name)
+  );
+  document.querySelectorAll('.section').forEach(s => {
+    const hit = s.id === 'sec-' + name;
+    if (hit) {
+      s.style.display = 'block';
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        s.classList.add('active');
+      }));
+    } else {
+      s.classList.remove('active');
+      setTimeout(() => { if (!s.classList.contains('active')) s.style.display = 'none'; }, 220);
+    }
+  });
+  pushTheme();
+  if (navigator.vibrate) navigator.vibrate(8);
+};
 
-function navigateTo(name) {
-  navItems.forEach(n => n.classList.toggle('active', n.dataset.sec === name));
-  sections.forEach(s => s.classList.toggle('active', s.id === 'sec-' + name));
-  if (navigator.vibrate) navigator.vibrate(10);
-  propagateTheme();
-}
-navItems.forEach(item => {
-  item.addEventListener('click', () => { if (item.dataset.sec) navigateTo(item.dataset.sec); });
-});
+// Expose to iframes so they can call window.parent.navigateTo('ai')
+// Already set on window by the declaration above
 
-// Expose to iframes: window.parent.navigateTo('gaming')
-window.navigateTo = navigateTo;
+// Fix height on resize / orientation change
+const fixH = () => { shell.style.height = window.innerHeight + 'px'; };
+window.addEventListener('resize', fixH);
+window.addEventListener('orientationchange', () => setTimeout(fixH, 300));
+fixH();
 
-// VIEWPORT FIX
-const fix = () => { shell.style.height = window.innerHeight + 'px'; };
-window.addEventListener('resize', fix); fix();
-</script>
-<script>
-function hideLoader(id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
+// Ensure dashboard section starts correct
+const dash = document.getElementById('sec-dashboard');
+dash.style.display = 'block';
 </script>
 </body>
 </html>
