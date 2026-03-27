@@ -106,19 +106,13 @@ iframe{width:100%;height:100%;border:none;display:block;background:var(--bg)}
       <iframe src="gaming-section.html" onload="hideLoader('sk-gaming')" loading="lazy"></iframe>
     </div>
 
-    <!-- MEETUP COMING SOON -->
+    <!-- MEETUP -->
     <div id="sec-meetup" class="section">
-      <div class="meetup-icon-wrap"><i class="fas fa-earth-africa"></i></div>
-      <div class="meetup-title">MeetUp</div>
-      <div class="meetup-sub">The Lenovox global student community launches very soon. Get ready.</div>
-      <div class="meetup-feats">
-        <div class="mf"><i class="fas fa-users"></i> Connect with students worldwide</div>
-        <div class="mf"><i class="fas fa-comments"></i> Global & country chat rooms</div>
-        <div class="mf"><i class="fas fa-people-group"></i> Team quizzes & study groups</div>
-        <div class="mf"><i class="fas fa-shield-halved"></i> Safe, moderated community</div>
-        <div class="mf"><i class="fas fa-coins"></i> Earn LNX from social activity</div>
+      <div class="skeleton-loader" id="sk-meetup">
+        <div class="sk-logo">LENOVOX</div>
+        <div class="sk-rings"><div></div><div></div><div></div></div>
       </div>
-      <div class="meetup-badge"><i class="fas fa-clock"></i> Coming Soon — Stay Tuned</div>
+      <iframe src="meetup.html" onload="hideLoader('sk-meetup')" loading="lazy"></iframe>
     </div>
 
     <!-- SETTINGS -->
@@ -174,10 +168,23 @@ watchAuth(user => {
 const navItems = document.querySelectorAll('.nav-item');
 const sections  = document.querySelectorAll('.section');
 
+function propagateTheme() {
+  const t = localStorage.getItem('lenovox_theme') || 'dark';
+  const attr = t === 'dark' ? '' : t === 'light' ? 'light' : 'dim';
+  document.documentElement.setAttribute('data-theme', attr);
+  document.querySelectorAll('iframe').forEach(f => {
+    try { f.contentDocument?.documentElement?.setAttribute('data-theme', attr); } catch {}
+  });
+}
+
+window.addEventListener('storage', e => { if (e.key === 'lenovox_theme') propagateTheme(); });
+propagateTheme();
+
 function navigateTo(name) {
   navItems.forEach(n => n.classList.toggle('active', n.dataset.sec === name));
   sections.forEach(s => s.classList.toggle('active', s.id === 'sec-' + name));
   if (navigator.vibrate) navigator.vibrate(10);
+  propagateTheme();
 }
 navItems.forEach(item => {
   item.addEventListener('click', () => { if (item.dataset.sec) navigateTo(item.dataset.sec); });

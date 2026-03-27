@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lenovox MeetUp — Student Community</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03030b;--card:rgba(11,11,30,.94);--card2:rgba(16,16,42,.97);
+  --blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--orange:#ff9500;
+  --purple:#9d50bb;--pink:#ff3d70;--red:#ef4444;
+  --border:rgba(255,255,255,0.07);--text:#e8eaf6;--muted:#8892a4;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow-x:hidden;padding-bottom:88px}
+
+.bg-nebula{position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(circle at 15% 20%,rgba(88,86,214,.2) 0%,transparent 50%),
+             radial-gradient(circle at 85% 75%,rgba(175,82,222,.15) 0%,transparent 50%)}
+
+.page{max-width:540px;margin:0 auto;padding:0 14px}
+
+/* ── HEADER ── */
+.mu-header{position:sticky;top:0;z-index:100;background:rgba(3,3,11,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 14px}
+.mu-header-inner{max-width:540px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.mu-logo{font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;background:linear-gradient(90deg,#fff,#af52de);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:7px}
+.mu-logo-dot{width:8px;height:8px;border-radius:50%;background:#af52de;box-shadow:0 0 10px #af52de;animation:ldot 2s ease-in-out infinite;flex-shrink:0}
+@keyframes ldot{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+.mu-logo-sub{font-size:.65rem;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:700;margin-left:auto;display:flex;align-items:center;gap:5px}
+.mu-logo-sub i{font-size:.6rem}
+.beta-pill{background:rgba(175,82,222,.15);border:1px solid rgba(175,82,222,.3);color:#c084fc;padding:2px 9px;border-radius:999px;font-size:.65rem;font-weight:800;letter-spacing:.3px}
+.online-count{display:flex;align-items:center;gap:4px;font-size:.68rem;color:var(--green);font-weight:700}
+.online-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:ldot 1.5s ease-in-out infinite}
+
+/* ── TABS ── */
+.mu-tabs{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--border);padding:0 14px;background:rgba(3,3,11,.85);-webkit-overflow-scrolling:touch;scrollbar-width:none;position:sticky;top:60px;z-index:99;backdrop-filter:blur(20px)}
+.mu-tabs::-webkit-scrollbar{display:none}
+.mu-tab{flex-shrink:0;padding:12px 16px;border:none;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:.25s;display:flex;align-items:center;gap:6px;position:relative;white-space:nowrap}
+.mu-tab i{font-size:.78rem}
+.mu-tab.active{color:#fff}
+.mu-tab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#5856d6,#af52de);border-radius:2px 2px 0 0}
+
+/* ── COMPOSE ── */
+.compose-box{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px;margin:14px 0;transition:.3s}
+.compose-box:focus-within{border-color:rgba(175,82,222,.3)}
+.compose-top{display:flex;gap:10px;align-items:flex-start}
+.compose-avatar{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#5856d6,#af52de);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:.9rem;font-weight:900;color:#fff;flex-shrink:0}
+.compose-ta{flex:1;background:none;border:none;color:#fff;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;resize:none;outline:none;min-height:44px;line-height:1.55;padding-top:6px}
+.compose-ta::placeholder{color:rgba(136,146,164,.45)}
+.compose-bottom{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.compose-tool{width:32px;height:32px;border-radius:9px;background:none;border:1px solid var(--border);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.8rem;transition:.25s}
+.compose-tool:hover{border-color:rgba(175,82,222,.3);color:#af52de}
+.compose-post-btn{margin-left:auto;padding:8px 18px;border:none;border-radius:10px;background:linear-gradient(135deg,#5856d6,#af52de);color:#fff;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.3s;box-shadow:0 5px 14px rgba(88,86,214,.28)}
+.compose-post-btn i{font-size:.76rem}
+.compose-post-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(88,86,214,.38)}
+.compose-post-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.char-count{font-size:.67rem;color:var(--muted);margin-left:4px}
+
+/* ── POST CARD ── */
+.post-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:12px;transition:.25s;animation:postIn .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes postIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.post-card:hover{border-color:rgba(175,82,222,.15)}
+.post-header{display:flex;align-items:center;gap:10px;padding:13px 14px 8px}
+.post-avatar{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:.9rem;font-weight:900;color:#fff;flex-shrink:0;font-size:.85rem}
+.post-user-info{flex:1;min-width:0}
+.post-username{font-size:.86rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px}
+.post-username i{font-size:.65rem}
+.post-meta{font-size:.68rem;color:var(--muted);margin-top:1px;display:flex;align-items:center;gap:6px}
+.post-meta i{font-size:.6rem}
+.verified-badge{color:var(--blue);font-size:.7rem}
+.country-flag{font-size:.75rem}
+.tier-badge{padding:1px 7px;border-radius:999px;font-size:.6rem;font-weight:800;letter-spacing:.3px}
+.tier-free{background:rgba(100,116,139,.12);border:1px solid rgba(100,116,139,.2);color:var(--muted)}
+.tier-standard{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.22);color:var(--green)}
+.tier-pro{background:rgba(157,80,187,.12);border:1px solid rgba(157,80,187,.22);color:#c084fc}
+.tier-elite{background:rgba(255,204,51,.12);border:1px solid rgba(255,204,51,.22);color:var(--gold)}
+.post-more{width:30px;height:30px;border-radius:8px;background:none;border:none;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.8rem;transition:.2s;flex-shrink:0}
+.post-more:hover{background:rgba(255,255,255,.06);color:#fff}
+.post-body{padding:0 14px 12px;font-size:.87rem;line-height:1.7;color:var(--text)}
+.post-body .hashtag{color:#af52de;font-weight:700;cursor:pointer}
+.post-body .hashtag:hover{text-decoration:underline}
+.post-img{width:100%;max-height:260px;object-fit:cover;display:block}
+.post-img-wrap{margin-bottom:10px;border-radius:12px;overflow:hidden;margin:0 14px 10px}
+.post-actions{display:flex;align-items:center;gap:0;padding:0 10px 10px;border-top:1px solid var(--border);margin:0 0;padding-top:10px}
+.post-act{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 0;border:none;background:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;border-radius:10px;transition:all .25s}
+.post-act i{font-size:.82rem;transition:.25s}
+.post-act:hover{background:rgba(255,255,255,.04);color:#fff}
+.post-act.liked{color:var(--pink)}
+.post-act.liked i{color:var(--pink)}
+.post-act-count{font-size:.72rem}
+
+/* STORY ROW */
+.stories-row{display:flex;gap:10px;overflow-x:auto;padding:14px 0 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.stories-row::-webkit-scrollbar{display:none}
+.story-item{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
+.story-avatar-wrap{position:relative}
+.story-ring{width:58px;height:58px;border-radius:50%;padding:2px;background:linear-gradient(135deg,#5856d6,#af52de,#ff3d70);display:flex;align-items:center;justify-content:center}
+.story-ring.seen{background:rgba(255,255,255,.1)}
+.story-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:.9rem;font-weight:900;color:#fff;border:2px solid var(--bg)}
+.story-name{font-size:.64rem;font-weight:700;color:var(--muted);max-width:60px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.story-plus{position:absolute;bottom:0;right:0;width:18px;height:18px;background:linear-gradient(135deg,#5856d6,#af52de);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg)}
+.story-plus i{font-size:.55rem;color:#fff}
+
+/* CHAT ROOMS */
+.rooms-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.room-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:13px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.25s}
+.room-card:hover{border-color:rgba(175,82,222,.25);transform:translateX(4px)}
+.room-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.room-info{flex:1;min-width:0}
+.room-name{font-size:.88rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px}
+.room-name i{font-size:.72rem}
+.room-last{font-size:.7rem;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.room-right{text-align:right;flex-shrink:0}
+.room-count{display:flex;align-items:center;gap:4px;font-size:.68rem;color:var(--green);font-weight:700;margin-bottom:3px}
+.room-count i{font-size:.6rem}
+.room-unread{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#5856d6,#af52de);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;color:#fff;margin-left:auto}
+
+/* COMING SOON BANNER */
+.coming-banner{background:linear-gradient(135deg,rgba(88,86,214,.12),rgba(175,82,222,.08));border:1px solid rgba(175,82,222,.2);border-radius:16px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.cb-icon{width:40px;height:40px;border-radius:12px;background:rgba(175,82,222,.15);border:1px solid rgba(175,82,222,.25);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.cb-icon i{color:#c084fc}
+.cb-body{flex:1}
+.cb-title{font-weight:800;font-size:.88rem;color:#fff;margin-bottom:2px}
+.cb-sub{font-size:.72rem;color:var(--muted)}
+.cb-badge{padding:3px 10px;border-radius:999px;background:rgba(175,82,222,.15);border:1px solid rgba(175,82,222,.28);color:#c084fc;font-size:.68rem;font-weight:800;white-space:nowrap}
+
+/* LEADERBOARD STRIP */
+.lb-strip{display:flex;gap:8px;overflow-x:auto;padding:6px 0 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.lb-strip::-webkit-scrollbar{display:none}
+.lb-card{flex-shrink:0;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:10px 12px;text-align:center;min-width:90px;cursor:pointer;transition:.25s}
+.lb-card:hover{border-color:rgba(175,82,222,.25);transform:translateY(-2px)}
+.lb-card.top1{border-color:rgba(255,204,51,.3);background:rgba(255,204,51,.06)}
+.lb-pos{font-family:'Orbitron',monospace;font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:4px}
+.lb-av{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:.78rem;font-weight:900;color:#fff;margin:0 auto 5px}
+.lb-name{font-size:.68rem;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-lnx{font-size:.62rem;color:var(--gold);font-weight:700;display:flex;align-items:center;justify-content:center;gap:3px;margin-top:2px}
+.lb-lnx i{font-size:.55rem}
+
+/* TOAST */
+#toasts{position:fixed;top:14px;right:14px;z-index:99999;display:flex;flex-direction:column;gap:7px;max-width:280px}
+.toast{padding:10px 13px;border-radius:12px;font-size:.79rem;font-weight:700;display:flex;align-items:center;gap:8px;backdrop-filter:blur(16px);border:1px solid;animation:tIn .4s cubic-bezier(.34,1.56,.64,1)}
+.toast i{font-size:.88rem;flex-shrink:0}.toast span{flex:1}
+.toast.success{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.28);color:#6ee7b7}
+.toast.error{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.28);color:#fca5a5}
+.toast.info{background:rgba(175,82,222,.13);border-color:rgba(175,82,222,.25);color:#c084fc}
+.toast.removing{animation:tOut .3s ease forwards}
+@keyframes tIn{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tOut{to{opacity:0;transform:translateX(36px)}}
+.tc{margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;opacity:.5;padding:0 0 0 5px}
+
+/* TAB PANELS */
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* SEC LABEL */
+.sec-lbl{font-size:.7rem;font-weight:800;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:6px;margin-bottom:10px;padding-top:4px}
+.sec-lbl i{font-size:.68rem;color:#af52de}
+</style>
+</head>
+<body>
+<div class="bg-nebula"></div>
+<div id="toasts"></div>
+
+<!-- HEADER -->
+<div class="mu-header">
+  <div class="mu-header-inner">
+    <div class="mu-logo"><div class="mu-logo-dot"></div>MeetUp</div>
+    <span class="beta-pill">DEMO</span>
+    <div class="mu-logo-sub" style="margin-left:auto">
+      <div class="online-count"><div class="online-dot"></div> <span id="onlineCount">1,247</span> online</div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="mu-tabs">
+  <button class="mu-tab active" data-tab="feed"><i class="fas fa-house"></i> Feed</button>
+  <button class="mu-tab" data-tab="rooms"><i class="fas fa-comments"></i> Rooms</button>
+  <button class="mu-tab" data-tab="explore"><i class="fas fa-compass"></i> Explore</button>
+  <button class="mu-tab" data-tab="leaderboard"><i class="fas fa-trophy"></i> Rankings</button>
+</div>
+
+<div class="page">
+
+  <!-- ══ TAB: FEED ══ -->
+  <div class="tab-panel active" id="tab-feed">
+
+    <!-- COMING SOON NOTICE -->
+    <div style="margin-top:14px">
+      <div class="coming-banner">
+        <div class="cb-icon"><i class="fas fa-rocket"></i></div>
+        <div class="cb-body">
+          <div class="cb-title">MeetUp is launching soon</div>
+          <div class="cb-sub">This is a demo preview. Real-time posts, likes and comments are coming.</div>
+        </div>
+        <div class="cb-badge">DEMO</div>
+      </div>
+    </div>
+
+    <!-- STORIES -->
+    <div class="sec-lbl"><i class="fas fa-circle-play"></i> Stories</div>
+    <div class="stories-row" id="storiesRow"></div>
+
+    <!-- COMPOSE -->
+    <div class="compose-box">
+      <div class="compose-top">
+        <div class="compose-avatar" id="composeAvatar">?</div>
+        <textarea class="compose-ta" id="composeText" placeholder="Share what you're studying, a tip, or ask a question..." maxlength="280" oninput="updateCharCount()"></textarea>
+      </div>
+      <div class="compose-bottom">
+        <button class="compose-tool" onclick="toast('Image upload coming soon','info')"><i class="fas fa-image"></i></button>
+        <button class="compose-tool" onclick="toast('Polls coming soon','info')"><i class="fas fa-chart-bar"></i></button>
+        <button class="compose-tool" onclick="addHashtag()"><i class="fas fa-hashtag"></i></button>
+        <span class="char-count" id="charCount">0/280</span>
+        <button class="compose-post-btn" id="postBtn" onclick="createPost()">
+          <i class="fas fa-paper-plane"></i> Post
+        </button>
+      </div>
+    </div>
+
+    <!-- FEED -->
+    <div class="sec-lbl"><i class="fas fa-rss"></i> Latest Posts</div>
+    <div id="feedContainer"></div>
+
+  </div>
+
+  <!-- ══ TAB: ROOMS ══ -->
+  <div class="tab-panel" id="tab-rooms">
+    <div style="margin-top:14px"></div>
+    <div class="coming-banner">
+      <div class="cb-icon"><i class="fas fa-comments"></i></div>
+      <div class="cb-body">
+        <div class="cb-title">Real-time Chat Rooms</div>
+        <div class="cb-sub">Country rooms, subject rooms, and study groups with live Firestore messaging.</div>
+      </div>
+      <div class="cb-badge">COMING</div>
+    </div>
+    <div class="sec-lbl"><i class="fas fa-earth-africa"></i> Country Rooms</div>
+    <div class="rooms-list" id="countryRooms"></div>
+    <div class="sec-lbl" style="margin-top:16px"><i class="fas fa-book-open"></i> Subject Rooms</div>
+    <div class="rooms-list" id="subjectRooms"></div>
+  </div>
+
+  <!-- ══ TAB: EXPLORE ══ -->
+  <div class="tab-panel" id="tab-explore">
+    <div style="margin-top:14px"></div>
+    <div class="coming-banner">
+      <div class="cb-icon"><i class="fas fa-compass"></i></div>
+      <div class="cb-body">
+        <div class="cb-title">Explore Trending Topics</div>
+        <div class="cb-sub">Discover trending study content, popular hashtags, and top students.</div>
+      </div>
+      <div class="cb-badge">COMING</div>
+    </div>
+    <div class="sec-lbl"><i class="fas fa-fire"></i> Trending Hashtags</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px" id="trendingTags"></div>
+    <div class="sec-lbl"><i class="fas fa-users"></i> Suggested Students</div>
+    <div id="suggestedUsers"></div>
+  </div>
+
+  <!-- ══ TAB: LEADERBOARD ══ -->
+  <div class="tab-panel" id="tab-leaderboard">
+    <div style="margin-top:14px"></div>
+    <div class="sec-lbl"><i class="fas fa-trophy"></i> MeetUp Top Contributors</div>
+    <div class="lb-strip" id="lbStrip"></div>
+    <div class="sec-lbl" style="margin-top:6px"><i class="fas fa-list-ol"></i> Full Rankings</div>
+    <div id="lbFull"></div>
+  </div>
+
+</div><!-- /page -->
+
+<script type="module">
+import { watchAuth, db } from './auth.js';
+import { doc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+let _uid = null, _userName = 'User', _userInitial = 'U', _userPlan = 'free';
+
+// ── TOAST ─────────────────────────────────────────────────────
+window.toast = (msg, type='success') => {
+  const el = document.createElement('div'); el.className = `toast ${type}`;
+  const ic = {success:'fas fa-circle-check',error:'fas fa-circle-exclamation',info:'fas fa-circle-info'};
+  el.innerHTML = `<i class="${ic[type]||ic.info}"></i><span>${msg}</span><button class="tc" onclick="this.parentElement.classList.add('removing');setTimeout(()=>this.parentElement.remove(),300)"><i class="fas fa-xmark"></i></button>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>{if(el.parentElement){el.classList.add('removing');setTimeout(()=>el.remove(),300);}},4500);
+};
+
+// ── TABS ──────────────────────────────────────────────────────
+document.querySelectorAll('.mu-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mu-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── DEMO DATA ─────────────────────────────────────────────────
+const AVATARS_COLORS = [
+  ['#5856d6','#af52de'],['#00d2ff','#3a7bd5'],['#ff3d70','#ff2d55'],
+  ['#10b981','#059669'],['#ff9500','#ff6b00'],['#ffcc33','#ff9500']
+];
+const DEMO_POSTS = [
+  { uid:'u1', name:'Chukwuemeka O.', initial:'C', plan:'pro', country:'🇳🇬', verified:true, time:'2m ago', text:'Just used the Smart Tutor to learn about cellular respiration for my WAEC Biology exam. The AI explanation was 10x better than my textbook. Anyone else using it for exam prep? #WAEC #Biology #Lenovox', likes:47, comments:12, color:0 },
+  { uid:'u2', name:'Aminat Bello', initial:'A', plan:'standard', country:'🇳🇬', verified:false, time:'15m ago', text:'Climbed to #3 on the Nigeria leaderboard today! Started with 0 LNX a month ago. Consistent daily quiz + referrals got me here. Never stop grinding 🔥\n\n#LNX #Leaderboard #Grind', likes:83, comments:28, color:1 },
+  { uid:'u3', name:'David Emmanuel', initial:'D', plan:'free', country:'🇳🇬', verified:false, time:'1h ago', text:'Question for science students — which AI topic explanation helped you understand something you\'ve struggled with for years? For me it was integration by parts. The Smart Tutor actually made it click. #Math #AI', likes:31, comments:19, color:3 },
+  { uid:'u4', name:'Fatima Kabiru', initial:'F', plan:'elite', country:'🇳🇬', verified:true, time:'2h ago', text:'PSA: The referral system gives 600 LNX per friend. I referred 8 people last week = 4,800 LNX = access to premium AI for almost a month. Work smarter, not harder. Share the link! #Referral #LNX #Tips', likes:124, comments:45, color:2 },
+  { uid:'u5', name:'Tunde Adeleke', initial:'T', plan:'standard', country:'🇳🇬', verified:false, time:'3h ago', text:'Daily reminder: claim your LNX every 24 hours. Free users get 300 LNX daily. Do not waste it. That\'s 9,000 LNX per month just for logging in. 💰 #DailyClaim #LenovoxTips', likes:67, comments:8, color:4 },
+  { uid:'u6', name:'Blessing Nwosu', initial:'B', plan:'starter', country:'🇳🇬', verified:false, time:'5h ago', text:'The quiz system is addictive. I have answered 340 questions this week without realising it. Turns out gamifying studying actually works. Who would have thought? #SmartQuiz #StudyTips', likes:44, comments:16, color:5 },
+];
+const DEMO_STORIES = [
+  { name:'You', initial:_userInitial, color:1, self:true },
+  { name:'Chukwuemeka', initial:'C', color:0 },
+  { name:'Aminat', initial:'A', color:1 },
+  { name:'David', initial:'D', color:3 },
+  { name:'Fatima', initial:'F', color:2 },
+  { name:'Tunde', initial:'T', color:4 },
+  { name:'Blessing', initial:'B', color:5 },
+];
+const COUNTRY_ROOMS = [
+  { flag:'🇳🇬', name:'Nigeria Room', sub:'General study & discussion', online:847, unread:3, color:'rgba(0,210,255,.1)', ic:'fas fa-comments', icColor:'var(--blue)' },
+  { flag:'🇬🇭', name:'Ghana Room', sub:'Ghanaian students connect here', online:234, unread:0, color:'rgba(16,185,129,.1)', ic:'fas fa-comments', icColor:'var(--green)' },
+  { flag:'🇿🇦', name:'South Africa Room', sub:'SA students & study groups', online:312, unread:1, color:'rgba(255,61,112,.1)', ic:'fas fa-comments', icColor:'var(--pink)' },
+  { flag:'🌍', name:'Pan-Africa Room', sub:'Connect across the continent', online:1203, unread:5, color:'rgba(157,80,187,.1)', ic:'fas fa-earth-africa', icColor:'#c084fc' },
+];
+const SUBJECT_ROOMS = [
+  { icon:'fas fa-flask', name:'Science & Biology', sub:'WAEC, JAMB science discussions', online:423, color:'rgba(16,185,129,.1)', icColor:'var(--green)' },
+  { icon:'fas fa-calculator', name:'Mathematics', sub:'Algebra, calculus, statistics help', online:389, color:'rgba(0,210,255,.1)', icColor:'var(--blue)' },
+  { icon:'fas fa-landmark', name:'Social Studies', sub:'Government, Economics, History', online:178, color:'rgba(255,149,0,.1)', icColor:'var(--orange)' },
+  { icon:'fas fa-laptop-code', name:'Tech & Coding', sub:'Programming, web dev, AI', online:567, color:'rgba(157,80,187,.1)', icColor:'#c084fc' },
+];
+const TRENDING_TAGS = ['#WAEC2025','#Biology','#Mathematics','#JAMB','#LNX','#StudyTips','#AI','#SmartTutor','#Nigeria','#Referral'];
+const LB_DEMO = [
+  { name:'Fatima K.', initial:'F', color:2, lnx:8420, plan:'elite', country:'🇳🇬' },
+  { name:'Aminat B.', initial:'A', color:1, lnx:7130, plan:'pro', country:'🇳🇬' },
+  { name:'Tunde A.', initial:'T', color:4, lnx:5890, plan:'standard', country:'🇳🇬' },
+  { name:'David E.', initial:'D', color:3, lnx:4210, plan:'standard', country:'🇳🇬' },
+  { name:'Chukwuemeka', initial:'C', color:0, lnx:3760, plan:'pro', country:'🇳🇬' },
+  { name:'Blessing N.', initial:'B', color:5, lnx:2890, plan:'starter', country:'🇳🇬' },
+];
+const SUGGESTED = [
+  { name:'Chukwuemeka O.', initial:'C', color:0, plan:'pro', bio:'SS3 · Biology & Chemistry · Lagos', country:'🇳🇬' },
+  { name:'Aminat Bello', initial:'A', color:1, plan:'standard', bio:'200L · Computer Science · Abuja', country:'🇳🇬' },
+  { name:'David Emmanuel', initial:'D', color:3, plan:'free', bio:'JAMB Candidate · Math & Physics', country:'🇳🇬' },
+];
+
+// ── LOCAL POST STORE ──────────────────────────────────────────
+let localPosts = [...DEMO_POSTS];
+let likedPosts = new Set();
+
+// ── RENDER ────────────────────────────────────────────────────
+function gradient(i){ const [a,b]=AVATARS_COLORS[i%AVATARS_COLORS.length]; return `linear-gradient(135deg,${a},${b})`; }
+function tierClass(plan){ return {free:'tier-free',starter:'tier-free',standard:'tier-standard',pro:'tier-pro',elite:'tier-elite'}[plan]||'tier-free'; }
+function tierLabel(plan){ return {free:'Free',starter:'Starter',standard:'Standard',pro:'Pro',elite:'Elite ⭐'}[plan]||'Free'; }
+
+function renderStories(){
+  const container = document.getElementById('storiesRow');
+  DEMO_STORIES.forEach((s,i) => {
+    const el = document.createElement('div'); el.className = 'story-item';
+    el.innerHTML = `
+      <div class="story-avatar-wrap">
+        <div class="story-ring${i>0?'':' seen'}">
+          <div class="story-avatar" style="background:${gradient(s.color)}">${i===0?(_userInitial||'?'):s.initial}</div>
+        </div>
+        ${i===0?`<div class="story-plus"><i class="fas fa-plus"></i></div>`:''}
+      </div>
+      <div class="story-name">${i===0?'Your Story':s.name}</div>`;
+    el.onclick = () => toast(i===0?'Story creation coming soon':'Stories coming soon — demo mode','info');
+    container.appendChild(el);
+  });
+}
+
+function renderPosts(posts){
+  const container = document.getElementById('feedContainer');
+  container.innerHTML = '';
+  posts.forEach((p,idx) => {
+    const el = document.createElement('div'); el.className = 'post-card'; el.id = `post-${p.uid}-${idx}`;
+    const liked = likedPosts.has(`${p.uid}-${idx}`);
+    el.innerHTML = `
+      <div class="post-header">
+        <div class="post-avatar" style="background:${gradient(p.color)}">${p.initial}</div>
+        <div class="post-user-info">
+          <div class="post-username">
+            ${p.name}
+            ${p.verified?`<i class="fas fa-circle-check verified-badge"></i>`:''}
+            <span class="country-flag">${p.country}</span>
+            <span class="tier-badge ${tierClass(p.plan)}">${tierLabel(p.plan)}</span>
+          </div>
+          <div class="post-meta"><i class="fas fa-clock"></i>${p.time}</div>
+        </div>
+        <button class="post-more" onclick="toast('Options coming soon','info')"><i class="fas fa-ellipsis"></i></button>
+      </div>
+      <div class="post-body">${formatPost(p.text)}</div>
+      <div class="post-actions">
+        <button class="post-act ${liked?'liked':''}" onclick="toggleLike('${p.uid}',${idx},this)">
+          <i class="${liked?'fas':'far'} fa-heart"></i>
+          <span class="post-act-count">${p.likes+(liked?0:0)}</span>
+        </button>
+        <button class="post-act" onclick="toast('Comments launching in full release','info')">
+          <i class="far fa-comment"></i>
+          <span class="post-act-count">${p.comments}</span>
+        </button>
+        <button class="post-act" onclick="sharePost('${encodeURIComponent(p.text)}')">
+          <i class="fas fa-share-nodes"></i>
+        </button>
+        <button class="post-act" onclick="toast('Bookmarks coming soon','info')">
+          <i class="far fa-bookmark"></i>
+        </button>
+      </div>`;
+    container.appendChild(el);
+  });
+}
+
+function formatPost(text){
+  return text
+    .replace(/\n/g,'<br>')
+    .replace(/#(\w+)/g,'<span class="hashtag">#$1</span>');
+}
+
+window.toggleLike = (uid, idx, btn) => {
+  const key = `${uid}-${idx}`;
+  const post = localPosts[idx];
+  if(likedPosts.has(key)){
+    likedPosts.delete(key);
+    post.likes--;
+    btn.classList.remove('liked');
+    btn.querySelector('i').className = 'far fa-heart';
+  } else {
+    likedPosts.add(key);
+    post.likes++;
+    btn.classList.add('liked');
+    btn.querySelector('i').className = 'fas fa-heart';
+  }
+  btn.querySelector('.post-act-count').textContent = post.likes;
+};
+
+window.sharePost = enc => {
+  const text = decodeURIComponent(enc);
+  if(navigator.share) navigator.share({title:'Lenovox MeetUp',text:text.slice(0,100)+'...',url:location.href});
+  else { navigator.clipboard.writeText(text); toast('Post copied!','info'); }
+};
+
+function renderRooms(){
+  const countryEl = document.getElementById('countryRooms');
+  COUNTRY_ROOMS.forEach(r => {
+    const el = document.createElement('div'); el.className = 'room-card';
+    el.innerHTML = `
+      <div class="room-icon" style="background:${r.color};border:1px solid rgba(255,255,255,.08)"><i class="${r.ic}" style="color:${r.icColor}"></i></div>
+      <div class="room-info">
+        <div class="room-name">${r.flag} ${r.name}</div>
+        <div class="room-last">${r.sub}</div>
+      </div>
+      <div class="room-right">
+        <div class="room-count"><div style="width:5px;height:5px;border-radius:50%;background:var(--green)"></div>${r.online.toLocaleString()}</div>
+        ${r.unread?`<div class="room-unread">${r.unread}</div>`:''}
+      </div>`;
+    el.onclick = () => toast('Live chat rooms launching in full release!','info');
+    countryEl.appendChild(el);
+  });
+  const subjectEl = document.getElementById('subjectRooms');
+  SUBJECT_ROOMS.forEach(r => {
+    const el = document.createElement('div'); el.className = 'room-card';
+    el.innerHTML = `
+      <div class="room-icon" style="background:${r.color};border:1px solid rgba(255,255,255,.08)"><i class="${r.icon}" style="color:${r.icColor}"></i></div>
+      <div class="room-info">
+        <div class="room-name">${r.name}</div>
+        <div class="room-last">${r.sub}</div>
+      </div>
+      <div class="room-right">
+        <div class="room-count"><div style="width:5px;height:5px;border-radius:50%;background:var(--green)"></div>${r.online.toLocaleString()}</div>
+      </div>`;
+    el.onclick = () => toast('Live chat rooms launching in full release!','info');
+    subjectEl.appendChild(el);
+  });
+}
+
+function renderExplore(){
+  const tagsEl = document.getElementById('trendingTags');
+  TRENDING_TAGS.forEach(t => {
+    const el = document.createElement('div');
+    el.style.cssText = 'background:rgba(175,82,222,.1);border:1px solid rgba(175,82,222,.22);border-radius:999px;padding:6px 14px;font-size:.78rem;font-weight:700;color:#c084fc;cursor:pointer;transition:.25s';
+    el.textContent = t;
+    el.onclick = () => toast(`Trending: ${t}  — Full explore coming soon`,'info');
+    el.onmouseenter = () => el.style.background='rgba(175,82,222,.2)';
+    el.onmouseleave = () => el.style.background='rgba(175,82,222,.1)';
+    tagsEl.appendChild(el);
+  });
+  const sugEl = document.getElementById('suggestedUsers');
+  SUGGESTED.forEach(u => {
+    const el = document.createElement('div');
+    el.style.cssText = 'display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:15px;padding:12px 14px;margin-bottom:9px;cursor:pointer;transition:.25s';
+    el.innerHTML = `
+      <div style="width:42px;height:42px;border-radius:13px;background:${gradient(u.color)};display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:.9rem;font-weight:900;color:#fff;flex-shrink:0">${u.initial}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.86rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:5px">${u.name} <span style="font-size:.65rem">${u.country}</span></div>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:1px">${u.bio}</div>
+      </div>
+      <button style="padding:7px 13px;border:none;border-radius:9px;background:rgba(175,82,222,.15);border:1px solid rgba(175,82,222,.25);color:#c084fc;font-family:'Nunito',sans-serif;font-size:.74rem;font-weight:800;cursor:pointer" onclick="event.stopPropagation();toast('Follow feature coming soon','info')"><i class="fas fa-user-plus" style="margin-right:5px"></i>Follow</button>`;
+    sugEl.appendChild(el);
+  });
+}
+
+function renderLeaderboard(){
+  const strip = document.getElementById('lbStrip');
+  const full  = document.getElementById('lbFull');
+  LB_DEMO.forEach((u,i) => {
+    const el = document.createElement('div');
+    el.className = `lb-card${i===0?' top1':''}`;
+    el.innerHTML = `
+      <div class="lb-pos">${i===0?'👑':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</div>
+      <div class="lb-av" style="background:${gradient(u.color)}">${u.initial}</div>
+      <div class="lb-name">${u.name.split(' ')[0]}</div>
+      <div class="lb-lnx"><i class="fas fa-coins"></i>${u.lnx.toLocaleString()}</div>`;
+    strip.appendChild(el);
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px 14px;margin-bottom:8px';
+    if(i===0) row.style.borderColor='rgba(255,204,51,.28)';
+    row.innerHTML = `
+      <div style="font-family:'Orbitron',monospace;font-size:.78rem;font-weight:700;color:var(--muted);min-width:28px;text-align:center">${i===0?'👑':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</div>
+      <div style="width:38px;height:38px;border-radius:11px;background:${gradient(u.color)};display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:.82rem;font-weight:900;color:#fff;flex-shrink:0">${u.initial}</div>
+      <div style="flex:1">
+        <div style="font-size:.85rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:5px">${u.name} <span>${u.country}</span></div>
+        <div style="font-size:.68rem;color:var(--muted);margin-top:1px">${tierLabel(u.plan)}</div>
+      </div>
+      <div style="font-family:'Orbitron',monospace;font-size:.82rem;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:4px"><i class="fas fa-coins" style="font-size:.72rem"></i>${u.lnx.toLocaleString()}</div>`;
+    full.appendChild(row);
+  });
+}
+
+// ── COMPOSE ───────────────────────────────────────────────────
+window.updateCharCount = () => {
+  const len = document.getElementById('composeText').value.length;
+  document.getElementById('charCount').textContent = `${len}/280`;
+};
+window.addHashtag = () => {
+  const ta = document.getElementById('composeText');
+  ta.value += ' #';ta.focus();window.updateCharCount();
+};
+window.createPost = () => {
+  const text = document.getElementById('composeText').value.trim();
+  if(!text){ toast('Write something first!','error'); return; }
+  const newPost = {
+    uid: _uid||'me', name: _userName, initial: _userInitial, plan: _userPlan,
+    country:'🇳🇬', verified:false, time:'Just now', text, likes:0, comments:0, color:1
+  };
+  localPosts.unshift(newPost);
+  document.getElementById('composeText').value = '';
+  window.updateCharCount();
+  renderPosts(localPosts);
+  toast('Posted! (Demo — not saved to database)','success');
+};
+
+// Animated online count
+setInterval(() => {
+  const base = 1247;
+  document.getElementById('onlineCount').textContent = (base + Math.floor(Math.random()*30-15)).toLocaleString();
+}, 5000);
+
+// ── AUTH ──────────────────────────────────────────────────────
+watchAuth(async user => {
+  if(!user) return;
+  _uid = user.uid;
+  const name = user.displayName || user.email?.split('@')[0] || 'Student';
+  _userName = name;
+  _userInitial = name[0].toUpperCase();
+  document.getElementById('composeAvatar').textContent = _userInitial;
+  onSnapshot(doc(db,'users',_uid), snap => {
+    if(snap.exists()) _userPlan = snap.data().plan || 'free';
+  });
+});
+
+// ── INIT ──────────────────────────────────────────────────────
+renderStories();
+renderPosts(localPosts);
+renderRooms();
+renderExplore();
+renderLeaderboard();
+</script>
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lenovox — Referral & Earn</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03030b;--card:rgba(11,11,30,.93);--card2:rgba(16,16,42,.97);--blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--orange:#ff9500;--purple:#9d50bb;--pink:#ff3d70;--red:#ef4444;--border:rgba(255,255,255,0.07);--text:#e8eaf6;--muted:#8892a4}
+[data-theme="light"]{--bg:#f0f4f8;--card:rgba(255,255,255,.96);--card2:#fff;--border:rgba(0,0,0,.09);--text:#1e293b;--muted:#64748b}
+[data-theme="dim"]{--bg:#0f1117;--card:rgba(20,22,36,.95);--card2:rgba(26,28,44,.98);--border:rgba(255,255,255,.08);--text:#d4d8e8;--muted:#7a8499}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+body{overflow-x:hidden;padding-bottom:88px}
+.bg-glow{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(16,185,129,.06) 0%,transparent 70%),radial-gradient(ellipse 50% 35% at 80% 85%,rgba(0,210,255,.05) 0%,transparent 70%)}
+.page{max-width:540px;margin:0 auto;padding:0 14px}
+
+/* HEADER */
+.pg-hdr{display:flex;align-items:center;gap:11px;padding:18px 0 14px}
+.back-c{width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.22s;flex-shrink:0}
+.back-c i{color:var(--muted);font-size:.85rem}
+.back-c:hover{border-color:rgba(16,185,129,.3)} .back-c:hover i{color:var(--green)}
+.hdr-title{font-family:'Orbitron',monospace;font-size:1.05rem;font-weight:900;color:var(--text)}
+.hdr-sub{font-size:.7rem;color:var(--muted);margin-top:1px}
+
+/* HERO CARD */
+.hero-card{background:linear-gradient(135deg,rgba(16,185,129,.14),rgba(5,150,105,.08));border:1px solid rgba(16,185,129,.24);border-radius:20px;padding:20px 18px;margin-bottom:16px;position:relative;overflow:hidden}
+.hero-card::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:rgba(16,185,129,.07);pointer-events:none}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.hero-label{font-size:.68rem;color:rgba(255,255,255,.45);font-weight:700;text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.hero-label i{font-size:.65rem;color:var(--green)}
+.hero-code{font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;color:#fff;letter-spacing:2px}
+.hero-tap{font-size:.68rem;color:var(--green);margin-top:3px;cursor:pointer;display:flex;align-items:center;gap:4px}
+.hero-tap i{font-size:.62rem}
+.pending-badge{background:rgba(255,204,51,.15);border:1px solid rgba(255,204,51,.25);border-radius:11px;padding:10px 13px;text-align:center}
+.pb-lbl{font-size:.62rem;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.pb-val{font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;color:var(--gold)}
+.pb-sub{font-size:.62rem;color:var(--muted)}
+.hero-btns{display:flex;gap:9px}
+.hb{flex:1;padding:11px 0;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:all .28s;display:flex;align-items:center;justify-content:center;gap:6px}
+.hb i{font-size:.76rem}
+.hb-share{background:linear-gradient(135deg,var(--green),#059669);color:#fff;box-shadow:0 5px 15px rgba(16,185,129,.25)}
+.hb-share:hover{transform:translateY(-2px);box-shadow:0 9px 22px rgba(16,185,129,.35)}
+.hb-copy{background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text)}
+.hb-copy:hover{border-color:rgba(16,185,129,.3);color:var(--green)}
+
+/* HOW IT WORKS */
+.how-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:18px}
+.how-card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:14px 10px;text-align:center}
+.how-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:.95rem;margin:0 auto 9px}
+.how-lnx{font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;color:var(--gold);margin-bottom:2px}
+.how-lbl{font-size:.7rem;font-weight:700;color:var(--text)}
+.how-sub{font-size:.62rem;color:var(--muted);margin-top:2px;line-height:1.4}
+
+/* SEC HEADER */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.sec-lbl{font-size:.7rem;font-weight:800;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.9px;display:flex;align-items:center;gap:5px}
+[data-theme="light"] .sec-lbl{color:rgba(0,0,0,.35)}
+.sec-lbl i{font-size:.67rem;color:var(--blue)}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:18px}
+.stat-c{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 10px;text-align:center}
+.stat-val{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:900;color:var(--text);display:block;margin-bottom:2px}
+.stat-lbl{font-size:.62rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+
+/* REFERRAL LIST */
+.ref-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.ref-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:.22s;position:relative;overflow:hidden}
+.ref-item::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.ref-item.completed::after{background:var(--green)}
+.ref-item.pending::after{background:var(--gold)}
+.ref-item.expired::after{background:var(--red)}
+.ref-item:hover{background:var(--card2)}
+.ref-av{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:.95rem;font-weight:900;color:#fff;flex-shrink:0}
+.ref-info{flex:1;min-width:0}
+.ref-name{font-size:.83rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-meta{font-size:.68rem;color:var(--muted);margin-top:1px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ref-meta i{font-size:.6rem}
+.ref-right{text-align:right;flex-shrink:0}
+.ref-amount{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:700}
+.ref-amount.completed{color:var(--green)}
+.ref-amount.pending{color:var(--gold)}
+.ref-amount.expired{color:var(--red)}
+.ref-status{font-size:.65rem;font-weight:700;margin-top:2px;display:flex;align-items:center;justify-content:flex-end;gap:3px}
+.ref-status i{font-size:.6rem}
+.rs-completed{color:var(--green)}.rs-pending{color:var(--gold)}.rs-expired{color:var(--red)}
+.lvl-badge{padding:1px 7px;border-radius:999px;font-size:.6rem;font-weight:700}
+.lv1{background:rgba(16,185,129,.13);border:1px solid rgba(16,185,129,.22);color:var(--green)}
+.lv2{background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.18);color:var(--blue)}
+.lv3{background:rgba(157,80,187,.1);border:1px solid rgba(157,80,187,.18);color:#c084fc}
+
+/* RULES */
+.rules-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:18px}
+.rules-hdr{display:flex;align-items:center;gap:9px;padding:11px 13px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.15)}
+.rules-hdr i{font-size:.87rem;color:var(--orange)}
+.rules-title{font-family:'Orbitron',monospace;font-size:.78rem;font-weight:700;color:var(--text)}
+.rule-row{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-top:1px solid var(--border);font-size:.8rem;color:var(--text);line-height:1.55}
+.rule-row i{font-size:.75rem;margin-top:3px;flex-shrink:0}
+.rule-row.ok i{color:var(--green)}.rule-row.warn i{color:var(--orange)}.rule-row.deny i{color:var(--red)}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:32px 20px;color:var(--muted)}
+.empty-state i{font-size:2.2rem;margin-bottom:12px;display:block;color:rgba(16,185,129,.2)}
+.empty-state p{font-size:.83rem;font-weight:600;margin-bottom:6px}
+.empty-state span{font-size:.75rem}
+
+/* TOAST */
+#toasts{position:fixed;top:14px;right:14px;z-index:9999;display:flex;flex-direction:column;gap:7px;max-width:270px}
+.toast{padding:10px 12px;border-radius:11px;font-size:.77rem;font-weight:700;display:flex;align-items:center;gap:7px;backdrop-filter:blur(16px);border:1px solid;animation:tIn .35s cubic-bezier(.34,1.56,.64,1)}
+.toast i{font-size:.87rem;flex-shrink:0}.toast span{flex:1}
+.toast.success{background:rgba(16,185,129,.14);border-color:rgba(16,185,129,.26);color:#6ee7b7}
+.toast.error{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.26);color:#fca5a5}
+.toast.info{background:rgba(0,210,255,.11);border-color:rgba(0,210,255,.22);color:#a5f3ff}
+.toast.removing{animation:tOut .28s ease forwards}
+@keyframes tIn{from{opacity:0;transform:translateX(34px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tOut{to{opacity:0;transform:translateX(34px)}}
+.tc{margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;opacity:.48;padding:0 0 0 4px}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div id="toasts"></div>
+
+<div class="page">
+  <div class="pg-hdr">
+    <div class="back-c" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
+    <div>
+      <div class="hdr-title">Referral & Earn</div>
+      <div class="hdr-sub">Invite friends — earn LNX at 3 levels deep</div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero-card">
+    <div class="hero-top">
+      <div>
+        <div class="hero-label"><i class="fas fa-link"></i> Your Referral Code</div>
+        <div class="hero-code" id="heroCode">LNX-——</div>
+        <div class="hero-tap" onclick="copyLink()"><i class="fas fa-copy"></i> Tap to copy link</div>
+      </div>
+      <div class="pending-badge">
+        <div class="pb-lbl">Pending</div>
+        <div class="pb-val" id="pendingLNX">0</div>
+        <div class="pb-sub">LNX</div>
+      </div>
+    </div>
+    <div class="hero-btns">
+      <button class="hb hb-share" onclick="shareLink()"><i class="fas fa-share-nodes"></i> Share Link</button>
+      <button class="hb hb-copy" onclick="copyLink()"><i class="fas fa-copy"></i> Copy Code</button>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how-row">
+    <div class="how-card">
+      <div class="how-icon" style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.22)"><i class="fas fa-user-plus" style="color:var(--green)"></i></div>
+      <div class="how-lnx">600</div>
+      <div class="how-lbl">Level 1</div>
+      <div class="how-sub">Direct friend joins via your link</div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon" style="background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.2)"><i class="fas fa-users" style="color:var(--blue)"></i></div>
+      <div class="how-lnx">60</div>
+      <div class="how-lbl">Level 2</div>
+      <div class="how-sub">Your friend refers someone</div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon" style="background:rgba(157,80,187,.1);border:1px solid rgba(157,80,187,.2)"><i class="fas fa-network-wired" style="color:#c084fc"></i></div>
+      <div class="how-lnx">6</div>
+      <div class="how-lbl">Level 3</div>
+      <div class="how-sub">Their friend refers someone</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="sec-hd"><div class="sec-lbl"><i class="fas fa-chart-simple"></i> Your Stats</div></div>
+  <div class="stats-row">
+    <div class="stat-c"><span class="stat-val" id="statTotal">0</span><div class="stat-lbl"><i class="fas fa-users" style="color:var(--green)"></i> Total Refs</div></div>
+    <div class="stat-c"><span class="stat-val" id="statEarned">0</span><div class="stat-lbl"><i class="fas fa-coins" style="color:var(--gold)"></i> LNX Earned</div></div>
+    <div class="stat-c"><span class="stat-val" id="statActive">0</span><div class="stat-lbl"><i class="fas fa-circle-check" style="color:var(--blue)"></i> Active</div></div>
+  </div>
+
+  <!-- ACTIVATION NOTICE -->
+  <div style="background:rgba(255,204,51,.07);border:1px solid rgba(255,204,51,.2);border-radius:13px;padding:12px 14px;margin-bottom:18px;display:flex;gap:10px;align-items:flex-start">
+    <i class="fas fa-triangle-exclamation" style="color:var(--gold);font-size:.9rem;margin-top:2px;flex-shrink:0"></i>
+    <div style="font-size:.78rem;color:var(--text);line-height:1.6"><b style="color:var(--gold)">How rewards activate:</b> Referral LNX stays <i>pending</i> until your friend either watches <b>2 ads</b> (free plan) or <b>upgrades to a paid plan</b>. Pending rewards expire after <b>7 days</b> if not activated.</div>
+  </div>
+
+  <!-- REFERRAL LIST -->
+  <div class="sec-hd">
+    <div class="sec-lbl"><i class="fas fa-list"></i> Your Referrals</div>
+    <span style="font-size:.7rem;color:var(--muted);font-weight:600" id="refCountLabel">0 referrals</span>
+  </div>
+  <div class="ref-list" id="refList">
+    <div class="empty-state">
+      <i class="fas fa-user-plus"></i>
+      <p>No referrals yet</p>
+      <span>Share your link below to start earning LNX!</span>
+    </div>
+  </div>
+
+  <!-- RULES -->
+  <div class="rules-card">
+    <div class="rules-hdr"><i class="fas fa-shield-halved"></i><div class="rules-title">Referral Rules & Anti-Fraud</div></div>
+    <div class="rule-row ok"><i class="fas fa-check"></i>Share your unique link — earn 600 LNX when direct referral activates</div>
+    <div class="rule-row ok"><i class="fas fa-check"></i>Earn 60 LNX when Level 2 referral activates (your friend refers someone)</div>
+    <div class="rule-row ok"><i class="fas fa-check"></i>Earn 6 LNX when Level 3 referral activates</div>
+    <div class="rule-row warn"><i class="fas fa-circle-info"></i>Rewards are PENDING until referred user watches 2 ads or upgrades plan</div>
+    <div class="rule-row warn"><i class="fas fa-clock"></i>Pending rewards expire after 7 days if not activated — no exceptions</div>
+    <div class="rule-row deny"><i class="fas fa-xmark"></i>Creating fake accounts to farm referrals will result in permanent ban</div>
+    <div class="rule-row deny"><i class="fas fa-xmark"></i>Each device and IP can only be counted as one unique referral</div>
+    <div class="rule-row deny"><i class="fas fa-xmark"></i>Referral abuse is tracked automatically — violators lose all LNX balance</div>
+  </div>
+</div>
+
+<script type="module">
+import { watchAuth, db } from './auth.js';
+import { doc, getDoc, collection, query, where, onSnapshot, updateDoc, increment, serverTimestamp, addDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+let _uid=null, _refCode='', _bal=0;
+
+function applyTheme(){const t=localStorage.getItem('lenovox_theme')||'dark';document.documentElement.setAttribute('data-theme',t==='dark'?'':t==='light'?'light':'dim');}
+applyTheme();window.addEventListener('storage',applyTheme);
+
+function toast(m,t='success'){const el=document.createElement('div');el.className=`toast ${t}`;const ic={success:'fas fa-circle-check',error:'fas fa-circle-exclamation',info:'fas fa-circle-info'};el.innerHTML=`<i class="${ic[t]||ic.info}"></i><span>${m}</span><button class="tc" onclick="this.parentElement.classList.add('removing');setTimeout(()=>this.parentElement.remove(),280)"><i class="fas fa-xmark"></i></button>`;document.getElementById('toasts').appendChild(el);setTimeout(()=>{if(el.parentElement){el.classList.add('removing');setTimeout(()=>el.remove(),280);}},4500);}
+
+window.goBack=()=>{if(window.parent?.navigateTo)window.parent.navigateTo('dashboard');else history.back();};
+
+function refUrl(){return `${location.origin}/signup.html?ref=${_refCode}`;}
+
+window.copyLink=()=>{if(!_refCode)return;navigator.clipboard.writeText(refUrl()).then(()=>toast('Referral link copied!','success'));};
+
+window.shareLink=()=>{if(!_refCode)return;const url=refUrl();if(navigator.share)navigator.share({title:'Join Lenovox AI',text:`Join me on Lenovox AI and get 300 LNX coins free! Use my code: ${_refCode}`,url});else{navigator.clipboard.writeText(url).then(()=>toast('Link copied to clipboard!','success'));}};
+
+const GRADIENTS=[['#4A90E2','#357ABD'],['#6FCF97','#27AE60'],['#F2994A','#E67E22'],['#9B59B6','#8E44AD'],['#E74C3C','#C0392B'],['#1ABC9C','#16A085'],['#F39C12','#D68910']];
+function gradient(uid){const idx=(uid?.charCodeAt(0)||0)%GRADIENTS.length;const[a,b]=GRADIENTS[idx];return `linear-gradient(135deg,${a},${b})`;}
+
+function timeAgo(ms){if(!ms)return '';const d=Date.now()-ms;const m=Math.floor(d/60000);if(m<60)return `${m}m ago`;const h=Math.floor(m/60);if(h<24)return `${h}h ago`;return `${Math.floor(h/24)}d ago`;}
+
+function timeLeft(expiresMs){if(!expiresMs)return '';const d=expiresMs-Date.now();if(d<=0)return 'Expired';const h=Math.floor(d/3600000);if(h<1)return 'Expires soon';if(h<24)return `${h}h left`;return `${Math.floor(h/24)}d left`;}
+
+async function loadReferrals(){
+  const q=query(collection(db,'referrals'),where('referrerId','==',_uid));
+  onSnapshot(q,async snap=>{
+    const refs=snap.docs.map(d=>({id:d.id,...d.data()}));
+    refs.sort((a,b)=>(b.createdAt?.toMillis()||0)-(a.createdAt?.toMillis()||0));
+
+    const pending=refs.filter(r=>r.status==='pending');
+    const completed=refs.filter(r=>r.status==='completed');
+    const pendingLNX=pending.reduce((s,r)=>s+(r.reward||0),0);
+    const earnedLNX=completed.reduce((s,r)=>s+(r.reward||0),0);
+
+    document.getElementById('pendingLNX').textContent=pendingLNX.toLocaleString();
+    document.getElementById('statTotal').textContent=refs.length;
+    document.getElementById('statEarned').textContent=earnedLNX.toLocaleString();
+    document.getElementById('statActive').textContent=completed.length;
+    document.getElementById('refCountLabel').textContent=`${refs.length} referral${refs.length!==1?'s':''}`;
+
+    if(!refs.length){
+      document.getElementById('refList').innerHTML=`<div class="empty-state"><i class="fas fa-user-plus"></i><p>No referrals yet</p><span>Share your referral link to start earning!</span></div>`;
+      return;
+    }
+
+    // Load referred users' names
+    const userCache={};
+    for(const r of refs){
+      if(r.referredId&&!userCache[r.referredId]){
+        try{const us=await getDoc(doc(db,'users',r.referredId));userCache[r.referredId]=us.exists()?us.data().name||'User':'User';}
+        catch{userCache[r.referredId]='User';}
+      }
+    }
+
+    const lvlCls={1:'lv1',2:'lv2',3:'lv3'};
+    document.getElementById('refList').innerHTML=refs.map(r=>{
+      const name=userCache[r.referredId]||'User';
+      const status=r.status||'pending';
+      const expMs=r.expiresAt?.toMillis();
+      const creMs=r.createdAt?.toMillis();
+      return `
+        <div class="ref-item ${status}">
+          <div class="ref-av" style="background:${gradient(r.referredId)}">${name[0].toUpperCase()}</div>
+          <div class="ref-info">
+            <div class="ref-name">${name} <span class="lvl-badge ${lvlCls[r.level]||'lv1'}">L${r.level||1}</span></div>
+            <div class="ref-meta">
+              <span><i class="fas fa-clock"></i>${timeAgo(creMs)}</span>
+              ${status==='pending'?`<span style="color:var(--orange)"><i class="fas fa-hourglass-half"></i>${timeLeft(expMs)}</span>`:''}
+              ${status==='completed'?`<span style="color:var(--green)"><i class="fas fa-circle-check"></i>Activated</span>`:''}
+              ${status==='expired'?`<span style="color:var(--red)"><i class="fas fa-circle-xmark"></i>Expired</span>`:''}
+            </div>
+          </div>
+          <div class="ref-right">
+            <div class="ref-amount ${status}">+${r.reward||0} LNX</div>
+            <div class="ref-status ${`rs-${status}`}">
+              <i class="fas ${status==='completed'?'fa-circle-check':status==='expired'?'fa-circle-xmark':'fa-hourglass-half'}"></i>
+              ${status.charAt(0).toUpperCase()+status.slice(1)}
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  });
+}
+
+watchAuth(async user=>{
+  if(!user){window.location.replace('login.html');return;}
+  _uid=user.uid;
+  const snap=await getDoc(doc(db,'users',_uid));
+  if(snap.exists()){
+    _refCode=snap.data().referralCode||'LNX-——';
+    document.getElementById('heroCode').textContent=_refCode;
+  }
+  loadReferrals();
+});
+</script>
+</body>
+</html>
