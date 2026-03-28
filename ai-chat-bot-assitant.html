@@ -291,6 +291,7 @@ input[type=file]{display:none}
   <div class="tab-bar">
     <button class="tb active" data-tab="chat"><i class="fas fa-comments"></i> Chat</button>
     <button class="tb" data-tab="image"><i class="fas fa-image"></i> Vision</button>
+    <button class="tb" onclick="goImagine()"><i class="fas fa-wand-magic-sparkles"></i> Imagine</button>
     <button class="tb" data-tab="brain"><i class="fas fa-brain"></i> Brain Box</button>
     <button class="tb" data-tab="rules"><i class="fas fa-shield-halved"></i> AI Rules</button>
   </div>
@@ -449,7 +450,7 @@ input[type=file]{display:none}
           <div class="rule-item deny"><i class="fas fa-circle-exclamation"></i>First violation: warning and message blocked</div>
           <div class="rule-item deny"><i class="fas fa-circle-exclamation"></i>Repeated violations: temporary AI access suspension</div>
           <div class="rule-item deny"><i class="fas fa-circle-exclamation"></i>Severe violations (illegal content): permanent account ban</div>
-          <div class="rule-item warn"><i class="fas fa-envelope"></i>Report abuse: lenovoxai.care@gmail.com</div>
+          <div class="rule-item warn"><i class="fas fa-envelope"></i>Report abuse: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="82eee7ecedf4edfae3ebace1e3f0e7c2e5efe3ebeeace1edef">[email&#160;protected]</a></div>
         </div>
       </div>
 
@@ -458,7 +459,7 @@ input[type=file]{display:none}
 
 </div><!-- /shell -->
 
-<script type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
 import { watchAuth, db } from './auth.js';
 import { doc, onSnapshot, updateDoc, increment, serverTimestamp, addDoc, collection, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
@@ -505,6 +506,7 @@ function toast(msg,type='success'){
 
 // ── NAV ───────────────────────────────────────────────────────
 window.goBack=()=>{if(window.parent?.navigateTo)window.parent.navigateTo('dashboard');else history.back();};
+window.goImagine=()=>{window.location.href='ai-imagine.html';};
 window.clearChat=()=>{
   _hist=[];
   document.getElementById('msgs').innerHTML=`<div class="empty" id="emptyState"><div class="empty-orb"><i class="fas fa-robot"></i></div><div class="empty-title">Lenovox AI</div><div class="empty-sub">Chat cleared. Ask me anything.</div></div>`;
@@ -750,10 +752,4 @@ watchAuth(async user=>{
   const name=user.displayName||user.email?.split('@')[0]||'User';
   _init=name[0].toUpperCase();
   const snap=await getDoc(doc(db,'users',_uid));
-  if(snap.exists()){const p=snap.data().aiPrefs||{};if(p.model){_model=p.model;document.querySelectorAll('.mchip').forEach(c=>{c.classList.toggle('active',c.dataset.model===p.model);});document.getElementById('modelLabel').textContent=MODEL_INFO[p.model]?.label||'GPT-4o Mini · Fast';}}
-  onSnapshot(doc(db,'wallets',_uid),s=>{if(!s.exists())return;_bal=s.data().balance||0;document.getElementById('balDisplay').textContent=_bal.toLocaleString();});
-  loadBB();loadImgCount();
-});
-</script>
-</body>
-</html>
+  if(snap.exists()){const p=snap.data().aiPrefs||{};if(p.model){_model=p.model;document.querySelectorAll('.mchip').forEach(c=>{c.classList.toggle('active',c.dataset.model===p.model);});document.getElementById('modelLabel').textContent=MODEL_INFO[p.model]?.label||'GPT-4o Mi

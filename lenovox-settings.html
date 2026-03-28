@@ -367,7 +367,7 @@ body{overflow-x:hidden;padding-bottom:88px}
   <div class="panel" id="tab-support">
     <div class="sblock">
       <div class="sblock-title"><i class="fas fa-headset"></i> Contact & Help</div>
-      <div class="sr" onclick="window.open('mailto:lenovoxai.care@gmail.com')"><div class="sr-icon" style="background:rgba(0,210,255,.09);border:1px solid rgba(0,210,255,.17)"><i class="fas fa-envelope" style="color:var(--blue)"></i></div><div class="sr-body"><div class="sr-title">Email Support</div><div class="sr-sub">lenovoxai.care@gmail.com</div></div><div class="sr-right"><i class="fas fa-arrow-up-right-from-square" style="font-size:.68rem"></i></div></div>
+      <div class="sr" onclick="window.open('mailto:lenovoxai.care@gmail.com')"><div class="sr-icon" style="background:rgba(0,210,255,.09);border:1px solid rgba(0,210,255,.17)"><i class="fas fa-envelope" style="color:var(--blue)"></i></div><div class="sr-body"><div class="sr-title">Email Support</div><div class="sr-sub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a8c4cdc6c7dec7d0c9c186cbc9dacde8cfc5c9c1c486cbc7c5">[email&#160;protected]</a></div></div><div class="sr-right"><i class="fas fa-arrow-up-right-from-square" style="font-size:.68rem"></i></div></div>
       <div class="sr"><div class="sr-icon" style="background:rgba(16,185,129,.09);border:1px solid rgba(16,185,129,.17)"><i class="fas fa-book-open" style="color:var(--green)"></i></div><div class="sr-body"><div class="sr-title">FAQ & Help Centre</div><div class="sr-sub">Common questions answered</div></div><div class="sr-right"><i class="fas fa-chevron-right"></i></div></div>
     </div>
     <div class="sblock">
@@ -393,15 +393,15 @@ body{overflow-x:hidden;padding-bottom:88px}
 
 </div>
 
-<script type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
 import { watchAuth, logoutUser, db } from './auth.js';
 import { doc, getDoc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 let _uid=null, _profile={}, _prefs={};
 let _selectedModel='fast';
 
-// THEME
-const savedTheme=localStorage.getItem('lenovox_theme')||'dark';
+// THEME — default follows system preference
+const savedTheme=localStorage.getItem('lenovox_theme')||(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
 applyTheme(savedTheme);
 
 function applyTheme(t){
@@ -507,10 +507,4 @@ window.doLogout=async()=>{
 };
 
 // DELETE
-window.confirmDelete=()=>{if(confirm('Permanently delete your account? This cannot be undone.'))toast('Contact lenovoxai.care@gmail.com to delete your account.','info');};
-
-// AUTH
-watchAuth(user=>{if(!user){window.location.replace('login.html');return;}_uid=user.uid;loadProfile(user.uid);});
-</script>
-</body>
-</html>
+window.confirmDelete=()=>{if(confirm('Permanently delete your account? This cannot be

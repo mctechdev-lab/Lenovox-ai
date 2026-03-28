@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lenovox — Top Up LNX</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<style>
+:root{--bg:#03030b;--card:rgba(11,11,30,.93);--card2:rgba(16,16,42,.97);--blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--orange:#ff9500;--red:#ef4444;--border:rgba(255,255,255,0.07);--text:#e8eaf6;--muted:#8892a4}
+[data-theme="light"]{--bg:#f0f4f8;--card:rgba(255,255,255,.96);--card2:#fff;--border:rgba(0,0,0,.09);--text:#1e293b;--muted:#64748b}
+[data-theme="dim"]{--bg:#0f1117;--card:rgba(20,22,36,.95);--card2:rgba(26,28,44,.98);--border:rgba(255,255,255,.08);--text:#d4d8e8;--muted:#7a8499}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;-webkit-font-smoothing:antialiased;transition:background .3s;padding-bottom:80px}
+.bg-glow{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 60% 40% at 20% 15%,rgba(255,204,51,.06) 0%,transparent 65%),radial-gradient(ellipse 50% 35% at 80% 80%,rgba(0,210,255,.05) 0%,transparent 65%)}
+.page{max-width:520px;margin:0 auto;padding:0 14px}
+
+.pg-hdr{display:flex;align-items:center;gap:11px;padding:18px 0 14px}
+.back-c{width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.22s;flex-shrink:0}
+.back-c i{color:var(--muted);font-size:.85rem}
+.back-c:hover i{color:var(--gold)}
+.hdr-title{font-family:'Orbitron',monospace;font-size:1.05rem;font-weight:900;color:var(--text)}
+.hdr-sub{font-size:.7rem;color:var(--muted);margin-top:1px}
+
+/* BALANCE DISPLAY */
+.bal-strip{background:linear-gradient(135deg,rgba(255,204,51,.1),rgba(255,149,0,.07));border:1px solid rgba(255,204,51,.2);border-radius:18px;padding:18px;margin-bottom:18px;display:flex;align-items:center;gap:14px}
+.bal-icon{width:46px;height:46px;border-radius:13px;background:rgba(255,204,51,.15);border:1px solid rgba(255,204,51,.25);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.bal-icon i{color:var(--gold)}
+.bal-info{flex:1}
+.bal-lbl{font-size:.68rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.bal-amount{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;color:var(--gold);display:flex;align-items:baseline;gap:5px}
+.bal-amount small{font-size:.72rem;color:var(--muted);font-family:'Nunito',sans-serif}
+.bal-naira{font-size:.72rem;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:4px}
+.bal-naira i{font-size:.65rem;color:var(--gold)}
+
+/* PACKAGES */
+.sec-lbl{font-size:.7rem;font-weight:800;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.9px;display:flex;align-items:center;gap:5px;margin-bottom:11px}
+[data-theme="light"] .sec-lbl{color:rgba(0,0,0,.32)}
+.sec-lbl i{font-size:.67rem;color:var(--gold)}
+.packages{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.pkg{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:15px 13px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.pkg.selected{border-color:var(--gold);background:rgba(255,204,51,.07)}
+.pkg:hover{transform:translateY(-3px);border-color:rgba(255,204,51,.35)}
+.pkg-badge{position:absolute;top:8px;right:8px;padding:1px 7px;border-radius:5px;font-size:.58rem;font-weight:800}
+.pb-popular{background:rgba(255,61,112,.15);border:1px solid rgba(255,61,112,.25);color:#ff3d70}
+.pb-best{background:rgba(255,204,51,.15);border:1px solid rgba(255,204,51,.25);color:var(--gold)}
+.pkg-naira{font-size:.72rem;color:var(--muted);font-weight:700;margin-bottom:4px}
+.pkg-lnx{font-family:'Orbitron',monospace;font-size:1.15rem;font-weight:900;color:var(--text)}
+.pkg-lnx-unit{font-size:.7rem;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:700;margin-left:3px}
+.pkg-bonus{font-size:.67rem;color:var(--green);font-weight:700;margin-top:3px;display:flex;align-items:center;gap:3px}
+.pkg-bonus i{font-size:.6rem}
+.pkg-rate{font-size:.64rem;color:var(--muted);margin-top:2px}
+
+/* CUSTOM AMOUNT */
+.custom-block{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:18px}
+.custom-label{font-size:.78rem;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.custom-label i{color:var(--gold);font-size:.74rem}
+.custom-row{display:flex;gap:9px;align-items:center}
+.custom-inp{flex:1;padding:11px 13px;background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:11px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:700;outline:none;transition:.25s;-webkit-appearance:none}
+.custom-inp:focus{border-color:rgba(255,204,51,.45);box-shadow:0 0 0 3px rgba(255,204,51,.08)}
+.custom-inp::placeholder{color:rgba(136,146,164,.38);font-weight:600}
+.custom-receive{background:rgba(255,204,51,.07);border:1px solid rgba(255,204,51,.16);border-radius:9px;padding:9px 13px;font-size:.82rem;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:6px;margin-top:9px}
+.custom-receive i{font-size:.76rem}
+.custom-receive span{color:var(--text);font-size:.76rem;margin-left:auto;font-weight:600}
+
+/* CONFIRM BUTTON */
+.confirm-btn{width:100%;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;transition:all .28s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 7px 22px rgba(255,204,51,.28);margin-bottom:14px}
+.confirm-btn i{font-size:.9rem}
+.confirm-btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(255,204,51,.38)}
+.confirm-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* RULES */
+.rules-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 15px;margin-bottom:18px}
+.rules-title{font-size:.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.rules-title i{font-size:.68rem;color:var(--orange)}
+.rule-row{display:flex;align-items:flex-start;gap:8px;font-size:.76rem;color:var(--text);line-height:1.5;padding:5px 0;border-bottom:1px solid var(--border)}
+.rule-row:last-child{border-bottom:none}
+.rule-row i{font-size:.72rem;margin-top:3px;flex-shrink:0}
+.rule-row.ok i{color:var(--green)}
+.rule-row.warn i{color:var(--orange)}
+.rule-row.deny i{color:var(--red)}
+
+/* PAYMENT METHODS */
+.pm-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.pm-chip{display:flex;align-items:center;gap:5px;padding:6px 12px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;font-size:.73rem;font-weight:700;color:var(--muted)}
+.pm-chip i{font-size:.78rem}
+
+/* TOAST */
+#toasts{position:fixed;top:14px;right:14px;z-index:9999;display:flex;flex-direction:column;gap:6px;max-width:270px}
+.toast{padding:10px 12px;border-radius:11px;font-size:.77rem;font-weight:700;display:flex;align-items:center;gap:7px;backdrop-filter:blur(16px);border:1px solid;animation:tIn .32s cubic-bezier(.34,1.56,.64,1)}
+.toast i{font-size:.85rem;flex-shrink:0}.toast span{flex:1}
+.toast.success{background:rgba(16,185,129,.14);border-color:rgba(16,185,129,.26);color:#6ee7b7}
+.toast.error{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.26);color:#fca5a5}
+.toast.info{background:rgba(255,204,51,.11);border-color:rgba(255,204,51,.22);color:var(--gold)}
+.toast.removing{animation:tOut .25s ease forwards}
+@keyframes tIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tOut{to{opacity:0;transform:translateX(30px)}}
+.tc{margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;opacity:.46;padding:0 0 0 4px}
+.spinner{width:15px;height:15px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div id="toasts"></div>
+
+<div class="page">
+  <div class="pg-hdr">
+    <div class="back-c" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
+    <div>
+      <div class="hdr-title">Top Up LNX</div>
+      <div class="hdr-sub">Buy LNX coins with Naira</div>
+    </div>
+  </div>
+
+  <!-- BALANCE -->
+  <div class="bal-strip">
+    <div class="bal-icon"><i class="fas fa-coins"></i></div>
+    <div class="bal-info">
+      <div class="bal-lbl">Current Balance</div>
+      <div class="bal-amount"><span id="balDisplay">—</span><small>LNX</small></div>
+      <div class="bal-naira"><i class="fas fa-naira-sign"></i><span id="nairaDisplay">—</span></div>
+    </div>
+  </div>
+
+  <!-- PACKAGES -->
+  <div class="sec-lbl"><i class="fas fa-layer-group"></i> Choose a Package</div>
+  <div class="packages" id="packagesGrid"></div>
+
+  <!-- CUSTOM AMOUNT -->
+  <div class="custom-block">
+    <div class="custom-label"><i class="fas fa-sliders"></i> Custom Amount</div>
+    <div class="custom-row">
+      <input class="custom-inp" id="customInp" type="number" placeholder="Enter ₦ amount" min="100" max="500000" oninput="calcCustom()">
+    </div>
+    <div class="custom-receive" id="customReceive" style="display:none">
+      <i class="fas fa-coins"></i>
+      You will receive: <b id="customLNX">0 LNX</b>
+      <span id="customBonus"></span>
+    </div>
+  </div>
+
+  <!-- CONFIRM -->
+  <button class="confirm-btn" id="confirmBtn" onclick="doPayment()" disabled>
+    <i class="fas fa-lock"></i> Select a package to continue
+  </button>
+
+  <!-- PAYMENT METHODS -->
+  <div class="sec-lbl" style="margin-top:4px"><i class="fas fa-lock"></i> Secure Payment via Paystack</div>
+  <div class="pm-row">
+    <div class="pm-chip"><i class="fas fa-credit-card" style="color:var(--blue)"></i> Card</div>
+    <div class="pm-chip"><i class="fas fa-building-columns" style="color:var(--green)"></i> Bank Transfer</div>
+    <div class="pm-chip"><i class="fas fa-mobile" style="color:var(--orange)"></i> USSD</div>
+    <div class="pm-chip"><i class="fas fa-wallet" style="color:var(--gold)"></i> Mobile Money</div>
+  </div>
+
+  <!-- RULES -->
+  <div class="rules-card">
+    <div class="rules-title"><i class="fas fa-shield-halved"></i> Purchase Rules & Restrictions</div>
+    <div class="rule-row ok"><i class="fas fa-check"></i>LNX is credited to your wallet immediately after payment is confirmed</div>
+    <div class="rule-row ok"><i class="fas fa-check"></i>All transactions are secured by Paystack (PCI DSS Level 1)</div>
+    <div class="rule-row warn"><i class="fas fa-triangle-exclamation"></i>LNX purchases are non-refundable once credited to your account</div>
+    <div class="rule-row warn"><i class="fas fa-triangle-exclamation"></i>Maximum purchase: ₦500,000 per transaction</div>
+    <div class="rule-row deny"><i class="fas fa-xmark"></i>Do not attempt chargebacks — accounts with fraudulent chargebacks are permanently banned</div>
+    <div class="rule-row deny"><i class="fas fa-xmark"></i>LNX cannot be transferred to other users or converted back to cash</div>
+    <div class="rule-row deny"><i class="fas fa-xmark"></i>Purchasing LNX for resale or arbitrage is strictly prohibited</div>
+  </div>
+</div>
+
+<script type="module">
+import { watchAuth, db } from './auth.js';
+import { doc, onSnapshot, updateDoc, increment, serverTimestamp, addDoc, collection, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+let _uid=null,_email='',_bal=0,_selectedPkg=null;
+
+function applyTheme(){const t=localStorage.getItem('lenovox_theme')||'';document.documentElement.setAttribute('data-theme',t==='light'?'light':t==='dim'?'dim':'');}
+applyTheme();window.addEventListener('storage',applyTheme);
+
+function toast(m,t='success'){const el=document.createElement('div');el.className=`toast ${t}`;const ic={success:'fas fa-circle-check',error:'fas fa-circle-exclamation',info:'fas fa-circle-info'};el.innerHTML=`<i class="${ic[t]||ic.info}"></i><span>${m}</span><button class="tc" onclick="this.parentElement.classList.add('removing');setTimeout(()=>this.parentElement.remove(),250)"><i class="fas fa-xmark"></i></button>`;document.getElementById('toasts').appendChild(el);setTimeout(()=>{if(el.parentElement){el.classList.add('removing');setTimeout(()=>el.remove(),250);}},5000);}
+
+window.goBack=()=>{if(window.parent?.navigateTo)window.parent.navigateTo('dashboard');else history.back();};
+
+// Package data — base rate: ₦1 = 8 LNX
+const PACKAGES=[
+  {naira:500,   lnx:4000,  bonus:0,    label:'₦500',   popular:false, best:false},
+  {naira:1000,  lnx:8000,  bonus:200,  label:'₦1,000', popular:true,  best:false},
+  {naira:2500,  lnx:20000, bonus:1000, label:'₦2,500', popular:false, best:false},
+  {naira:5000,  lnx:40000, bonus:3000, label:'₦5,000', popular:false, best:false},
+  {naira:10000, lnx:82000, bonus:10000,label:'₦10,000', popular:false, best:true},
+  {naira:20000, lnx:168000,bonus:24000,label:'₦20,000', popular:false, best:false},
+];
+
+function renderPackages(){
+  const grid=document.getElementById('packagesGrid');
+  grid.innerHTML=PACKAGES.map((p,i)=>`
+    <div class="pkg" id="pkg${i}" onclick="selectPkg(${i})">
+      ${p.popular?`<div class="pkg-badge pb-popular">🔥 Popular</div>`:''}
+      ${p.best?`<div class="pkg-badge pb-best">⭐ Best</div>`:''}
+      <div class="pkg-naira">${p.label}</div>
+      <div class="pkg-lnx">${(p.lnx+p.bonus).toLocaleString()}<span class="pkg-lnx-unit">LNX</span></div>
+      ${p.bonus?`<div class="pkg-bonus"><i class="fas fa-gift"></i>+${p.bonus.toLocaleString()} bonus</div>`:''}
+      <div class="pkg-rate">₦1 = ${Math.round((p.lnx+p.bonus)/p.naira)} LNX</div>
+    </div>`).join('');
+}
+
+window.selectPkg=(i)=>{
+  _selectedPkg=PACKAGES[i];
+  document.querySelectorAll('.pkg').forEach((el,j)=>el.classList.toggle('selected',j===i));
+  document.getElementById('customInp').value='';
+  document.getElementById('customReceive').style.display='none';
+  const btn=document.getElementById('confirmBtn');
+  const total=_selectedPkg.lnx+_selectedPkg.bonus;
+  btn.innerHTML=`<i class="fas fa-lock"></i> Pay ${_selectedPkg.label} → Get ${total.toLocaleString()} LNX`;
+  btn.disabled=false;
+};
+
+window.calcCustom=()=>{
+  const val=parseInt(document.getElementById('customInp').value)||0;
+  if(val<100){document.getElementById('customReceive').style.display='none';return;}
+  const baseLNX=val*8;
+  const bonus=val>=10000?Math.floor(baseLNX*0.12):val>=5000?Math.floor(baseLNX*0.075):val>=2500?Math.floor(baseLNX*0.05):val>=1000?Math.floor(baseLNX*0.025):0;
+  const total=baseLNX+bonus;
+  document.getElementById('customLNX').textContent=total.toLocaleString()+' LNX';
+  document.getElementById('customBonus').textContent=bonus?`(incl. +${bonus.toLocaleString()} bonus)`:'';
+  document.getElementById('customReceive').style.display='flex';
+  document.querySelectorAll('.pkg').forEach(el=>el.classList.remove('selected'));
+  _selectedPkg={naira:val,lnx:baseLNX,bonus,label:`₦${val.toLocaleString()}`};
+  const btn=document.getElementById('confirmBtn');
+  btn.innerHTML=`<i class="fas fa-lock"></i> Pay ₦${val.toLocaleString()} → Get ${total.toLocaleString()} LNX`;
+  btn.disabled=false;
+};
+
+window.doPayment=()=>{
+  if(!_selectedPkg||!_uid){toast('Please select a package.','error');return;}
+  const {naira,lnx,bonus,label}=_selectedPkg;
+  const total=lnx+bonus;
+  const amountKobo=naira*100;
+
+  const PAYSTACK_PUBLIC_KEY='pk_test_REPLACE_WITH_YOUR_PAYSTACK_PUBLIC_KEY';
+
+  const handler=PaystackPop.setup({
+    key:PAYSTACK_PUBLIC_KEY,
+    email:_email||'user@lenovox.ai',
+    amount:amountKobo,
+    currency:'NGN',
+    ref:`lnx_topup_${_uid}_${Date.now()}`,
+    metadata:{uid:_uid,type:'lnx_topup',lnxAmount:total,nairaAmount:naira,custom_fields:[{display_name:'LNX Amount',variable_name:'lnx_amount',value:total},{display_name:'User ID',variable_name:'uid',value:_uid}]},
+    onSuccess:async(transaction)=>{
+      // Credit LNX immediately on success
+      try{
+        await updateDoc(doc(db,'wallets',_uid),{balance:increment(total),totalEarned:increment(total)});
+        await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(total)});
+        await addDoc(collection(db,'wallets',_uid,'transactions'),{type:`LNX Purchase · ${label}`,amount:total,paystackRef:transaction.reference,timestamp:serverTimestamp(),date:new Date().toLocaleString()});
+        toast(`✓ ${total.toLocaleString()} LNX credited to your wallet!`,'success');
+      }catch(e){toast('Payment received! LNX will be credited shortly.','info');}
+    },
+    onCancel:()=>{toast('Payment cancelled.','info');}
+  });
+  handler.openIframe();
+};
+
+watchAuth(async user=>{
+  if(!user){window.location.replace('login.html');return;}
+  _uid=user.uid;_email=user.email||'';
+  onSnapshot(doc(db,'wallets',_uid),s=>{
+    if(!s.exists())return;
+    const b=s.data().balance||0;_bal=b;
+    document.getElementById('balDisplay').textContent=b.toLocaleString();
+    document.getElementById('nairaDisplay').textContent=`≈ ₦${(b*0.124).toFixed(2)}`;
+  });
+  renderPackages();
+});
+</script>
+</body>
+</html>

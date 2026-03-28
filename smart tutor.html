@@ -3,279 +3,275 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Lenovox — Smart Tutor</title>
+<title>Smart Tutor</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
-:root{
-  --bg:#03030b;--card:rgba(11,11,30,.93);--card2:rgba(16,16,42,.97);
-  --blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--orange:#ff9500;
-  --purple:#9d50bb;--pink:#ff3d70;--red:#ef4444;
-  --border:rgba(255,255,255,0.07);--text:#e8eaf6;--muted:#8892a4;
-}
-[data-theme="light"]{--bg:#f0f4f8;--card:rgba(255,255,255,.96);--card2:#fff;--border:rgba(0,0,0,.09);--text:#1e293b;--muted:#64748b}
-[data-theme="dim"]{--bg:#0f1117;--card:rgba(20,22,36,.95);--card2:rgba(26,28,44,.98);--border:rgba(255,255,255,.08);--text:#d4d8e8;--muted:#7a8499}
+:root{--bg:#07080f;--s1:rgba(15,16,32,.95);--s2:rgba(20,22,40,.98);--blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--orange:#ff9500;--pink:#ff3d70;--red:#ef4444;--border:rgba(255,255,255,0.08);--text:#e8eaf6;--muted:#7a8499}
+[data-theme="light"]{--bg:#f5f7fa;--s1:rgba(255,255,255,.98);--s2:#fff;--border:rgba(0,0,0,.1);--text:#1e293b;--muted:#64748b}
+[data-theme="dim"]{--bg:#0c0e16;--s1:rgba(18,20,36,.96);--s2:rgba(24,26,44,.98);--border:rgba(255,255,255,.07);--text:#d4d8e8;--muted:#7a8499}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
-.shell{display:flex;flex-direction:column;height:100vh;max-width:680px;margin:0 auto;position:relative}
-
-/* BG */
-.bg-nebula{position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 20% 30%,rgba(93,63,211,.28) 0%,transparent 52%),radial-gradient(circle at 80% 70%,rgba(0,210,255,.16) 0%,transparent 52%)}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+.shell{display:flex;flex-direction:column;height:100vh}
 
 /* HEADER */
-.hdr{display:flex;align-items:center;gap:11px;padding:12px 14px 9px;border-bottom:1px solid var(--border);background:var(--card);backdrop-filter:blur(20px);flex-shrink:0}
-.back-btn{width:33px;height:33px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;flex-shrink:0}
-.back-btn i{color:var(--muted);font-size:.82rem}
-.back-btn:hover i{color:var(--blue)}
-.hdr-brand{flex:1}
-.hdr-name{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px}
-.hdr-name i{color:var(--blue);font-size:.85rem}
-.hdr-sub{font-size:.63rem;color:var(--muted);margin-top:1px}
-.bal-pill{display:flex;align-items:center;gap:5px;background:rgba(255,204,51,.08);border:1px solid rgba(255,204,51,.18);border-radius:999px;padding:4px 10px;cursor:pointer}
-.bal-pill i{color:var(--gold);font-size:.7rem}
-.bal-pill span{font-family:'Orbitron',monospace;font-size:.68rem;font-weight:700;color:var(--gold)}
+.hdr{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);background:var(--s1);flex-shrink:0}
+.hdr-back{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.hdr-back i{color:var(--muted);font-size:.82rem}
+.hdr-back:hover i{color:var(--blue)}
+.hdr-title{flex:1;font-size:.96rem;font-weight:800;color:var(--text)}
+.hdr-sub{font-size:.64rem;color:var(--muted);margin-top:1px}
+.hdr-clear{padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:.2s}
+.hdr-clear:hover{border-color:rgba(0,210,255,.3);color:var(--blue)}
 
-/* SCROLL AREA */
-.scroll-area{flex:1;overflow-y:auto;padding:14px 14px 8px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
-.scroll-area::-webkit-scrollbar{width:3px}
-.scroll-area::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:999px}
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--s1);flex-shrink:0}
+.tab{flex:1;padding:10px;border:none;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;transition:.2s;position:relative;display:flex;align-items:center;justify-content:center;gap:5px}
+.tab i{font-size:.72rem}
+.tab.active{color:var(--text)}
+.tab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),#3a7bd5);border-radius:2px 2px 0 0}
+.panel{display:none;flex-direction:column;flex:1;overflow:hidden}
+.panel.active{display:flex}
+
+/* SCROLL */
+.scroll{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.scroll::-webkit-scrollbar{width:2px}
+.scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:99px}
 
 /* LANDING */
-.landing{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;padding:28px 20px;gap:16px}
-.landing-icon{width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,rgba(0,210,255,.15),rgba(58,123,213,.1));border:1px solid rgba(0,210,255,.24);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--blue);animation:iconFloat 3.5s ease-in-out infinite;box-shadow:0 0 40px rgba(0,210,255,.14)}
-@keyframes iconFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.landing-title{font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:900;color:var(--text)}
-.landing-title span{color:var(--blue)}
-.landing-sub{font-size:.82rem;color:var(--muted);max-width:290px;line-height:1.7}
-.typing-txt{font-size:.9rem;font-weight:700;color:var(--blue);min-height:22px}
-.cost-note{display:flex;align-items:center;gap:7px;background:rgba(255,204,51,.07);border:1px solid rgba(255,204,51,.16);border-radius:11px;padding:8px 13px;font-size:.74rem;font-weight:700;color:var(--gold)}
-.cost-note i{font-size:.76rem;flex-shrink:0}
+.landing{display:flex;flex-direction:column;align-items:center;text-align:center;padding:32px 16px;gap:14px;flex:1;justify-content:center}
+.land-orb{width:68px;height:68px;border-radius:20px;background:linear-gradient(135deg,rgba(0,210,255,.14),rgba(58,123,213,.1));border:1px solid rgba(0,210,255,.22);display:flex;align-items:center;justify-content:center;font-size:1.7rem;color:var(--blue);animation:orb 3.5s ease-in-out infinite}
+@keyframes orb{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.land-title{font-size:1.1rem;font-weight:800;color:var(--text)}
+.land-sub{font-size:.8rem;color:var(--muted);max-width:270px;line-height:1.7}
+.land-type{font-size:.84rem;font-weight:700;color:var(--blue);min-height:20px}
+.sugs{display:flex;flex-direction:column;gap:7px;width:100%;max-width:300px}
+.sug{background:var(--s1);border:1px solid var(--border);border-radius:11px;padding:9px 13px;text-align:left;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:700;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:7px;transition:.2s}
+.sug i{font-size:.75rem;color:var(--blue);flex-shrink:0}
+.sug:hover{border-color:rgba(0,210,255,.28);background:rgba(0,210,255,.05)}
 
-/* THINKING — GROK STYLE */
-.think-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;animation:cardIn .4s ease}
-@keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.think-hdr{display:flex;align-items:center;gap:9px;margin-bottom:12px}
-.think-spinner{width:18px;height:18px;border:2.5px solid rgba(0,210,255,.2);border-top-color:var(--blue);border-radius:50%;animation:spin .65s linear infinite;flex-shrink:0}
+/* THINKING */
+.think{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:14px;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.think-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.think-spin{width:16px;height:16px;border:2px solid rgba(0,210,255,.2);border-top-color:var(--blue);border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
-.think-lbl{font-family:'Orbitron',monospace;font-size:.78rem;font-weight:700;color:var(--blue)}
-.think-steps{display:flex;flex-direction:column;gap:5px}
-.ts{display:flex;align-items:center;gap:7px;font-size:.75rem;opacity:0;animation:tsIn .32s ease forwards}
-@keyframes tsIn{from{opacity:0;transform:translateX(-7px)}to{opacity:1;transform:translateX(0)}}
-.ts i{font-size:.67rem;width:12px;flex-shrink:0}
-.ts.active{color:var(--text)}.ts.active i{color:var(--blue);animation:ipulse .9s ease-in-out infinite}
+.think-lbl{font-size:.76rem;font-weight:700;color:var(--blue)}
+.think-steps{display:flex;flex-direction:column;gap:4px}
+.ts{display:flex;align-items:center;gap:6px;font-size:.74rem;opacity:0;animation:tsIn .3s ease forwards}
+@keyframes tsIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+.ts i{font-size:.64rem;width:11px;flex-shrink:0}
+.ts.active{color:var(--text)}.ts.active i{color:var(--blue);animation:pulse .8s ease-in-out infinite}
 .ts.done{color:var(--green)}.ts.done i{color:var(--green)}
-.ts.wait{color:var(--muted)}.ts.wait i{color:var(--muted)}
-@keyframes ipulse{0%,100%{opacity:1}50%{opacity:.2}}
-.think-dots{display:flex;gap:4px;margin-top:8px}
-.td{width:5px;height:5px;border-radius:50%;background:var(--blue);animation:tdB .8s ease-in-out infinite}
-.td:nth-child(2){animation-delay:.15s}.td:nth-child(3){animation-delay:.3s}
-@keyframes tdB{0%,80%,100%{transform:scale(1);opacity:.35}40%{transform:scale(1.55);opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.dots{display:flex;gap:3px;margin-top:7px}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--blue);animation:dotB .8s ease-in-out infinite}
+.dot:nth-child(2){animation-delay:.14s}.dot:nth-child(3){animation-delay:.28s}
+@keyframes dotB{0%,80%,100%{transform:scale(1);opacity:.3}40%{transform:scale(1.5);opacity:1}}
 
-/* AI RESPONSE CARD */
-.resp-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;animation:cardIn .45s cubic-bezier(.34,1.56,.64,1)}
-.rc-hdr{display:flex;align-items:center;gap:9px;padding:13px 15px;border-bottom:1px solid var(--border);background:rgba(0,210,255,.04)}
-.rc-hdr i{color:var(--blue);font-size:.88rem}
-.rc-title{font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;color:var(--text);flex:1}
-.rc-cost{display:flex;align-items:center;gap:3px;font-size:.67rem;font-weight:700;color:var(--red);background:rgba(239,68,68,.09);border:1px solid rgba(239,68,68,.18);border-radius:7px;padding:2px 8px}
-.rc-cost i{font-size:.6rem}
-.rc-body{padding:15px;font-size:.86rem;line-height:1.8;color:var(--text)}
-.rc-body h1,.rc-body h2,.rc-body h3{font-family:'Orbitron',monospace;color:var(--blue);margin:14px 0 6px;line-height:1.3}
-.rc-body h1{font-size:.94rem}.rc-body h2{font-size:.85rem}.rc-body h3{font-size:.78rem;color:#a5d8ff}
-.rc-body p{margin-bottom:8px}
-.rc-body ul,.rc-body ol{padding-left:18px;margin-bottom:8px}
-.rc-body li{margin-bottom:3px}
-.rc-body strong{color:var(--text);font-weight:800}
-.rc-body code{background:rgba(0,0,0,.42);padding:1px 5px;border-radius:4px;font-family:'Courier New',monospace;font-size:.78rem;color:var(--gold)}
-.rc-body pre{background:rgba(0,0,0,.55);border-radius:10px;padding:11px;margin:9px 0;overflow-x:auto;border-left:3px solid var(--blue)}
-.rc-body pre code{background:none;padding:0;color:#e2e8f0;font-size:.76rem}
-.rc-body blockquote{border-left:3px solid var(--blue);padding-left:10px;margin:8px 0;color:var(--muted);font-style:italic}
-.rc-body table{width:100%;border-collapse:collapse;font-size:.78rem;margin:9px 0}
-.rc-body th{background:rgba(0,210,255,.1);padding:6px 9px;text-align:left;font-weight:700;color:var(--blue);border:1px solid rgba(0,210,255,.2)}
-.rc-body td{padding:6px 9px;border:1px solid var(--border)}
-.rc-actions{display:flex;gap:7px;padding:11px 15px;border-top:1px solid var(--border);flex-wrap:wrap}
-.ra-btn{display:flex;align-items:center;gap:5px;padding:7px 13px;border:none;border-radius:9px;font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:800;cursor:pointer;transition:.22s}
-.ra-btn i{font-size:.7rem}
-.btn-quiz{background:rgba(255,204,51,.12);border:1px solid rgba(255,204,51,.22);color:var(--gold)}
-.btn-quiz:hover{transform:translateY(-2px)}
-.btn-copy{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted)}
-.btn-copy:hover{color:var(--blue);border-color:rgba(0,210,255,.25)}
+/* AI ANSWER CARD */
+.ans-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:fadeUp .4s ease}
+.ans-hdr{display:flex;align-items:center;gap:8px;padding:11px 13px;border-bottom:1px solid var(--border);background:rgba(0,210,255,.04)}
+.ans-hdr i{color:var(--blue);font-size:.86rem}
+.ans-hdr span{font-size:.78rem;font-weight:700;color:var(--text);flex:1}
+.ans-body{padding:13px;font-size:.86rem;line-height:1.8;color:var(--text)}
+.ans-body h1,.ans-body h2,.ans-body h3{font-weight:800;color:var(--blue);margin:12px 0 5px;font-size:.9rem}
+.ans-body h2{font-size:.84rem}.ans-body h3{font-size:.78rem;color:#a5d8ff}
+.ans-body p{margin-bottom:8px}
+.ans-body ul,.ans-body ol{padding-left:16px;margin-bottom:8px}
+.ans-body li{margin-bottom:3px}
+.ans-body strong{color:var(--text);font-weight:800}
+.ans-body code{background:rgba(0,0,0,.38);padding:1px 5px;border-radius:4px;font-family:monospace;font-size:.78rem;color:var(--gold)}
+.ans-body pre{background:rgba(0,0,0,.5);border-radius:9px;padding:11px;margin:8px 0;overflow-x:auto;border-left:3px solid var(--blue)}
+.ans-body pre code{background:none;padding:0;color:#e2e8f0;font-size:.75rem}
+.ans-actions{display:flex;gap:7px;padding:10px 13px;border-top:1px solid var(--border)}
+.aa-btn{display:flex;align-items:center;gap:5px;padding:7px 12px;border:none;border-radius:9px;font-family:'Nunito',sans-serif;font-size:.74rem;font-weight:800;cursor:pointer;transition:.2s}
+.aa-btn i{font-size:.7rem}
+.btn-quiz{background:rgba(255,204,51,.1);border:1px solid rgba(255,204,51,.2);color:var(--gold)}
+.btn-copy{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted)}
+.btn-copy:hover{color:var(--blue)}
 
 /* VIDEOS */
-.vid-section{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;animation:cardIn .45s .08s cubic-bezier(.34,1.56,.64,1) both}
-.vs-hdr{display:flex;align-items:center;gap:9px;padding:13px 15px;border-bottom:1px solid var(--border);background:rgba(255,61,112,.04)}
-.vs-hdr i{color:var(--pink);font-size:.88rem}
-.vs-title{font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;color:var(--text);flex:1}
-.vs-note{font-size:.65rem;color:var(--muted);display:flex;align-items:center;gap:3px}
-.vs-note i{color:var(--gold);font-size:.6rem}
-.vids-scroll{display:flex;gap:11px;overflow-x:auto;padding:13px 15px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.vids-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:fadeUp .4s .05s ease both}
+.vids-hdr{display:flex;align-items:center;gap:8px;padding:11px 13px;border-bottom:1px solid var(--border)}
+.vids-hdr i{color:var(--pink);font-size:.86rem}
+.vids-hdr span{font-size:.78rem;font-weight:700;color:var(--text);flex:1}
+.vids-hdr small{font-size:.63rem;color:var(--muted)}
+.vids-scroll{display:flex;gap:10px;overflow-x:auto;padding:11px 13px;scrollbar-width:none}
 .vids-scroll::-webkit-scrollbar{display:none}
-.vid-card{flex-shrink:0;width:200px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:13px;overflow:hidden;cursor:pointer;transition:all .22s}
-.vid-card:hover{transform:translateY(-3px);border-color:rgba(255,61,112,.28)}
-.vid-thumb-wrap{position:relative;height:112px}
+.vid-c{flex-shrink:0;width:180px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
+.vid-c:hover{transform:translateY(-3px);border-color:rgba(255,61,112,.25)}
+.vid-thumb-w{position:relative;height:100px}
 .vid-thumb{width:100%;height:100%;object-fit:cover;display:block;background:#111}
-.vid-play-ov{position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;opacity:0;transition:.22s}
-.vid-card:hover .vid-play-ov{opacity:1}
-.vid-play-ov i{font-size:1.8rem;color:#fff}
-.vid-cost-badge{position:absolute;top:5px;right:5px;background:rgba(0,0,0,.82);border:1px solid rgba(255,204,51,.3);border-radius:5px;padding:2px 6px;font-size:.6rem;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:2px}
-.vid-cost-badge i{font-size:.55rem}
-.vid-info{padding:8px 9px}
-.vid-title{font-size:.73rem;font-weight:700;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.42;margin-bottom:4px}
-.vid-meta{font-size:.64rem;color:var(--muted);display:flex;align-items:center;gap:3px}
-.vid-meta i{font-size:.58rem}
-.vid-empty{padding:16px;font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:7px}
-.vid-empty i{color:var(--blue);font-size:.85rem}
+.vid-play{position:absolute;inset:0;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s}
+.vid-c:hover .vid-play{opacity:1}
+.vid-play i{font-size:1.7rem;color:#fff}
+.vid-badge{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.8);border:1px solid rgba(255,204,51,.3);border-radius:5px;padding:2px 6px;font-size:.59rem;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:2px}
+.vid-badge i{font-size:.54rem}
+.vid-info{padding:7px 9px}
+.vid-title{font-size:.72rem;font-weight:700;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;margin-bottom:3px}
+.vid-ch{font-size:.63rem;color:var(--muted);display:flex;align-items:center;gap:3px}
+.vid-ch i{font-size:.58rem}
 
-/* VIDEO COST MODAL */
-.modal-ov{position:fixed;inset:0;z-index:9999;background:rgba(3,3,11,.88);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
-.modal-ov.show{display:flex}
-.modal-box{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:26px;max-width:330px;width:100%;text-align:center;animation:mIn .35s cubic-bezier(.34,1.56,.64,1)}
+/* VIDEO MODAL */
+.vid-modal{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
+.vid-modal.show{display:flex}
+.vid-modal-box{background:var(--s2);border:1px solid var(--border);border-radius:18px;padding:22px;max-width:320px;width:100%;text-align:center;animation:mIn .3s cubic-bezier(.34,1.56,.64,1)}
 @keyframes mIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
-.modal-icon{width:58px;height:58px;border-radius:16px;background:rgba(255,61,112,.12);border:1px solid rgba(255,61,112,.22);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 14px}
-.modal-icon i{color:var(--pink)}
-.modal-title{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:900;color:var(--text);margin-bottom:7px}
-.modal-sub{font-size:.8rem;color:var(--muted);line-height:1.65;margin-bottom:18px}
-.modal-sub b{color:var(--gold)}
-.modal-btns{display:flex;gap:9px}
-.mb{flex:1;padding:11px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:800;cursor:pointer;transition:.25s;display:flex;align-items:center;justify-content:center;gap:6px}
-.mb i{font-size:.78rem}
-.mb-cancel{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted)}
-.mb-pay{background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;box-shadow:0 5px 14px rgba(255,204,51,.25)}
-.mb-pay:hover{transform:translateY(-2px)}
+.vmb-icon{font-size:2.2rem;margin-bottom:12px}
+.vmb-title{font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:6px}
+.vmb-sub{font-size:.78rem;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.vmb-sub b{color:var(--gold)}
+.vmb-btns{display:flex;gap:9px}
+.vmb-btn{flex:1;padding:11px;border:none;border-radius:11px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.vmb-btn i{font-size:.76rem}
+.vmb-cancel{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted)}
+.vmb-pay{background:linear-gradient(135deg,var(--gold),var(--orange));color:#000}
+.vmb-pay:hover{transform:translateY(-2px)}
 
 /* QUIZ */
-.quiz-section{background:var(--card);border:1px solid rgba(255,204,51,.2);border-radius:18px;overflow:hidden;animation:cardIn .45s .14s cubic-bezier(.34,1.56,.64,1) both}
-.qs-hdr{display:flex;align-items:center;gap:9px;padding:13px 15px;border-bottom:1px solid var(--border);background:rgba(255,204,51,.05)}
-.qs-hdr i{color:var(--gold);font-size:.88rem}
-.qs-title{font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;color:var(--text);flex:1}
-.qs-badge{font-size:.63rem;font-weight:700;background:rgba(255,204,51,.13);border:1px solid rgba(255,204,51,.23);color:var(--gold);padding:2px 8px;border-radius:6px}
-.quiz-q-wrap{padding:14px 15px}
-.qz-prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.qz-prog-txt{font-size:.68rem;font-weight:700;color:var(--muted)}
-.qz-score-lbl{font-family:'Orbitron',monospace;font-size:.68rem;font-weight:700;color:var(--gold)}
-.qz-bar{width:100%;height:3px;background:rgba(255,255,255,.07);border-radius:999px;margin-bottom:12px;overflow:hidden}
-.qz-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--orange));border-radius:999px;transition:width .35s ease}
-.qz-q{font-size:.88rem;font-weight:700;color:var(--text);line-height:1.6;margin-bottom:13px}
-.qz-opts{display:flex;flex-direction:column;gap:7px}
-.qz-opt{padding:11px 13px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;font-size:.82rem;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:9px;text-align:left;width:100%;color:var(--text)}
-.qz-opt i{font-size:.73rem;width:12px;flex-shrink:0;color:var(--muted)}
-.qz-opt:hover:not([disabled]){border-color:rgba(255,204,51,.35);background:rgba(255,204,51,.06)}
-.qz-opt.correct{border-color:var(--green);background:rgba(16,185,129,.1);color:var(--green)}
-.qz-opt.correct i{color:var(--green)}
-.qz-opt.wrong{border-color:var(--red);background:rgba(239,68,68,.09);color:var(--red)}
-.qz-opt.wrong i{color:var(--red)}
-.qz-opt[disabled]{pointer-events:none}
-.qz-explain{margin-top:9px;padding:9px 12px;background:rgba(0,210,255,.07);border:1px solid rgba(0,210,255,.15);border-radius:9px;font-size:.75rem;color:var(--text);line-height:1.55;display:none}
-.qz-explain.show{display:block}
-.qz-explain i{color:var(--blue);margin-right:4px}
-.qz-foot{display:flex;gap:7px;padding:11px 15px;border-top:1px solid var(--border)}
-.qz-btn{flex:1;padding:10px;border:none;border-radius:11px;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:.22s;display:flex;align-items:center;justify-content:center;gap:5px}
-.qz-btn i{font-size:.74rem}
-.qz-next{background:linear-gradient(135deg,var(--blue),#2d6dc7);color:#fff;display:none}
-.qz-next:hover{transform:translateY(-2px)}
-.qz-skip{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted)}
-.quiz-result{padding:20px;text-align:center}
-.qr-score{font-family:'Orbitron',monospace;font-size:2.4rem;font-weight:900;color:var(--blue);margin-bottom:6px}
-.qr-lbl{font-size:.84rem;color:var(--muted);margin-bottom:13px}
-.qr-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 15px;border-radius:999px;font-weight:800;font-size:.8rem;margin-bottom:14px}
-.qr-note{font-size:.74rem;color:var(--muted);line-height:1.6;margin-bottom:14px}
-.qr-retry{padding:10px 22px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:.25s}
+.quiz-card{background:var(--s1);border:1px solid rgba(255,204,51,.18);border-radius:16px;overflow:hidden;animation:fadeUp .4s .1s ease both}
+.quiz-hdr{display:flex;align-items:center;gap:8px;padding:11px 13px;border-bottom:1px solid var(--border);background:rgba(255,204,51,.04)}
+.quiz-hdr i{color:var(--gold);font-size:.86rem}
+.quiz-hdr span{font-size:.78rem;font-weight:700;color:var(--text);flex:1}
+.quiz-hdr small{font-size:.62rem;background:rgba(255,204,51,.12);border:1px solid rgba(255,204,51,.2);color:var(--gold);padding:1px 7px;border-radius:5px}
+.quiz-body{padding:13px}
+.q-prog-row{display:flex;justify-content:space-between;margin-bottom:7px;font-size:.7rem;color:var(--muted);font-weight:700}
+.q-bar{width:100%;height:3px;background:rgba(255,255,255,.07);border-radius:99px;margin-bottom:12px;overflow:hidden}
+.q-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--orange));border-radius:99px;transition:width .35s}
+.q-text{font-size:.87rem;font-weight:700;color:var(--text);line-height:1.6;margin-bottom:12px}
+.q-opts{display:flex;flex-direction:column;gap:7px}
+.q-opt{padding:11px 13px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);border-radius:11px;cursor:pointer;font-size:.83rem;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:9px;text-align:left;width:100%;color:var(--text)}
+.q-opt i{font-size:.73rem;width:12px;flex-shrink:0;color:var(--muted)}
+.q-opt:hover:not([disabled]){border-color:rgba(255,204,51,.35);background:rgba(255,204,51,.05)}
+.q-opt.correct{border-color:var(--green);background:rgba(16,185,129,.09);color:var(--green)}
+.q-opt.correct i{color:var(--green)}
+.q-opt.wrong{border-color:var(--red);background:rgba(239,68,68,.08);color:var(--red)}
+.q-opt.wrong i{color:var(--red)}
+.q-opt[disabled]{pointer-events:none}
+.q-exp{margin-top:9px;padding:9px 12px;background:rgba(0,210,255,.06);border:1px solid rgba(0,210,255,.14);border-radius:9px;font-size:.74rem;color:var(--text);line-height:1.55;display:none}
+.q-exp.show{display:block}
+.q-exp i{color:var(--blue);margin-right:4px}
+.q-foot{display:flex;gap:7px;padding:10px 13px;border-top:1px solid var(--border)}
+.q-btn{flex:1;padding:10px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.q-btn i{font-size:.72rem}
+.q-next{background:linear-gradient(135deg,var(--blue),#2d6dc7);color:#fff;display:none}
+.q-next:hover{transform:translateY(-2px)}
+.q-skip{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted)}
+.q-result{padding:18px;text-align:center}
+.qr-score{font-size:2.2rem;font-weight:900;color:var(--blue);margin-bottom:4px}
+.qr-lbl{font-size:.8rem;color:var(--muted);margin-bottom:12px}
+.qr-badge{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:999px;font-weight:800;font-size:.78rem;margin-bottom:12px}
+.qr-note{font-size:.72rem;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.qr-retry{padding:9px 20px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
 .qr-retry:hover{transform:translateY(-2px)}
-.qr-retry i{font-size:.76rem}
-
-/* INSUFFICIENT COIN */
-.insuf-card{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:15px;padding:14px 15px;animation:cardIn .35s ease}
-.insuf-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.insuf-top i{color:var(--red);font-size:.95rem}
-.insuf-title{font-weight:800;font-size:.85rem;color:var(--red)}
-.insuf-sub{font-size:.78rem;color:var(--muted);margin-bottom:10px;line-height:1.5}
-.insuf-sub b{color:var(--text)}
-.insuf-actions{display:flex;gap:7px;flex-wrap:wrap}
-.ia-btn{padding:8px 13px;border:none;border-radius:9px;font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:800;cursor:pointer;transition:.22s;display:flex;align-items:center;gap:5px}
-.ia-btn i{font-size:.7rem}
-.ia-topup{background:linear-gradient(135deg,var(--blue),#2d6dc7);color:#fff}
-.ia-ad{background:rgba(255,204,51,.12);border:1px solid rgba(255,204,51,.22);color:var(--gold)}
-.ia-claim{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.22);color:var(--green)}
 
 /* SEARCH BAR */
-.search-bar{padding:10px 12px 11px;background:var(--card);border-top:1px solid var(--border);flex-shrink:0;backdrop-filter:blur(20px)}
-.search-inner{display:flex;gap:7px;align-items:flex-end;background:var(--card2);border:1.5px solid var(--border);border-radius:15px;padding:9px 10px;transition:.25s}
-.search-inner:focus-within{border-color:rgba(0,210,255,.42);box-shadow:0 0 0 3px rgba(0,210,255,.07)}
-.search-ta{flex:1;background:none;border:none;color:var(--text);font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;resize:none;outline:none;min-height:20px;max-height:110px;line-height:1.55;padding:3px 0}
-.search-ta::placeholder{color:rgba(136,146,164,.42)}
-.send-btn{width:33px;height:33px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--blue),#2d6dc7);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.88rem;transition:.22s;flex-shrink:0;box-shadow:0 3px 10px rgba(0,210,255,.2)}
+.search-bar{padding:9px 12px 10px;background:var(--s1);border-top:1px solid var(--border);flex-shrink:0}
+.search-row{display:flex;gap:6px;align-items:flex-end;background:var(--s2);border:1.5px solid var(--border);border-radius:14px;padding:8px 9px;transition:.22s}
+.search-row:focus-within{border-color:rgba(0,210,255,.4);box-shadow:0 0 0 3px rgba(0,210,255,.07)}
+.search-ta{flex:1;background:none;border:none;color:var(--text);font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;resize:none;outline:none;min-height:20px;max-height:100px;line-height:1.55;padding:2px 0}
+.search-ta::placeholder{color:rgba(136,146,164,.4)}
+.send-btn{width:32px;height:32px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--blue),#2d6dc7);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.86rem;transition:.2s;flex-shrink:0}
 .send-btn:hover{transform:scale(1.07)}
-.send-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-.search-hint{display:flex;justify-content:space-between;align-items:center;margin-top:5px;padding:0 2px}
-.sh-cost{font-size:.62rem;color:var(--muted);display:flex;align-items:center;gap:3px;font-weight:600}
-.sh-cost i{color:var(--gold);font-size:.58rem}
-.sh-clear{font-size:.62rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;display:flex;align-items:center;gap:3px;transition:.2s}
-.sh-clear:hover{color:var(--pink)}
+.send-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.search-hint{display:flex;justify-content:space-between;margin-top:5px;padding:0 2px}
+.sh-l{font-size:.61rem;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:3px}
+.sh-l i{font-size:.57rem;color:var(--blue)}
+.sh-r{font-size:.61rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;display:flex;align-items:center;gap:3px}
+.sh-r:hover{color:var(--pink)}
+.sh-r i{font-size:.57rem}
 
 /* TOAST */
-#toasts{position:fixed;top:12px;right:12px;z-index:99999;display:flex;flex-direction:column;gap:6px;max-width:270px}
-.toast{padding:9px 12px;border-radius:10px;font-size:.76rem;font-weight:700;display:flex;align-items:center;gap:7px;backdrop-filter:blur(16px);border:1px solid;animation:tIn .32s cubic-bezier(.34,1.56,.64,1)}
-.toast i{font-size:.85rem;flex-shrink:0}.toast span{flex:1}
-.toast.success{background:rgba(16,185,129,.14);border-color:rgba(16,185,129,.26);color:#6ee7b7}
-.toast.error{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.26);color:#fca5a5}
-.toast.info{background:rgba(0,210,255,.11);border-color:rgba(0,210,255,.22);color:#a5f3ff}
+#toasts{position:fixed;top:12px;right:12px;z-index:99999;display:flex;flex-direction:column;gap:5px;max-width:260px}
+.toast{padding:9px 11px;border-radius:10px;font-size:.75rem;font-weight:700;display:flex;align-items:center;gap:6px;border:1px solid;animation:tIn .3s ease}
+.toast i{font-size:.83rem;flex-shrink:0}.toast span{flex:1}
+.toast.success{background:rgba(16,185,129,.13);border-color:rgba(16,185,129,.25);color:#6ee7b7}
+.toast.error{background:rgba(239,68,68,.13);border-color:rgba(239,68,68,.25);color:#fca5a5}
+.toast.info{background:rgba(0,210,255,.1);border-color:rgba(0,210,255,.2);color:#a5f3ff}
 .toast.removing{animation:tOut .25s ease forwards}
-@keyframes tIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
-@keyframes tOut{to{opacity:0;transform:translateX(30px)}}
-.tc{margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;opacity:.45;padding:0 0 0 4px}
-.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+@keyframes tIn{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tOut{to{opacity:0;transform:translateX(26px)}}
+.tc{margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;opacity:.4;padding:0 0 0 4px}
+.spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
 </style>
 </head>
 <body>
-<div class="bg-nebula"></div>
 <div id="toasts"></div>
 
-<!-- VIDEO COST MODAL -->
-<div class="modal-ov" id="vidModal">
-  <div class="modal-box">
-    <div class="modal-icon"><i class="fab fa-youtube"></i></div>
-    <div class="modal-title">Watch Video</div>
-    <div class="modal-sub">YouTube videos are free but we charge a small fee to cover our search service.<br><br>Cost: <b>5 LNX</b> per video</div>
-    <div class="modal-btns">
-      <button class="mb mb-cancel" onclick="closeVidModal()"><i class="fas fa-xmark"></i> Cancel</button>
-      <button class="mb mb-pay" onclick="confirmWatch()"><i class="fas fa-coins"></i> Pay 5 LNX</button>
+<div class="vid-modal" id="vidModal">
+  <div class="vid-modal-box">
+    <div class="vmb-icon">▶️</div>
+    <div class="vmb-title">Watch Video</div>
+    <div class="vmb-sub">Videos are free on YouTube. We charge <b>5 LNX</b> to cover our search service.</div>
+    <div class="vmb-btns">
+      <button class="vmb-btn vmb-cancel" onclick="closeVid()"><i class="fas fa-xmark"></i> Cancel</button>
+      <button class="vmb-btn vmb-pay" onclick="confirmVid()"><i class="fas fa-coins"></i> Pay 5 LNX</button>
     </div>
   </div>
 </div>
 
 <div class="shell">
-  <!-- HEADER -->
   <div class="hdr">
-    <div class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
-    <div class="hdr-brand">
-      <div class="hdr-name"><i class="fas fa-brain"></i> Smart Tutor</div>
-      <div class="hdr-sub">AI-powered deep learning · OpenAI GPT-4o Mini</div>
+    <div class="hdr-back" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
+    <div>
+      <div class="hdr-title">Smart Tutor</div>
+      <div class="hdr-sub">AI-powered · Ask any subject</div>
     </div>
-    <div class="bal-pill"><i class="fas fa-coins"></i><span id="balDisplay">—</span></div>
+    <button class="hdr-clear" onclick="clearAll()"><i class="fas fa-rotate-left"></i> New</button>
   </div>
 
-  <!-- SCROLL AREA -->
-  <div class="scroll-area" id="scrollArea">
-    <div class="landing" id="landingState">
-      <div class="landing-icon"><i class="fas fa-brain"></i></div>
-      <div class="landing-title">Your Personal<br><span>AI Tutor</span></div>
-      <div class="typing-txt" id="typingTxt"></div>
-      <div class="landing-sub">Ask about any subject. Get a detailed explanation, YouTube videos, and an instant quiz — all in one search.</div>
-      <div class="cost-note"><i class="fas fa-coins"></i> Search: <b style="margin:0 3px;color:var(--gold)">10 LNX</b> · Video: <b style="margin:0 3px;color:var(--gold)">5 LNX</b> · Quiz: Free</div>
+  <div class="tabs">
+    <button class="tab active" data-tab="ask"><i class="fas fa-brain"></i> Ask</button>
+    <button class="tab" data-tab="videos"><i class="fab fa-youtube"></i> Videos</button>
+    <button class="tab" data-tab="quiz"><i class="fas fa-graduation-cap"></i> Quiz</button>
+  </div>
+
+  <div class="panel active" id="tab-ask">
+    <div class="scroll" id="askScroll">
+      <div class="landing" id="landingEl">
+        <div class="land-orb"><i class="fas fa-brain"></i></div>
+        <div class="land-title">Smart Tutor</div>
+        <div class="land-type" id="typingEl"></div>
+        <div class="land-sub">Ask any topic. Get a clear explanation, YouTube videos, and a quiz — all at once.</div>
+        <div class="sugs">
+          <button class="sug" onclick="useSug(this)"><i class="fas fa-dna"></i>Explain photosynthesis step by step</button>
+          <button class="sug" onclick="useSug(this)"><i class="fas fa-calculator"></i>How to solve quadratic equations</button>
+          <button class="sug" onclick="useSug(this)"><i class="fas fa-atom"></i>What is Newton's third law?</button>
+          <button class="sug" onclick="useSug(this)"><i class="fas fa-landmark"></i>Causes of World War II</button>
+        </div>
+      </div>
+    </div>
+    <div class="search-bar">
+      <div class="search-row">
+        <textarea class="search-ta" id="searchTa" placeholder="Ask your tutor anything..." rows="1"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="doSearch()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+      <div class="search-hint">
+        <div class="sh-l"><i class="fas fa-coins"></i> 10 LNX per search · Videos 5 LNX each</div>
+        <button class="sh-r" onclick="clearAll()"><i class="fas fa-rotate-left"></i> Clear</button>
+      </div>
     </div>
   </div>
 
-  <!-- SEARCH BAR -->
-  <div class="search-bar">
-    <div class="search-inner">
-      <textarea class="search-ta" id="searchTa" placeholder="Ask your Smart Tutor anything..." rows="1"></textarea>
-      <button class="send-btn" id="sendBtn" onclick="doSearch()"><i class="fas fa-paper-plane"></i></button>
+  <div class="panel" id="tab-videos">
+    <div class="scroll" id="videosScroll">
+      <div style="padding:28px 16px;text-align:center;color:var(--muted)">
+        <i class="fab fa-youtube" style="font-size:2.5rem;margin-bottom:10px;display:block;color:rgba(255,61,112,.3)"></i>
+        <p style="font-size:.82rem;font-weight:700;margin-bottom:4px">Videos appear here</p>
+        <p style="font-size:.74rem">Search a topic first to load relevant videos</p>
+      </div>
     </div>
-    <div class="search-hint">
-      <div class="sh-cost"><i class="fas fa-coins"></i> 10 LNX per search · 5 LNX per video · Quiz free</div>
-      <button class="sh-clear" onclick="clearAll()"><i class="fas fa-rotate-left"></i> New Topic</button>
+  </div>
+
+  <div class="panel" id="tab-quiz">
+    <div class="scroll" id="quizScroll">
+      <div style="padding:28px 16px;text-align:center;color:var(--muted)">
+        <i class="fas fa-graduation-cap" style="font-size:2.5rem;margin-bottom:10px;display:block;color:rgba(255,204,51,.2)"></i>
+        <p style="font-size:.82rem;font-weight:700;margin-bottom:4px">Quiz appears here</p>
+        <p style="font-size:.74rem">Search a topic to auto-generate 5 quiz questions</p>
+      </div>
     </div>
   </div>
 </div>
@@ -284,38 +280,37 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
 import { watchAuth, db } from './auth.js';
 import { doc, onSnapshot, updateDoc, increment, serverTimestamp, addDoc, collection, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-let _uid=null, _bal=0, _busy=false, _aiPrefs={};
-let _lastText='', _quizData=[], _qIdx=0, _qScore=0, _answered=false;
+let _uid=null,_bal=0,_busy=false,_aiPrefs={};
+let _quizData=[],_qIdx=0,_qScore=0,_qAnswered=false;
 let _vidUrl='';
 
-/* THEME */
-function applyTheme(){const t=localStorage.getItem('lenovox_theme')||'dark';document.documentElement.setAttribute('data-theme',t==='dark'?'':t==='light'?'light':'dim');}
+function applyTheme(){const t=localStorage.getItem('lenovox_theme')||'';const attr=t==='light'?'light':t==='dim'?'dim':'';document.documentElement.setAttribute('data-theme',attr);}
 applyTheme();window.addEventListener('storage',applyTheme);
 
-/* TYPING */
-const phrases=['Type any topic and learn deeply...','Ask about Biology, Maths, History...','Get explanation + videos + quiz...','Study smarter with AI...'];
+// Typing effect
+const phrases=['Ask about Biology, Physics, Maths...','Get explanations + videos + quiz...','Study smarter with AI...','Type any topic below ↓'];
 let wi=0,ci=0,del=false;
-function typeIt(){const w=phrases[wi];const el=document.getElementById('typingTxt');if(!el)return;if(!del){el.textContent=w.slice(0,ci++);if(ci>w.length){del=true;setTimeout(typeIt,1500);return;}}else{el.textContent=w.slice(0,ci--);if(ci<0){del=false;wi=(wi+1)%phrases.length;}}setTimeout(typeIt,del?40:75);}
-typeIt();
+function type(){const el=document.getElementById('typingEl');if(!el)return;const w=phrases[wi];if(!del){el.textContent=w.slice(0,ci++);if(ci>w.length){del=true;setTimeout(type,1500);return;}}else{el.textContent=w.slice(0,ci--);if(ci<0){del=false;wi=(wi+1)%phrases.length;}}setTimeout(type,del?38:72);}
+type();
 
-/* TOAST */
 function toast(m,t='success'){const el=document.createElement('div');el.className=`toast ${t}`;const ic={success:'fas fa-circle-check',error:'fas fa-circle-exclamation',info:'fas fa-circle-info'};el.innerHTML=`<i class="${ic[t]||ic.info}"></i><span>${m}</span><button class="tc" onclick="this.parentElement.classList.add('removing');setTimeout(()=>this.parentElement.remove(),250)"><i class="fas fa-xmark"></i></button>`;document.getElementById('toasts').appendChild(el);setTimeout(()=>{if(el.parentElement){el.classList.add('removing');setTimeout(()=>el.remove(),250);}},4500);}
 
 window.goBack=()=>{if(window.parent?.navigateTo)window.parent.navigateTo('dashboard');else history.back();};
-window.clearAll=()=>location.reload();
+window.clearAll=()=>{document.getElementById('askScroll').innerHTML=`<div class="landing" id="landingEl"><div class="land-orb"><i class="fas fa-brain"></i></div><div class="land-title">Smart Tutor</div><div class="land-type"></div><div class="land-sub">Search a new topic below.</div></div>`;document.getElementById('videosScroll').innerHTML=`<div style="padding:28px 16px;text-align:center;color:var(--muted)"><i class="fab fa-youtube" style="font-size:2.5rem;margin-bottom:10px;display:block;color:rgba(255,61,112,.3)"></i><p style="font-size:.82rem;font-weight:700">Videos appear here</p></div>`;document.getElementById('quizScroll').innerHTML=`<div style="padding:28px 16px;text-align:center;color:var(--muted)"><i class="fas fa-graduation-cap" style="font-size:2.5rem;margin-bottom:10px;display:block;color:rgba(255,204,51,.2)"></i><p style="font-size:.82rem;font-weight:700">Quiz appears here</p></div>`;};
 
-/* TEXTAREA AUTO-RESIZE */
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('tab-'+b.dataset.tab).classList.add('active');}));
+
 const ta=document.getElementById('searchTa');
-ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,110)+'px';});
+ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,100)+'px';});
 ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doSearch();}});
+window.useSug=el=>{ta.value=el.textContent.trim();ta.focus();};
 
-function scrollBottom(){const sa=document.getElementById('scrollArea');setTimeout(()=>sa.scrollTo({top:sa.scrollHeight,behavior:'smooth'}),60);}
-function rmLanding(){const l=document.getElementById('landingState');if(l)l.remove();}
+function scrollBottom(id){const el=document.getElementById(id);if(el)setTimeout(()=>el.scrollTo({top:el.scrollHeight,behavior:'smooth'}),60);}
+function switchTab(id){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+id));}
 
-/* DEDUCT LNX */
 async function deductLNX(amt,desc){
   if(!_uid)return false;
-  if(_bal<amt){return false;}
+  if(_bal<amt){toast(`Need ${amt} LNX to continue.`,'error');return false;}
   try{
     await updateDoc(doc(db,'wallets',_uid),{balance:increment(-amt),totalSpent:increment(amt)});
     await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(-amt)});
@@ -324,38 +319,14 @@ async function deductLNX(amt,desc){
   }catch{return false;}
 }
 
-/* INSUFFICIENT COIN */
-function showInsuf(needed){
-  rmLanding();const sa=document.getElementById('scrollArea');
-  const div=document.createElement('div');div.className='insuf-card';
-  div.innerHTML=`<div class="insuf-top"><i class="fas fa-coins"></i><div class="insuf-title">Insufficient LNX Balance</div></div><div class="insuf-sub">You need <b>${needed} LNX</b> for this search. Your balance: <b>${_bal} LNX</b>.</div><div class="insuf-actions"><button class="ia-btn ia-topup" onclick="window.parent?.navigateTo?.('settings')"><i class="fas fa-arrow-up"></i> Top Up</button><button class="ia-btn ia-ad" onclick="watchAdForLNX()"><i class="fas fa-play-circle"></i> Watch Ad (+15 LNX)</button><button class="ia-btn ia-claim" onclick="window.parent?.navigateTo?.('dashboard')"><i class="fas fa-gift"></i> Claim Daily</button></div>`;
-  sa.appendChild(div);scrollBottom();
-}
-
-window.watchAdForLNX=async()=>{
-  toast('Ad loading... (+15 LNX on completion)','info');
-  setTimeout(async()=>{
-    try{
-      const r=await fetch('/api/ads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:_uid,adType:'rewarded_video',platform:'web'})});
-      const d=await r.json();
-      if(d.success){
-        await updateDoc(doc(db,'wallets',_uid),{balance:increment(d.lnxReward),totalEarned:increment(d.lnxReward)});
-        await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(d.lnxReward)});
-        await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Ad Reward',amount:d.lnxReward,timestamp:serverTimestamp(),date:new Date().toLocaleString()});
-        toast(`+${d.lnxReward} LNX earned!`,'success');
-      }else toast(d.error||'Ad not available.','error');
-    }catch{toast('Ad service unavailable.','error');}
-  },1500);
-};
-
-/* THINKING ANIMATION */
 function showThinking(){
-  rmLanding();const sa=document.getElementById('scrollArea');
-  const el=document.createElement('div');el.className='think-card';el.id='thinkCard';
-  el.innerHTML=`<div class="think-hdr"><div class="think-spinner"></div><div class="think-lbl">Thinking...</div></div><div class="think-steps" id="thinkSteps"></div><div class="think-dots"><div class="td"></div><div class="td"></div><div class="td"></div></div>`;
-  sa.appendChild(el);scrollBottom();
-  const steps=[{i:'fas fa-search',t:'Analysing your question...'},{i:'fas fa-book-open',t:'Searching knowledge base...'},{i:'fas fa-pen-nib',t:'Composing explanation...'},{i:'fas fa-video',t:'Finding relevant videos...'},{i:'fas fa-graduation-cap',t:'Preparing quiz questions...'}];
-  const c=document.getElementById('thinkSteps');let idx=0;
+  const landing=document.getElementById('landingEl');if(landing)landing.remove();
+  const sa=document.getElementById('askScroll');
+  const el=document.createElement('div');el.className='think';el.id='thinkEl';
+  el.innerHTML=`<div class="think-hdr"><div class="think-spin"></div><div class="think-lbl">Thinking...</div></div><div class="think-steps" id="tsContainer"></div><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  sa.appendChild(el);scrollBottom('askScroll');
+  const steps=[{i:'fas fa-search',t:'Reading your question...'},{i:'fas fa-book',t:'Searching knowledge...'},{i:'fas fa-pen-nib',t:'Writing explanation...'},{i:'fas fa-video',t:'Finding videos...'},{i:'fas fa-graduation-cap',t:'Creating quiz...'}];
+  const c=document.getElementById('tsContainer');let idx=0;
   const iv=setInterval(()=>{
     if(idx>0){const p=c.children[idx-1];if(p){p.className='ts done';p.querySelector('i').className='fas fa-check-circle';}}
     if(idx<steps.length){const s=steps[idx];const d=document.createElement('div');d.className='ts active';d.style.animationDelay=(idx*.08)+'s';d.innerHTML=`<i class="${s.i}"></i><span>${s.t}</span>`;c.appendChild(d);idx++;}
@@ -363,161 +334,133 @@ function showThinking(){
   },550);
   return iv;
 }
-function rmThinking(){const el=document.getElementById('thinkCard');if(el)el.remove();}
+function rmThinking(){const el=document.getElementById('thinkEl');if(el)el.remove();}
 
-/* RENDER AI RESPONSE */
-function renderResponse(text,lnx){
-  const sa=document.getElementById('scrollArea');
-  const el=document.createElement('div');el.className='resp-card';
-  el.innerHTML=`<div class="rc-hdr"><i class="fas fa-robot"></i><div class="rc-title">AI Explanation</div><div class="rc-cost"><i class="fas fa-coins"></i> -${lnx} LNX</div></div><div class="rc-body" id="rcBody">${marked.parse(text)}</div><div class="rc-actions"><button class="ra-btn btn-quiz" onclick="scrollToQuiz()"><i class="fas fa-graduation-cap"></i> Take Quiz</button><button class="ra-btn btn-copy" onclick="navigator.clipboard.writeText(document.getElementById('rcBody').innerText).then(()=>toast('Copied!','success'))"><i class="fas fa-copy"></i> Copy</button></div>`;
-  sa.appendChild(el);
-  el.querySelectorAll('pre code').forEach(b=>hljs.highlightElement(b));
-  scrollBottom();
+function renderAnswer(text){
+  const sa=document.getElementById('askScroll');
+  const el=document.createElement('div');el.className='ans-card';
+  el.innerHTML=`<div class="ans-hdr"><i class="fas fa-robot"></i><span>Explanation</span></div><div class="ans-body" id="ansBody">${marked.parse(text)}</div><div class="ans-actions"><button class="aa-btn btn-quiz" onclick="switchTab('quiz')"><i class="fas fa-graduation-cap"></i> Take Quiz</button><button class="aa-btn btn-copy" onclick="copy()"><i class="fas fa-copy"></i> Copy</button></div>`;
+  sa.appendChild(el);scrollBottom('askScroll');
 }
+window.copy=()=>{const el=document.getElementById('ansBody');if(el){navigator.clipboard.writeText(el.innerText);toast('Copied!','success');}};
 
-/* YOUTUBE VIDEOS */
-async function loadVideos(query){
+async function loadVideos(q){
+  document.getElementById('videosScroll').innerHTML=`<div style="padding:20px;text-align:center;color:var(--muted)"><div class="spinner" style="margin:0 auto 10px;border-top-color:var(--blue)"></div><p style="font-size:.8rem">Loading videos...</p></div>`;
   try{
     const instances=['https://inv.tux.pizza','https://invidious.nerdvpn.de','https://invidious.privacyredirect.com'];
+    let vids=[];
     for(const base of instances){
-      try{
-        const r=await fetch(`${base}/api/v1/search?q=${encodeURIComponent(query+' tutorial explanation')}&type=video&sort_by=relevance`,{signal:AbortSignal.timeout(4000)});
-        if(r.ok){const d=await r.json();if(Array.isArray(d)&&d.length)return d.slice(0,6);}
-      }catch{continue;}
+      try{const r=await fetch(`${base}/api/v1/search?q=${encodeURIComponent(q+' explained tutorial')}&type=video&sort_by=relevance`,{signal:AbortSignal.timeout(4000)});if(r.ok){const d=await r.json();if(Array.isArray(d)&&d.length){vids=d.slice(0,6);break;}}}catch{continue;}
     }
-  }catch{}
-  return [];
+    const sc=document.getElementById('videosScroll');
+    if(!vids.length){sc.innerHTML=`<div style="padding:20px;text-align:center;color:var(--muted);font-size:.8rem"><i class="fas fa-circle-info" style="color:var(--blue);font-size:1.4rem;display:block;margin-bottom:8px"></i>No videos found for this topic</div>`;return;}
+    const wrapper=document.createElement('div');wrapper.className='vids-card';
+    wrapper.innerHTML=`<div class="vids-hdr"><i class="fab fa-youtube"></i><span>Videos</span><small>5 LNX each</small></div><div class="vids-scroll" id="vScroll"></div>`;
+    sc.innerHTML='';sc.appendChild(wrapper);
+    const vscroll=document.getElementById('vScroll');
+    vids.forEach(v=>{
+      const id=v.videoId;const title=v.title||'Video';const author=v.author||'YouTube';
+      const thumb=v.videoThumbnails?.[0]?.url||`https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
+      const c=document.createElement('div');c.className='vid-c';
+      c.innerHTML=`<div class="vid-thumb-w"><img class="vid-thumb" src="${thumb}" loading="lazy" onerror="this.src='https://placehold.co/180x100/111/00d2ff?text=Video'"><div class="vid-play"><i class="fab fa-youtube"></i></div><div class="vid-badge"><i class="fas fa-coins"></i>5</div></div><div class="vid-info"><div class="vid-title">${title}</div><div class="vid-ch"><i class="fab fa-youtube"></i>${author}</div></div>`;
+      c.onclick=()=>openVid(`https://www.youtube.com/watch?v=${id}`);
+      vscroll.appendChild(c);
+    });
+  }catch{document.getElementById('videosScroll').innerHTML=`<div style="padding:20px;text-align:center;color:var(--muted);font-size:.8rem">Could not load videos</div>`;}
 }
 
-function renderVideos(videos,query){
-  const sa=document.getElementById('scrollArea');
-  const el=document.createElement('div');el.className='vid-section';el.id='vidSection';
-  el.innerHTML=`<div class="vs-hdr"><i class="fab fa-youtube"></i><div class="vs-title">Explanation Videos</div><div class="vs-note"><i class="fas fa-coins"></i> 5 LNX per video</div></div><div class="vids-scroll" id="vidsScroll"></div>`;
-  sa.appendChild(el);
-  const scroll=document.getElementById('vidsScroll');
-  if(!videos.length){scroll.innerHTML=`<div class="vid-empty"><i class="fas fa-circle-info"></i> No videos found for this topic.</div>`;scrollBottom();return;}
-  videos.forEach(v=>{
-    const id=v.videoId;const title=v.title||'Video';const author=v.author||'YouTube';
-    const thumb=v.videoThumbnails?.[0]?.url||`https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
-    const card=document.createElement('div');card.className='vid-card';
-    card.innerHTML=`<div class="vid-thumb-wrap"><img class="vid-thumb" src="${thumb}" alt="${title}" loading="lazy" onerror="this.src='https://placehold.co/200x112/0a0a1a/00d2ff?text=Video'"><div class="vid-play-ov"><i class="fab fa-youtube"></i></div><div class="vid-cost-badge"><i class="fas fa-coins"></i> 5 LNX</div></div><div class="vid-info"><div class="vid-title">${title}</div><div class="vid-meta"><i class="fab fa-youtube"></i>${author}</div></div>`;
-    card.onclick=()=>openVidModal(`https://www.youtube.com/watch?v=${id}`);
-    scroll.appendChild(card);
-  });
-  scrollBottom();
-}
-
-/* VIDEO MODAL */
-window.openVidModal=(url)=>{_vidUrl=url;document.getElementById('vidModal').classList.add('show');};
-window.closeVidModal=()=>{document.getElementById('vidModal').classList.remove('show');_vidUrl='';};
-window.confirmWatch=async()=>{
+window.openVid=url=>{_vidUrl=url;document.getElementById('vidModal').classList.add('show');};
+window.closeVid=()=>{document.getElementById('vidModal').classList.remove('show');_vidUrl='';};
+window.confirmVid=async()=>{
   const ok=await deductLNX(5,'Smart Tutor Video');
-  if(!ok){toast('Not enough LNX.','error');closeVidModal();return;}
-  closeVidModal();window.open(_vidUrl,'_blank');toast('-5 LNX · Enjoy the video!','info');
+  if(!ok){closeVid();return;}
+  closeVid();window.open(_vidUrl,'_blank');
 };
 
-/* QUIZ GENERATION */
-async function generateQuiz(query,aiText){
+async function generateQuiz(q,txt){
   try{
-    const r=await fetch('/api/getData',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-      messages:[{role:'user',content:`Based on this explanation about "${query}":\n\n${aiText.slice(0,1500)}\n\nGenerate exactly 5 multiple-choice quiz questions. Return ONLY valid JSON array, no markdown: [{"q":"question","options":["A. opt","B. opt","C. opt","D. opt"],"answer":"A","explain":"why"}]`}],
-      model:'fast',
-      systemPrompt:'You are a quiz generator. Return ONLY valid JSON array. No markdown. No backticks. No preamble.',
-      uid:_uid
-    })});
+    const r=await fetch('/api/getData',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:`From this explanation about "${q}":\n\n${txt.slice(0,1500)}\n\nGenerate 5 multiple-choice questions. Return ONLY JSON array: [{"q":"question","options":["A. opt","B. opt","C. opt","D. opt"],"answer":"A","explain":"why"}]`}],model:'fast',systemPrompt:'Quiz generator. Return ONLY valid JSON array. No markdown. No extra text.',uid:_uid})});
     const data=await r.json();
-    let raw=data.content||'[]';raw=raw.replace(/```json|```/g,'').trim();
-    _quizData=JSON.parse(raw);
-    if(_quizData.length)renderQuiz();
-  }catch(e){console.error('Quiz gen failed',e);}
-}
-
-function renderQuiz(){
-  _qIdx=0;_qScore=0;_answered=false;
-  const sa=document.getElementById('scrollArea');
-  const el=document.createElement('div');el.className='quiz-section';el.id='quizSection';
-  el.innerHTML=`<div class="qs-hdr"><i class="fas fa-graduation-cap"></i><div class="qs-title">Topic Quiz</div><div class="qs-badge">AI Generated · No LNX reward</div></div><div id="quizBody"></div>`;
-  sa.appendChild(el);
-  renderQuizQ();scrollBottom();
+    let raw=(data.content||'[]').replace(/```json|```/g,'').trim();
+    _quizData=JSON.parse(raw);if(!Array.isArray(_quizData)||!_quizData.length)return;
+    _qIdx=0;_qScore=0;_qAnswered=false;renderQuizQ();
+  }catch(e){console.error('quiz gen failed',e);}
 }
 
 function renderQuizQ(){
   const q=_quizData[_qIdx];if(!q)return;
   const pct=Math.round((_qIdx/_quizData.length)*100);
   const letters=['A','B','C','D'];
-  document.getElementById('quizBody').innerHTML=`
-    <div class="quiz-q-wrap">
-      <div class="qz-prog-row"><div class="qz-prog-txt">Question ${_qIdx+1} of ${_quizData.length}</div><div class="qz-score-lbl">Score: ${_qScore}</div></div>
-      <div class="qz-bar"><div class="qz-fill" style="width:${pct}%"></div></div>
-      <div class="qz-q">${q.q}</div>
-      <div class="qz-opts">${(q.options||[]).map((opt,i)=>`<button class="qz-opt" id="qo${i}" onclick="answerQ(${i})"><i class="fas fa-circle"></i><span><b>${letters[i]}.</b> ${opt.replace(/^[A-D]\.\s*/,'')}</span></button>`).join('')}</div>
-      <div class="qz-explain" id="qzExp"><i class="fas fa-lightbulb"></i><span id="qzExpTxt"></span></div>
+  const sc=document.getElementById('quizScroll');
+  sc.innerHTML='';
+  const el=document.createElement('div');el.className='quiz-card';
+  el.innerHTML=`<div class="quiz-hdr"><i class="fas fa-graduation-cap"></i><span>Quiz</span><small>No LNX reward</small></div>
+    <div class="quiz-body">
+      <div class="q-prog-row"><span>Q${_qIdx+1}/${_quizData.length}</span><span>Score: ${_qScore}</span></div>
+      <div class="q-bar"><div class="q-fill" style="width:${pct}%"></div></div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${(q.options||[]).map((opt,i)=>`<button class="q-opt" id="qo${i}" onclick="ansQ(${i})"><i class="fas fa-circle"></i><span><b>${letters[i]}.</b> ${opt.replace(/^[A-D]\.\s*/,'')}</span></button>`).join('')}</div>
+      <div class="q-exp" id="qExp"><i class="fas fa-lightbulb"></i><span id="qExpTxt"></span></div>
     </div>
-    <div class="qz-foot"><button class="qz-btn qz-skip" onclick="skipQ()"><i class="fas fa-forward"></i> Skip</button><button class="qz-btn qz-next" id="qzNext" onclick="nextQ()"><i class="fas fa-arrow-right"></i> Next</button></div>`;
-  _answered=false;
+    <div class="q-foot"><button class="q-btn q-skip" onclick="skipQ()"><i class="fas fa-forward"></i> Skip</button><button class="q-btn q-next" id="qNext" onclick="nextQ()"><i class="fas fa-arrow-right"></i> Next</button></div>`;
+  sc.appendChild(el);_qAnswered=false;
 }
 
-window.answerQ=(idx)=>{
-  if(_answered)return;_answered=true;
+window.ansQ=(idx)=>{
+  if(_qAnswered)return;_qAnswered=true;
   const q=_quizData[_qIdx];const letters=['A','B','C','D'];
   const correctLetter=(q.answer||'A').replace(/[^A-D]/g,'').charAt(0);
   const correctIdx=letters.indexOf(correctLetter);
-  document.querySelectorAll('.qz-opt').forEach(b=>b.setAttribute('disabled','true'));
+  document.querySelectorAll('.q-opt').forEach(b=>b.setAttribute('disabled','true'));
   const chosen=document.getElementById(`qo${idx}`);
   const correctEl=document.getElementById(`qo${correctIdx}`);
   if(idx===correctIdx){_qScore++;chosen.classList.add('correct');chosen.querySelector('i').className='fas fa-circle-check';}
   else{chosen.classList.add('wrong');chosen.querySelector('i').className='fas fa-circle-xmark';if(correctEl){correctEl.classList.add('correct');correctEl.querySelector('i').className='fas fa-circle-check';}}
-  if(q.explain){document.getElementById('qzExpTxt').textContent=q.explain;document.getElementById('qzExp').classList.add('show');}
-  document.getElementById('qzNext').style.display='flex';
+  if(q.explain){document.getElementById('qExpTxt').textContent=q.explain;document.getElementById('qExp').classList.add('show');}
+  document.getElementById('qNext').style.display='flex';
 };
-window.nextQ=()=>{_qIdx++;if(_qIdx>=_quizData.length)showQuizResult();else{_answered=false;renderQuizQ();}};
-window.skipQ=()=>{_qIdx++;if(_qIdx>=_quizData.length)showQuizResult();else{_answered=false;renderQuizQ();}};
-window.scrollToQuiz=()=>{const q=document.getElementById('quizSection');if(q)q.scrollIntoView({behavior:'smooth'});else toast('Quiz is being generated...','info');};
-
-function showQuizResult(){
+window.nextQ=()=>{_qIdx++;if(_qIdx>=_quizData.length)showQResult();else{_qAnswered=false;renderQuizQ();}};
+window.skipQ=()=>{_qIdx++;if(_qIdx>=_quizData.length)showQResult();else{_qAnswered=false;renderQuizQ();}};
+function showQResult(){
   const pct=Math.round((_qScore/_quizData.length)*100);
-  const cls=pct>=80?'background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.26);color:var(--green)':pct>=50?'background:rgba(0,210,255,.11);border:1px solid rgba(0,210,255,.22);color:var(--blue)':'background:rgba(239,68,68,.11);border:1px solid rgba(239,68,68,.22);color:var(--red)';
+  const cls=pct>=80?'background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.24);color:var(--green)':pct>=50?'background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.2);color:var(--blue)':'background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red)';
   const lbl=pct>=80?'Excellent!':pct>=50?'Good Effort!':'Keep Practising!';
-  document.getElementById('quizBody').innerHTML=`<div class="quiz-result"><div class="qr-score">${_qScore}/${_quizData.length}</div><div class="qr-lbl">${pct}% correct</div><div class="qr-badge" style="${cls}">${lbl}</div><div class="qr-note">Note: This quiz has no LNX reward.<br>Take the main quiz from the dashboard to earn coins.</div><button class="qr-retry" onclick="retryQuiz()"><i class="fas fa-rotate-right"></i> Try Again</button></div>`;
-  scrollBottom();
+  document.getElementById('quizScroll').innerHTML=`<div class="quiz-card"><div class="quiz-hdr"><i class="fas fa-graduation-cap"></i><span>Result</span></div><div class="q-result"><div class="qr-score">${_qScore}/${_quizData.length}</div><div class="qr-lbl">${pct}% correct</div><div class="qr-badge" style="${cls}">${lbl}</div><div class="qr-note">This quiz has no LNX reward. Take the main quiz from the dashboard to earn coins.</div><button class="qr-retry" onclick="retryQuiz()"><i class="fas fa-rotate-right"></i> Try Again</button></div></div>`;
 }
-window.retryQuiz=()=>{_qIdx=0;_qScore=0;_answered=false;renderQuizQ();};
+window.retryQuiz=()=>{_qIdx=0;_qScore=0;_qAnswered=false;renderQuizQ();};
 
-/* MAIN SEARCH */
 window.doSearch=async()=>{
-  const query=ta.value.trim();if(!query||_busy)return;
-  if(!_uid){toast('Please sign in first.','error');return;}
-  if(_bal<10){showInsuf(10);ta.value='';ta.style.height='auto';return;}
+  const q=ta.value.trim();if(!q||_busy)return;
+  if(!_uid){toast('Sign in first.','error');return;}
+  if(_bal<10){toast('Need 10 LNX to search. Watch an ad or claim daily reward.','error');return;}
   _busy=true;
   const btn=document.getElementById('sendBtn');btn.innerHTML='<div class="spinner"></div>';btn.disabled=true;
   ta.value='';ta.style.height='auto';
   const iv=showThinking();
-  const tone=_aiPrefs.tone||'friendly';
-  const level=_aiPrefs.eduLevel||'sss';
-  const context=_aiPrefs.context||'';
-  const systemPrompt=`You are Lenovox Smart Tutor, an expert educational AI. Tone: ${tone}. Student level: ${level}.${context?' About student: '+context:''} Give a thorough well-structured explanation with clear ## headings, concrete examples relevant to Nigerian students, **bold** key points, and a brief summary. Format in clean markdown.`;
+  const systemPrompt=`You are Lenovox Smart Tutor, an expert educational AI for Nigerian students. Give a clear, thorough explanation with ## headings, examples, and key points in bold. Explain clearly for a student studying for WAEC/JAMB. Format in clean markdown.${_aiPrefs.context?' Student context: '+_aiPrefs.context:''}`;
   try{
-    const r=await fetch('/api/getData',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:`Explain this topic thoroughly for a student: ${query}`}],model:'fast',systemPrompt,uid:_uid})});
+    const r=await fetch('/api/getData',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:`Explain this thoroughly for a student: ${q}`}],model:_aiPrefs.model||'fast',systemPrompt,uid:_uid})});
     const data=await r.json();
     clearInterval(iv);rmThinking();
-    if(data.error){toast(data.error,'error');_busy=false;btn.innerHTML='<i class="fas fa-paper-plane"></i>';btn.disabled=false;return;}
-    const lnx=data.usage?.lnxCost||10;
-    const ok=await deductLNX(lnx,'Smart Tutor Search');
-    if(!ok){showInsuf(lnx);_busy=false;btn.innerHTML='<i class="fas fa-paper-plane"></i>';btn.disabled=false;return;}
-    _lastText=data.content||'';
-    renderResponse(_lastText,lnx);
-    const videos=await loadVideos(query);
-    renderVideos(videos,query);
-    generateQuiz(query,_lastText);
+    if(data.error){toast(data.error,'error');}
+    else{
+      const lnx=data.usage?.lnxCost||10;
+      const ok=await deductLNX(lnx,'Smart Tutor');
+      if(ok){
+        renderAnswer(data.content||'');
+        switchTab('ask');
+        loadVideos(q);
+        generateQuiz(q,data.content||'');
+      }
+    }
   }catch{clearInterval(iv);rmThinking();toast('Search failed. Try again.','error');}
   _busy=false;btn.innerHTML='<i class="fas fa-paper-plane"></i>';btn.disabled=false;
 };
 
-/* AUTH */
 watchAuth(async user=>{
   if(!user){window.location.replace('login.html');return;}
   _uid=user.uid;
-  onSnapshot(doc(db,'wallets',_uid),s=>{if(!s.exists())return;_bal=s.data().balance||0;document.getElementById('balDisplay').textContent=_bal.toLocaleString();});
+  onSnapshot(doc(db,'wallets',_uid),s=>{if(s.exists())_bal=s.data().balance||0;});
   const snap=await getDoc(doc(db,'users',_uid));
   if(snap.exists())_aiPrefs=snap.data().aiPrefs||{};
 });
