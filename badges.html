@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Lenovox — Badges</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03030b;--card:rgba(11,11,30,.93);--card2:rgba(16,16,42,.97);--blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--orange:#ff9500;--purple:#9d50bb;--pink:#ff3d70;--red:#ef4444;--border:rgba(255,255,255,0.07);--text:#e8eaf6;--muted:#8892a4}
+[data-theme="light"]{--bg:#f0f4f8;--card:rgba(255,255,255,.96);--card2:#fff;--border:rgba(0,0,0,.09);--text:#1e293b;--muted:#64748b}
+[data-theme="dim"]{--bg:#0f1117;--card:rgba(20,22,36,.95);--card2:rgba(26,28,44,.98);--border:rgba(255,255,255,.08);--text:#d4d8e8;--muted:#7a8499}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;padding-bottom:88px;transition:background .3s,color .3s}
+.bg-glow{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 60% 40% at 25% 15%,rgba(157,80,187,.1) 0%,transparent 60%),radial-gradient(ellipse 50% 35% at 75% 85%,rgba(255,204,51,.07) 0%,transparent 60%)}
+.page{max-width:520px;margin:0 auto;padding:0 14px}
+.pg-hdr{display:flex;align-items:center;gap:11px;padding:18px 0 14px}
+.back-c{width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.22s;flex-shrink:0}
+.back-c i{color:var(--muted);font-size:.85rem}
+.back-c:hover i{color:var(--purple)}
+.hdr-title{font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;color:var(--text)}
+.hdr-sub{font-size:.7rem;color:var(--muted);margin-top:1px}
+
+/* MY BADGES STRIP */
+.my-strip{background:linear-gradient(135deg,rgba(157,80,187,.12),rgba(255,204,51,.07));border:1px solid rgba(157,80,187,.22);border-radius:18px;padding:16px;margin-bottom:20px}
+.my-strip-title{font-size:.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.my-strip-title i{font-size:.68rem;color:var(--purple)}
+.my-badges-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.my-badges-row::-webkit-scrollbar{display:none}
+.my-badge-mini{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px}
+.mbi{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;border:2px solid;position:relative}
+.mbi-none{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.04);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--muted)}
+.my-badge-mini span{font-size:.6rem;font-weight:700;color:var(--muted);max-width:48px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.my-bal{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:.76rem;font-weight:700;color:var(--gold)}
+.my-bal i{font-size:.72rem}
+
+/* SECTION */
+.sec-lbl{font-size:.7rem;font-weight:800;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.9px;display:flex;align-items:center;gap:5px;margin-bottom:11px}
+[data-theme="light"] .sec-lbl{color:rgba(0,0,0,.3)}
+.sec-lbl i{font-size:.66rem;color:var(--purple)}
+
+/* BADGE GRID */
+.badge-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:20px}
+.badge-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:16px 13px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.badge-card.owned{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.04)}
+.badge-card.owned::after{content:'✓ Owned';position:absolute;top:8px;right:8px;background:rgba(16,185,129,.2);border:1px solid rgba(16,185,129,.3);border-radius:5px;padding:1px 7px;font-size:.58rem;font-weight:800;color:var(--green)}
+.badge-card:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(0,0,0,.35)}
+.badge-icon{width:58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.65rem;position:relative}
+.badge-glow{position:absolute;inset:-4px;border-radius:20px;opacity:.35;filter:blur(8px)}
+.badge-name{font-family:'Orbitron',monospace;font-size:.76rem;font-weight:700;color:var(--text);line-height:1.3}
+.badge-desc{font-size:.7rem;color:var(--muted);line-height:1.55}
+.badge-type{display:flex;align-items:center;gap:4px;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:999px;margin-top:2px}
+.bt-earn{background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.2);color:var(--blue)}
+.bt-buy{background:rgba(255,204,51,.1);border:1px solid rgba(255,204,51,.2);color:var(--gold)}
+.bt-special{background:rgba(255,61,112,.1);border:1px solid rgba(255,61,112,.2);color:var(--pink)}
+.badge-req{font-size:.68rem;color:var(--muted);display:flex;align-items:center;gap:3px}
+.badge-req i{font-size:.62rem}
+.badge-prog{width:100%;height:4px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin-top:2px}
+.badge-prog-fill{height:100%;border-radius:99px;transition:width .6s ease}
+.claim-btn{width:100%;padding:8px;border:none;border-radius:9px;font-family:'Nunito',sans-serif;font-size:.76rem;font-weight:800;cursor:pointer;transition:.22s;display:flex;align-items:center;justify-content:center;gap:4px;margin-top:2px}
+.claim-btn i{font-size:.7rem}
+.cb-earn{background:linear-gradient(135deg,var(--blue),#2d6dc7);color:#fff}
+.cb-buy{background:linear-gradient(135deg,var(--gold),var(--orange));color:#000}
+.cb-locked{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);cursor:not-allowed}
+.cb-owned{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.22);color:var(--green);cursor:default}
+
+/* BADGE DETAIL MODAL */
+.modal-ov{position:fixed;inset:0;z-index:9999;background:rgba(3,3,11,.88);backdrop-filter:blur(8px);display:none;align-items:flex-end;justify-content:center}
+.modal-ov.show{display:flex}
+.modal-box{background:var(--card2);border:1px solid var(--border);border-radius:22px 22px 0 0;width:100%;max-width:520px;padding:22px 16px 36px;animation:mIn .32s cubic-bezier(.34,1.56,.64,1)}
+@keyframes mIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:99px;margin:0 auto 18px}
+.modal-badge-icon{width:70px;height:70px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 12px;position:relative}
+.modal-badge-glow{position:absolute;inset:-6px;border-radius:26px;opacity:.4;filter:blur(10px)}
+.modal-title{font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;color:var(--text);text-align:center;margin-bottom:5px}
+.modal-sub{font-size:.8rem;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:16px}
+.modal-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.ms{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:11px;text-align:center}
+.ms-val{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:900;color:var(--text)}
+.ms-lbl{font-size:.64rem;color:var(--muted);margin-top:2px}
+.modal-prog{margin-bottom:16px}
+.modal-prog-lbl{font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.modal-prog-bar{width:100%;height:8px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+.modal-prog-fill{height:100%;border-radius:99px;transition:width 1s ease}
+.modal-btn{width:100%;padding:13px;border:none;border-radius:13px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;transition:.25s;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:8px}
+.modal-btn i{font-size:.86rem}
+.modal-btn:hover{transform:translateY(-2px)}
+.modal-cancel{width:100%;padding:10px;border:1px solid var(--border);border-radius:11px;background:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:700;cursor:pointer}
+
+/* TOAST */
+#toasts{position:fixed;top:14px;right:14px;z-index:99999;display:flex;flex-direction:column;gap:6px;max-width:270px}
+.toast{padding:9px 12px;border-radius:10px;font-size:.77rem;font-weight:700;display:flex;align-items:center;gap:7px;backdrop-filter:blur(16px);border:1px solid;animation:tIn .3s ease}
+.toast i{font-size:.85rem;flex-shrink:0}.toast span{flex:1}
+.toast.success{background:rgba(16,185,129,.14);border-color:rgba(16,185,129,.26);color:#6ee7b7}
+.toast.error{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.26);color:#fca5a5}
+.toast.info{background:rgba(0,210,255,.11);border-color:rgba(0,210,255,.22);color:#a5f3ff}
+.toast.removing{animation:tOut .25s ease forwards}
+@keyframes tIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tOut{to{opacity:0;transform:translateX(28px)}}
+.tc{margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;opacity:.44;padding:0 0 0 4px}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div id="toasts"></div>
+
+<!-- BADGE DETAIL MODAL -->
+<div class="modal-ov" id="badgeModal" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-badge-icon" id="mIcon"><div class="modal-badge-glow" id="mGlow"></div><span id="mEmoji"></span></div>
+    <div class="modal-title" id="mTitle"></div>
+    <div class="modal-sub" id="mSub"></div>
+    <div class="modal-stats">
+      <div class="ms"><div class="ms-val" id="mOwners">—</div><div class="ms-lbl">Owners</div></div>
+      <div class="ms"><div class="ms-val" id="mCost">—</div><div class="ms-lbl">Cost</div></div>
+    </div>
+    <div class="modal-prog" id="mProgWrap">
+      <div class="modal-prog-lbl"><span>Your Progress</span><span id="mProgTxt">0%</span></div>
+      <div class="modal-prog-bar"><div class="modal-prog-fill" id="mProgFill" style="width:0%"></div></div>
+    </div>
+    <button class="modal-btn" id="mActionBtn"></button>
+    <button class="modal-cancel" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<div class="page">
+  <div class="pg-hdr">
+    <div class="back-c" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
+    <div>
+      <div class="hdr-title">Badges & Honours</div>
+      <div class="hdr-sub">Earn, collect and display your achievements</div>
+    </div>
+  </div>
+
+  <!-- MY BADGES -->
+  <div class="my-strip">
+    <div class="my-strip-title"><i class="fas fa-shield-halved"></i> My Badges</div>
+    <div class="my-badges-row" id="myBadgesRow"><div style="color:var(--muted);font-size:.78rem;padding:10px 0">No badges yet — earn your first one below!</div></div>
+    <div class="my-bal"><i class="fas fa-coins"></i><span id="myBal">— LNX</span></div>
+  </div>
+
+  <!-- HONOUR RANKS -->
+  <div class="sec-lbl" style="margin-top:4px"><i class="fas fa-trophy"></i> Honour Rank Badges</div>
+  <div class="badge-grid" id="rankGrid"></div>
+
+  <!-- ACHIEVABLE BADGES -->
+  <div class="sec-lbl"><i class="fas fa-star"></i> Achievement Badges</div>
+  <div class="badge-grid" id="achieveGrid"></div>
+
+  <!-- PURCHASABLE -->
+  <div class="sec-lbl"><i class="fas fa-gem"></i> Premium Badges</div>
+  <div class="badge-grid" id="premiumGrid"></div>
+
+  <!-- SPECIAL -->
+  <div class="sec-lbl"><i class="fas fa-crown"></i> Special Titles</div>
+  <div class="badge-grid" id="specialGrid"></div>
+</div>
+
+<script type="module">
+import { watchAuth, db } from './auth.js';
+import { doc, onSnapshot, getDoc, updateDoc, increment, serverTimestamp, addDoc, collection, arrayUnion } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+let _uid=null,_bal=0,_profile={},_ownedBadges=[];
+let _curBadge=null;
+
+function applyTheme(){const t=localStorage.getItem('lenovox_theme')||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t==='light'?'light':t==='dim'?'dim':'');}
+applyTheme();window.addEventListener('storage',applyTheme);
+
+function toast(m,t='success'){const el=document.createElement('div');el.className=`toast ${t}`;const ic={success:'fas fa-circle-check',error:'fas fa-circle-exclamation',info:'fas fa-circle-info'};el.innerHTML=`<i class="${ic[t]||ic.info}"></i><span>${m}</span><button class="tc" onclick="this.parentElement.classList.add('removing');setTimeout(()=>this.parentElement.remove(),250)"><i class="fas fa-xmark"></i></button>`;document.getElementById('toasts').appendChild(el);setTimeout(()=>{if(el.parentElement){el.classList.add('removing');setTimeout(()=>el.remove(),250);}},5000);}
+
+window.goBack=()=>{if(window.parent?.navigateTo)window.parent.navigateTo('settings');else history.back();};
+
+// ── ALL BADGES ─────────────────────────────────────────────────
+const RANK_BADGES=[
+  {id:'bronze_scholar',emoji:'🥉',name:'Bronze Scholar',desc:'A dedicated learner building strong foundations.',bg:'linear-gradient(135deg,#cd7f32,#a0522d)',glow:'#cd7f32',type:'earn',req:'Score 50+ on 10 quizzes',reqVal:10,metric:'quizzes',owners:1842,cost:'Free'},
+  {id:'silver_scholar',emoji:'🥈',name:'Silver Scholar',desc:'Consistent performance across many subjects.',bg:'linear-gradient(135deg,#c0c0c0,#808080)',glow:'#c0c0c0',type:'earn',req:'Score 70+ on 25 quizzes',reqVal:25,metric:'quizzes',owners:743,cost:'Free'},
+  {id:'gold_scholar',emoji:'🥇',name:'Gold Scholar',desc:'Exceptional academic achievement.',bg:'linear-gradient(135deg,#ffd700,#ffa500)',glow:'#ffd700',type:'earn',req:'Score 80+ on 50 quizzes',reqVal:50,metric:'quizzes',owners:201,cost:'Free'},
+  {id:'diamond_scholar',emoji:'💎',name:'Diamond Scholar',desc:'Elite academic excellence. Top 1% of all users.',bg:'linear-gradient(135deg,#b9f2ff,#00d2ff)',glow:'#00d2ff',type:'earn',req:'Score 90+ on 100 quizzes',reqVal:100,metric:'quizzes',owners:38,cost:'Free'},
+];
+const ACHIEVE_BADGES=[
+  {id:'early_adopter',emoji:'🚀',name:'Early Adopter',desc:'Among the first 500 users on the platform.',bg:'linear-gradient(135deg,#ff6b35,#f7c59f)',glow:'#ff6b35',type:'earn',req:'Join before 500 users',reqVal:500,metric:'signup',owners:492,cost:'Free'},
+  {id:'referral_king',emoji:'👑',name:'Referral King',desc:'Referred 10 or more active users.',bg:'linear-gradient(135deg,#ffcc33,#ff9500)',glow:'#ffcc33',type:'earn',req:'Refer 10 users',reqVal:10,metric:'referrals',owners:127,cost:'Free'},
+  {id:'streak_master',emoji:'🔥',name:'Streak Master',desc:'Logged in for 30 consecutive days.',bg:'linear-gradient(135deg,#ff3d70,#ff9500)',glow:'#ff3d70',type:'earn',req:'30-day login streak',reqVal:30,metric:'streak',owners:304,cost:'Free'},
+  {id:'lnx_millionaire',emoji:'💰',name:'LNX Millionaire',desc:'Accumulated 100,000 LNX total earned.',bg:'linear-gradient(135deg,#ffd700,#10b981)',glow:'#ffd700',type:'earn',req:'Earn 100,000 LNX total',reqVal:100000,metric:'lnx',owners:19,cost:'Free'},
+  {id:'ai_power_user',emoji:'🤖',name:'AI Power User',desc:'Sent 500 messages to the AI.',bg:'linear-gradient(135deg,#00d2ff,#3a7bd5)',glow:'#00d2ff',type:'earn',req:'Send 500 AI messages',reqVal:500,metric:'messages',owners:88,cost:'Free'},
+  {id:'quiz_champion',emoji:'🎓',name:'Quiz Champion',desc:'Completed 200 quizzes on the platform.',bg:'linear-gradient(135deg,#9d50bb,#6e3592)',glow:'#9d50bb',type:'earn',req:'Complete 200 quizzes',reqVal:200,metric:'quizzes',owners:52,cost:'Free'},
+];
+const PREMIUM_BADGES=[
+  {id:'verified',emoji:'✅',name:'Verified',desc:'Official verified account. Displayed everywhere.',bg:'linear-gradient(135deg,#1da1f2,#0077b6)',glow:'#1da1f2',type:'buy',req:'Purchase to display',owners:234,cost:'5,000 LNX'},
+  {id:'elite_member',emoji:'⭐',name:'Elite Member',desc:'Exclusive badge for Elite plan subscribers.',bg:'linear-gradient(135deg,#ffd700,#ff9500)',glow:'#ffd700',type:'buy',req:'Requires Elite plan',owners:89,cost:'Plan Perk'},
+  {id:'supporter',emoji:'💜',name:'Supporter',desc:'Supports Lenovox and MC Tech development.',bg:'linear-gradient(135deg,#9d50bb,#af52de)',glow:'#9d50bb',type:'buy',req:'Purchase',owners:156,cost:'3,000 LNX'},
+  {id:'mentor',emoji:'🧑‍🏫',name:'Mentor',desc:'Recognized as a helpful community member.',bg:'linear-gradient(135deg,#10b981,#059669)',glow:'#10b981',type:'buy',req:'Purchase',owners:72,cost:'2,000 LNX'},
+];
+const SPECIAL_BADGES=[
+  {id:'nigeria_no1',emoji:'🇳🇬',name:'Nigeria No.1',desc:'Top ranked student in Nigeria on leaderboard.',bg:'linear-gradient(135deg,#008751,#ffcc33)',glow:'#008751',type:'special',req:'Reach #1 in Nigeria',owners:1,cost:'Auto-awarded'},
+  {id:'africa_no1',emoji:'🌍',name:'Africa Champion',desc:'Top ranked student across all of Africa.',bg:'linear-gradient(135deg,#ff3d70,#ffcc33)',glow:'#ff3d70',type:'special',req:'Reach #1 in Africa',owners:1,cost:'Auto-awarded'},
+  {id:'mc_tech_crew',emoji:'⚡',name:'MC Tech Crew',desc:'Official member of the MC Tech development team.',bg:'linear-gradient(135deg,#00d2ff,#9d50bb)',glow:'#00d2ff',type:'special',req:'Invite only',owners:5,cost:'Invite Only'},
+  {id:'lenovox_legend',emoji:'🏆',name:'Lenovox Legend',desc:'The highest honour on the platform. Rarely awarded.',bg:'linear-gradient(135deg,#ffd700,#ff3d70,#9d50bb)',glow:'#ffd700',type:'special',req:'Staff awarded',owners:3,cost:'Staff Awarded'},
+];
+
+const BADGE_COSTS={verified:5000,supporter:3000,mentor:2000};
+
+function renderGrid(badges,containerId){
+  const c=document.getElementById(containerId);
+  c.innerHTML=badges.map(b=>{
+    const owned=_ownedBadges.includes(b.id);
+    let btnHtml='';let typeHtml='';
+    if(b.type==='earn'){typeHtml=`<div class="badge-type bt-earn"><i class="fas fa-star"></i> Earn</div>`;btnHtml=owned?`<button class="claim-btn cb-owned"><i class="fas fa-circle-check"></i> Owned</button>`:`<button class="claim-btn cb-earn" onclick="openBadge('${b.id}')"><i class="fas fa-eye"></i> View Progress</button>`;}
+    else if(b.type==='buy'){typeHtml=`<div class="badge-type bt-buy"><i class="fas fa-coins"></i> ${b.cost}</div>`;btnHtml=owned?`<button class="claim-btn cb-owned"><i class="fas fa-circle-check"></i> Owned</button>`:`<button class="claim-btn cb-buy" onclick="openBadge('${b.id}')"><i class="fas fa-cart-shopping"></i> Get Badge</button>`;}
+    else{typeHtml=`<div class="badge-type bt-special"><i class="fas fa-crown"></i> Special</div>`;btnHtml=owned?`<button class="claim-btn cb-owned"><i class="fas fa-circle-check"></i> Owned</button>`:`<button class="claim-btn cb-locked" disabled><i class="fas fa-lock"></i> ${b.cost}</button>`;}
+    return `<div class="badge-card${owned?' owned':''}" onclick="openBadge('${b.id}')">
+      <div class="badge-icon" style="background:${b.bg}"><div class="badge-glow" style="background:${b.glow}"></div>${b.emoji}</div>
+      <div class="badge-name">${b.name}</div>
+      <div class="badge-desc">${b.desc}</div>
+      ${typeHtml}
+      <div class="badge-req"><i class="fas fa-circle-info"></i>${b.req}</div>
+      ${btnHtml}
+    </div>`;
+  }).join('');
+}
+
+function renderMyBadges(){
+  const row=document.getElementById('myBadgesRow');
+  if(!_ownedBadges.length){row.innerHTML=`<div style="color:var(--muted);font-size:.78rem;padding:10px 0">No badges yet — earn your first one below!</div>`;return;}
+  const allBadges=[...RANK_BADGES,...ACHIEVE_BADGES,...PREMIUM_BADGES,...SPECIAL_BADGES];
+  row.innerHTML=_ownedBadges.map(id=>{
+    const b=allBadges.find(x=>x.id===id);if(!b)return '';
+    return `<div class="my-badge-mini" onclick="openBadge('${b.id}')"><div class="mbi" style="background:${b.bg};border-color:rgba(255,255,255,.2)">${b.emoji}</div><span>${b.name}</span></div>`;
+  }).join('');
+}
+
+const ALL_BADGES=[...RANK_BADGES,...ACHIEVE_BADGES,...PREMIUM_BADGES,...SPECIAL_BADGES];
+
+window.openBadge=(id)=>{
+  const b=ALL_BADGES.find(x=>x.id===id);if(!b)return;
+  _curBadge=b;
+  const owned=_ownedBadges.includes(b.id);
+  document.getElementById('mEmoji').textContent=b.emoji;
+  document.getElementById('mGlow').style.background=b.glow;
+  document.getElementById('mIcon').style.background=b.bg;
+  document.getElementById('mTitle').textContent=b.name;
+  document.getElementById('mSub').textContent=b.desc;
+  document.getElementById('mOwners').textContent=b.owners.toLocaleString();
+  document.getElementById('mCost').textContent=b.cost;
+  // Progress bar
+  const pw=document.getElementById('mProgWrap');
+  if(b.type==='earn'&&b.reqVal&&b.metric){
+    pw.style.display='block';
+    const prog=calcProgress(b);
+    const pct=Math.min(100,Math.round((prog/b.reqVal)*100));
+    document.getElementById('mProgFill').style.width=pct+'%';
+    document.getElementById('mProgFill').style.background=b.glow;
+    document.getElementById('mProgTxt').textContent=`${prog.toLocaleString()} / ${b.reqVal.toLocaleString()} (${pct}%)`;
+  }else pw.style.display='none';
+  // Action button
+  const ab=document.getElementById('mActionBtn');
+  if(owned){ab.className='modal-btn';ab.style.cssText=`background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.22);color:var(--green);cursor:default`;ab.innerHTML='<i class="fas fa-circle-check"></i> You own this badge';}
+  else if(b.type==='buy'&&BADGE_COSTS[b.id]){ab.className='modal-btn';ab.style.cssText=`background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;box-shadow:0 5px 14px rgba(255,204,51,.25)`;ab.innerHTML=`<i class="fas fa-coins"></i> Buy for ${BADGE_COSTS[b.id].toLocaleString()} LNX`;ab.onclick=()=>buyBadge(b);}
+  else if(b.type==='earn'){ab.className='modal-btn';ab.style.cssText=`background:linear-gradient(135deg,var(--blue),#2d6dc7);color:#fff`;ab.innerHTML='<i class="fas fa-arrow-right"></i> Keep Earning — You\'re on your way!';ab.onclick=()=>closeModal();}
+  else{ab.className='modal-btn';ab.style.cssText=`background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted);cursor:default`;ab.innerHTML='<i class="fas fa-lock"></i> '+b.cost;ab.onclick=null;}
+  document.getElementById('badgeModal').classList.add('show');
+};
+window.closeModal=()=>document.getElementById('badgeModal').classList.remove('show');
+
+function calcProgress(b){
+  const p=_profile;
+  if(!p)return 0;
+  if(b.metric==='quizzes')return p.totalQuizzes||0;
+  if(b.metric==='referrals')return p.totalReferrals||0;
+  if(b.metric==='streak')return p.loginStreak||0;
+  if(b.metric==='lnx')return p.totalLNXEarned||0;
+  if(b.metric==='messages')return p.totalAIMessages||0;
+  return 0;
+}
+
+async function buyBadge(b){
+  const cost=BADGE_COSTS[b.id];if(!cost)return;
+  if(_bal<cost){toast(`Need ${cost.toLocaleString()} LNX. You have ${_bal.toLocaleString()}.`,'error');return;}
+  const ab=document.getElementById('mActionBtn');ab.disabled=true;ab.innerHTML='<div style="width:16px;height:16px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto"></div>';
+  try{
+    await updateDoc(doc(db,'wallets',_uid),{balance:increment(-cost),totalSpent:increment(cost)});
+    await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(-cost),badges:arrayUnion(b.id)});
+    await addDoc(collection(db,'wallets',_uid,'transactions'),{type:`Badge Purchase · ${b.name}`,amount:-cost,timestamp:serverTimestamp(),date:new Date().toLocaleString()});
+    _ownedBadges.push(b.id);
+    toast(`🎉 ${b.name} badge unlocked!`,'success');
+    closeModal();
+    renderMyBadges();
+    renderAll();
+  }catch{toast('Purchase failed. Try again.','error');}
+  ab.disabled=false;
+}
+
+function renderAll(){
+  renderGrid(RANK_BADGES,'rankGrid');
+  renderGrid(ACHIEVE_BADGES,'achieveGrid');
+  renderGrid(PREMIUM_BADGES,'premiumGrid');
+  renderGrid(SPECIAL_BADGES,'specialGrid');
+}
+
+watchAuth(async user=>{
+  if(!user){window.location.replace('login.html');return;}
+  _uid=user.uid;
+  const snap=await getDoc(doc(db,'users',_uid));
+  if(snap.exists()){_profile=snap.data();_ownedBadges=_profile.badges||[];}
+  onSnapshot(doc(db,'wallets',_uid),s=>{if(s.exists()){_bal=s.data().balance||0;document.getElementById('myBal').textContent=_bal.toLocaleString()+' LNX';}});
+  renderAll();renderMyBadges();
+});
+</script>
+</body>
+</html>

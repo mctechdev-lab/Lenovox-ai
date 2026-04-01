@@ -1,397 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Terms & Conditions - Lenovox AI</title>
-
-  <!-- Font Awesome for Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --space-bg: #0a0a1a;
-      --nebula-purple: rgba(93, 63, 211, 0.4);
-      --nebula-blue: rgba(0, 210, 255, 0.3);
-      --accent-blue: #00d2ff;
-      --accent-purple: #9d50bb;
-      --accent-pink: #ff006e;
-      --accent-orange: #ff9500;
-      --accent-green: #00d98e;
-      --glass: rgba(255, 255, 255, 0.05);
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body, html {
-      width: 100%;
-      font-family: 'Inter', sans-serif;
-      background-color: var(--space-bg);
-      color: white;
-      overflow-x: hidden;
-      scroll-behavior: smooth;
-    }
-
-    /* BACKGROUND EFFECTS */
-    .universe-bg {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -2;
-      background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0f0f1e 100%);
-    }
-
-    .nebula {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: 
-        radial-gradient(circle at 20% 30%, var(--nebula-purple) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, var(--nebula-blue) 0%, transparent 50%);
-      z-index: -1;
-      filter: blur(100px);
-      opacity: 0.6;
-    }
-
-    /* NAVIGATION */
-    nav {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      padding: 20px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      backdrop-filter: blur(20px);
-      background: linear-gradient(90deg, rgba(10, 10, 26, 0.9), rgba(26, 10, 46, 0.9));
-      border-bottom: 1px solid rgba(0, 210, 255, 0.2);
-      z-index: 1000;
-      box-shadow: 0 10px 40px rgba(0, 210, 255, 0.1);
-    }
-
-    .nav-logo {
-      font-size: 24px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      background: linear-gradient(90deg, #ff006e, #ff9500, #00d2ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .nav-logo a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 30px;
-      align-items: center;
-    }
-
-    .nav-links a {
-      color: #aaa;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      transition: 0.3s;
-    }
-
-    .nav-links a:hover {
-      color: var(--accent-blue);
-    }
-
-    .nav-cta {
-      background: linear-gradient(90deg, #ff006e, #ff9500) !important;
-      color: white !important;
-      padding: 10px 24px !important;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 13px;
-      transition: 0.3s;
-    }
-
-    .nav-cta:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(255, 0, 110, 0.4);
-    }
-
-    /* CONTENT */
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 140px 40px 60px;
-    }
-
-    .page-header {
-      text-align: center;
-      margin-bottom: 60px;
-    }
-
-    .page-header h1 {
-      font-size: 42px;
-      font-weight: 900;
-      margin-bottom: 15px;
-      background: linear-gradient(90deg, #ff006e, #ff9500, #00d2ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .page-header p {
-      color: #aaa;
-      font-size: 16px;
-    }
-
-    .policy-content {
-      background: linear-gradient(135deg, rgba(0, 210, 255, 0.05), rgba(157, 80, 187, 0.05));
-      border: 1px solid rgba(0, 210, 255, 0.2);
-      border-radius: 20px;
-      padding: 40px;
-      line-height: 1.8;
-    }
-
-    .policy-section {
-      margin-bottom: 40px;
-    }
-
-    .policy-section h2 {
-      font-size: 24px;
-      font-weight: 800;
-      margin-bottom: 15px;
-      color: #fff;
-      border-left: 4px solid var(--accent-orange);
-      padding-left: 15px;
-    }
-
-    .policy-section h3 {
-      font-size: 18px;
-      font-weight: 700;
-      margin-top: 20px;
-      margin-bottom: 10px;
-      color: #ff9500;
-    }
-
-    .policy-section p {
-      color: #aaa;
-      margin-bottom: 15px;
-      font-size: 15px;
-    }
-
-    .policy-section ul {
-      color: #aaa;
-      margin-left: 20px;
-      margin-bottom: 15px;
-    }
-
-    .policy-section li {
-      margin-bottom: 10px;
-      font-size: 15px;
-    }
-
-    .last-updated {
-      color: #666;
-      font-size: 13px;
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .note {
-      background: rgba(255, 149, 0, 0.1);
-      border-left: 4px solid #ff9500;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 40px;
-      color: #aaa;
-      font-size: 14px;
-    }
-
-    /* FOOTER */
-    footer {
-      padding: 60px 40px;
-      border-top: 2px solid rgba(255, 0, 110, 0.2);
-      text-align: center;
-      background: linear-gradient(180deg, transparent, rgba(93, 63, 211, 0.1));
-      margin-top: 60px;
-    }
-
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .footer-logo {
-      font-size: 24px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      margin-bottom: 20px;
-      background: linear-gradient(90deg, #ff006e, #ff9500, #00d2ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 30px;
-      justify-content: center;
-      margin: 30px 0;
-      flex-wrap: wrap;
-    }
-
-    .footer-links a {
-      color: #aaa;
-      text-decoration: none;
-      font-size: 13px;
-      transition: 0.3s;
-    }
-
-    .footer-links a:hover {
-      color: var(--accent-blue);
-    }
-
-    .footer-copyright {
-      color: #555;
-      font-size: 12px;
-      margin-top: 30px;
-    }
-
-    @media (max-width: 768px) {
-      nav {
-        padding: 15px 20px;
-      }
-
-      .nav-links {
-        gap: 15px;
-        font-size: 12px;
-      }
-
-      .container {
-        padding: 120px 20px 40px;
-      }
-
-      .page-header h1 {
-        font-size: 28px;
-      }
-
-      .policy-content {
-        padding: 25px;
-      }
-
-      .policy-section h2 {
-        font-size: 20px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lenovox — Terms & Conditions</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03030b;--card:rgba(11,11,30,.93);--blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--orange:#ff9500;--red:#ef4444;--border:rgba(255,255,255,0.07);--text:#e8eaf6;--muted:#8892a4}
+[data-theme="light"]{--bg:#f8fafc;--card:rgba(255,255,255,.98);--border:rgba(0,0,0,.09);--text:#1e293b;--muted:#64748b}
+[data-theme="dim"]{--bg:#0f1117;--card:rgba(20,22,36,.95);--border:rgba(255,255,255,.08);--text:#d4d8e8;--muted:#7a8499}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;padding-bottom:50px;line-height:1.7;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased}
+.bg-glow{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 20% 20%,rgba(0,210,255,.04) 0%,transparent 55%)}
+.page{max-width:700px;margin:0 auto;padding:0 16px}
+.pg-hdr{display:flex;align-items:center;gap:11px;padding:18px 0 14px;border-bottom:1px solid var(--border);margin-bottom:24px}
+.back-c{width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.back-c i{color:var(--muted);font-size:.85rem}
+.back-c:hover i{color:var(--blue)}
+.hdr-title{font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;color:var(--text)}
+.hdr-sub{font-size:.7rem;color:var(--muted);margin-top:1px}
+.cover{margin-bottom:28px}
+.cover h1{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;color:var(--text);margin-bottom:8px}
+.cover-meta{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cover-meta i{font-size:.72rem;color:var(--blue)}
+.warn-box{background:rgba(255,149,0,.07);border:1px solid rgba(255,149,0,.2);border-left:4px solid var(--orange);border-radius:0 12px 12px 0;padding:12px 15px;margin-bottom:24px;font-size:.82rem;color:var(--text);line-height:1.65;display:flex;gap:9px}
+.warn-box i{color:var(--orange);flex-shrink:0;margin-top:2px}
+.toc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:24px}
+.toc-title{font-size:.78rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.toc-title i{font-size:.72rem;color:var(--blue)}
+.toc-list{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.toc-link{font-size:.78rem;color:var(--blue);text-decoration:none;padding:3px 0;display:flex;align-items:center;gap:5px;transition:.18s}
+.toc-link:hover{color:var(--text)}
+.toc-link i{font-size:.64rem}
+h2{font-family:'Orbitron',monospace;font-size:.92rem;font-weight:700;color:var(--text);margin:28px 0 10px;padding-top:8px;display:flex;align-items:center;gap:8px}
+h2 i{font-size:.85rem}
+h2::before{content:attr(data-n);width:26px;height:26px;border-radius:7px;background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.2);display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:var(--blue);flex-shrink:0}
+p{font-size:.84rem;color:var(--text);line-height:1.8;margin-bottom:10px}
+ul,ol{padding-left:20px;margin-bottom:10px}
+li{font-size:.82rem;color:var(--text);line-height:1.75;margin-bottom:4px}
+li strong{color:var(--text);font-weight:800}
+.hl{background:rgba(255,204,51,.08);border:1px solid rgba(255,204,51,.18);border-radius:10px;padding:11px 14px;margin:10px 0;font-size:.82rem;color:var(--text);line-height:1.65;display:flex;gap:8px;align-items:flex-start}
+.hl i{color:var(--gold);flex-shrink:0;margin-top:2px}
+.hl.red{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.2)}.hl.red i{color:var(--red)}
+.hl.green{background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.2)}.hl.green i{color:var(--green)}
+.divider{height:1px;background:var(--border);margin:20px 0}
+.footer{margin-top:32px;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;text-align:center}
+.footer p{font-size:.78rem;color:var(--muted);margin-bottom:5px}
+.footer a{color:var(--blue);text-decoration:none;font-weight:700}
+@media(max-width:480px){.toc-list{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-
-  <div class="universe-bg"></div>
-  <div class="nebula"></div>
-
-  <!-- NAVIGATION -->
-  <nav>
-    <div class="nav-logo"><a href="index.html">LENOVOX-AI</a></div>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="privacy.html">Privacy</a>
-      <a href="login.html" class="nav-cta">Login</a>
-      <a href="signup.html" class="nav-cta">Sign Up</a>
-    </div>
-  </nav>
-
-  <!-- CONTENT -->
-  <div class="container">
-    <div class="page-header">
-      <h1>Terms & Conditions</h1>
-      <p>Please read these terms carefully before using our service.</p>
-    </div>
-
-    <div class="policy-content">
-      <div class="policy-section">
-        <p><strong>Last Updated: February 15, 2026</strong></p>
-      </div>
-
-      <div class="policy-section">
-        <p>Welcome to Lenovox-ai. By using our services, you agree to the following terms. Please read them carefully.</p>
-      </div>
-
-      <div class="policy-section">
-        <h2>1. Acceptance of Terms</h2>
-        <p>By accessing or using our platform, you confirm that you agree to these Terms and Conditions. If you do not agree, please do not use our services.</p>
-      </div>
-
-      <div class="policy-section">
-        <h2>2. Use of Our Services</h2>
-        <p>You agree to use our platform only for lawful purposes. You must not:</p>
-        <ul>
-          <li>Use the service for fraud or illegal activities</li>
-          <li>Attempt to hack, damage, or disrupt the platform</li>
-          <li>Copy, resell, or exploit our content without permission</li>
-        </ul>
-      </div>
-
-      <div class="policy-section">
-        <h2>3. User Accounts</h2>
-        <p>If you create an account:</p>
-        <ul>
-          <li>You are responsible for maintaining the confidentiality of your login details.</li>
-          <li>You agree to provide accurate information.</li>
-          <li>We may suspend accounts that violate our rules.</li>
-        </ul>
-      </div>
-
-      <div class="policy-section">
-        <h2>4. Intellectual Property</h2>
-        <p>All content, branding, design, and materials on this platform belong to Lenovox-ai unless stated otherwise. You may not reuse them without written permission.</p>
-      </div>
-
-      <div class="policy-section">
-        <h2>5. Limitation of Liability</h2>
-        <p>We provide our services "as is" without guarantees. We are not responsible for:</p>
-        <ul>
-          <li>Loss of data</li>
-          <li>Service interruptions</li>
-          <li>Damages resulting from misuse of the platform</li>
-        </ul>
-      </div>
-
-      <div class="policy-section">
-        <h2>6. Changes to Terms</h2>
-        <p>We may update these Terms at any time. Continued use of the platform means you accept the updated Terms.</p>
-      </div>
-
-      <div class="policy-section">
-        <h2>7. Contact Information</h2>
-        <p>If you have questions, contact us at:</p>
-        <p><strong>Email: support@lenovox-ai.com</strong></p>
-      </div>
-
-      <div class="note">
-        <strong><i class="fas fa-exclamation-triangle"></i> IMPORTANT NOTE</strong><br><br>
-        This is a general template and should be reviewed or customized to match your exact business operations and local legal requirements.
-      </div>
-
-      <div class="last-updated">
-        <strong>Last Updated:</strong> February 15, 2026
-      </div>
+<div class="bg-glow"></div>
+<div class="page">
+  <div class="pg-hdr">
+    <div class="back-c" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
+    <div>
+      <div class="hdr-title">Terms & Conditions</div>
+      <div class="hdr-sub">Lenovox AI · MC Tech</div>
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-content">
-      <div class="footer-logo">LENOVOX-AI</div>
-      <div class="footer-links">
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="terms.html">Terms of Service</a>
-        <a href="#">Contact Us</a>
-        <a href="#">Blog</a>
-        <a href="#">Careers</a>
-      </div>
-      <div class="footer-copyright">© 2026 Lenovox-ai. All rights reserved. | Empowering students worldwide</div>
+  <div class="cover">
+    <h1>Terms & Conditions</h1>
+    <div class="cover-meta">
+      <span><i class="fas fa-calendar"></i> Effective: 1 January 2026</span>
+      <span><i class="fas fa-rotate"></i> Last updated: March 2026</span>
+      <span><i class="fas fa-building"></i> MC Tech, Nigeria</span>
     </div>
-  </footer>
+  </div>
 
-  </body>
+  <div class="warn-box"><i class="fas fa-triangle-exclamation"></i>Please read these terms carefully. By creating an account or using Lenovox AI, you agree to be bound by these terms. If you do not agree, do not use the platform.</div>
+
+  <div class="toc">
+    <div class="toc-title"><i class="fas fa-list"></i> Contents</div>
+    <div class="toc-list">
+      <a class="toc-link" href="#s1"><i class="fas fa-chevron-right"></i>1. Acceptance</a>
+      <a class="toc-link" href="#s2"><i class="fas fa-chevron-right"></i>2. Eligibility</a>
+      <a class="toc-link" href="#s3"><i class="fas fa-chevron-right"></i>3. User Accounts</a>
+      <a class="toc-link" href="#s4"><i class="fas fa-chevron-right"></i>4. LNX Coin Economy</a>
+      <a class="toc-link" href="#s5"><i class="fas fa-chevron-right"></i>5. Payments</a>
+      <a class="toc-link" href="#s6"><i class="fas fa-chevron-right"></i>6. AI Services</a>
+      <a class="toc-link" href="#s7"><i class="fas fa-chevron-right"></i>7. User Content</a>
+      <a class="toc-link" href="#s8"><i class="fas fa-chevron-right"></i>8. Prohibited Uses</a>
+      <a class="toc-link" href="#s9"><i class="fas fa-chevron-right"></i>9. Suspension & Bans</a>
+      <a class="toc-link" href="#s10"><i class="fas fa-chevron-right"></i>10. Intellectual Property</a>
+      <a class="toc-link" href="#s11"><i class="fas fa-chevron-right"></i>11. Privacy</a>
+      <a class="toc-link" href="#s12"><i class="fas fa-chevron-right"></i>12. Limitation of Liability</a>
+      <a class="toc-link" href="#s13"><i class="fas fa-chevron-right"></i>13. Governing Law</a>
+      <a class="toc-link" href="#s14"><i class="fas fa-chevron-right"></i>14. Contact</a>
+    </div>
+  </div>
+
+  <h2 id="s1" data-n="1"><i class="fas fa-handshake"></i>Acceptance of Terms</h2>
+  <p>These Terms and Conditions ("Terms") govern your access to and use of the Lenovox AI platform ("Platform"), owned and operated by MC Tech ("we", "us", "our"). By registering an account, accessing the Platform, or using any of its services, you confirm that you have read, understood, and agree to be bound by these Terms.</p>
+  <p>We may update these Terms at any time. Continued use of the Platform after updates constitutes your acceptance of the revised Terms.</p>
+
+  <h2 id="s2" data-n="2"><i class="fas fa-user-check"></i>Eligibility</h2>
+  <ul>
+    <li>You must be at least <strong>13 years old</strong> to use the Platform.</li>
+    <li>Users under 18 should have parental or guardian consent.</li>
+    <li>You must provide accurate registration information.</li>
+    <li>One account per person. Multiple accounts for the same person are prohibited and may result in all accounts being banned.</li>
+    <li>The Platform is currently available to users across Africa, primarily Nigeria.</li>
+  </ul>
+
+  <h2 id="s3" data-n="3"><i class="fas fa-shield-halved"></i>User Accounts</h2>
+  <p>You are responsible for maintaining the confidentiality of your account credentials. You agree to:</p>
+  <ul>
+    <li>Keep your password secure and not share it with others</li>
+    <li>Notify us immediately at <strong>lenovoxai.care@gmail.com</strong> if you suspect unauthorised access</li>
+    <li>Accept responsibility for all activities that occur under your account</li>
+    <li>Provide accurate and up-to-date profile information</li>
+  </ul>
+  <div class="hl"><i class="fas fa-circle-info"></i>We reserve the right to terminate accounts that are found to be fraudulent, inactive for over 12 months, or in violation of these Terms.</div>
+
+  <h2 id="s4" data-n="4"><i class="fas fa-coins"></i>LNX Coin Economy</h2>
+  <p>LNX is the virtual currency used within the Lenovox platform. Please understand the following rules regarding LNX:</p>
+  <ul>
+    <li><strong>LNX has no real-world monetary value</strong> and cannot be exchanged for cash, transferred to bank accounts, or converted to any other currency.</li>
+    <li>LNX can be earned through platform activities (quizzes, referrals, daily claims, watching ads) or purchased with Nigerian Naira (₦).</li>
+    <li>LNX purchased with real money is <strong>non-refundable</strong> once credited to your account.</li>
+    <li>LNX balances may expire after 12 months of account inactivity.</li>
+    <li>We reserve the right to adjust LNX earning rates, costs, and packages at any time.</li>
+    <li>Fraudulent LNX acquisition (exploiting bugs, chargebacks, fake referrals) will result in immediate account ban.</li>
+    <li>LNX cannot be transferred between user accounts.</li>
+  </ul>
+  <div class="hl red"><i class="fas fa-xmark"></i><strong>Chargeback Policy:</strong> Initiating a fraudulent chargeback against a Lenovox purchase will result in permanent account suspension and forfeiture of all LNX and data.</div>
+
+  <h2 id="s5" data-n="5"><i class="fas fa-credit-card"></i>Payments & Subscriptions</h2>
+  <p>Payments on Lenovox are processed securely by <strong>Paystack</strong>. By making a payment, you agree to Paystack's terms of service in addition to these Terms.</p>
+  <ul>
+    <li><strong>Subscription plans</strong> renew monthly and can be cancelled at any time.</li>
+    <li>Cancellation takes effect at the end of the current billing cycle — no pro-rated refunds.</li>
+    <li>LNX top-up purchases are final and non-refundable once credited.</li>
+    <li>In case of genuine payment errors, contact us within 48 hours at lenovoxai.care@gmail.com.</li>
+    <li>We reserve the right to change pricing with 14 days' notice to existing subscribers.</li>
+  </ul>
+
+  <h2 id="s6" data-n="6"><i class="fas fa-robot"></i>AI Services</h2>
+  <p>Lenovox AI is powered by OpenAI's models. By using the AI features, you acknowledge that:</p>
+  <ul>
+    <li>AI responses are generated automatically and may contain errors or inaccuracies.</li>
+    <li>AI content should not be relied upon for medical, legal, or financial decisions.</li>
+    <li>You are responsible for how you use AI-generated content.</li>
+    <li>Submitting AI-generated work as your own in academic settings may violate your institution's policies — this is your responsibility, not ours.</li>
+    <li>We monitor AI usage for policy violations. Attempts to generate harmful content will result in account suspension.</li>
+  </ul>
+  <div class="hl"><i class="fas fa-circle-info"></i>AI responses reflect the AI model's training data, not official advice from MC Tech or Lenovox.</div>
+
+  <h2 id="s7" data-n="7"><i class="fas fa-pen-to-square"></i>User Content</h2>
+  <p>Content you post on MeetUp (posts, videos, images, comments) remains yours. However, by posting, you grant MC Tech a non-exclusive, royalty-free licence to display, distribute, and promote that content within the Platform.</p>
+  <ul>
+    <li>You confirm you own or have rights to any content you post.</li>
+    <li>You take full responsibility for content you submit.</li>
+    <li>We may remove any content that violates these Terms without notice.</li>
+    <li>Deleted posts may remain in backup systems for up to 30 days before permanent deletion.</li>
+  </ul>
+
+  <h2 id="s8" data-n="8"><i class="fas fa-ban"></i>Prohibited Uses</h2>
+  <p>You must not use the Platform to:</p>
+  <ul>
+    <li>Post or share pornographic, sexually explicit, or adult content of any kind</li>
+    <li>Upload images or videos depicting violence, gore, or graphic harm</li>
+    <li>Harass, bully, threaten, or intimidate other users</li>
+    <li>Post hate speech based on race, ethnicity, religion, gender, or sexual orientation</li>
+    <li>Impersonate other users, public figures, or staff members</li>
+    <li>Share misinformation, fake news, or deliberately misleading content</li>
+    <li>Attempt to hack, exploit, or reverse-engineer any part of the Platform</li>
+    <li>Use bots, scripts, or automation to manipulate LNX earning or AI usage</li>
+    <li>Spam other users with unsolicited messages or referral links</li>
+    <li>Share, sell, or distribute another user's personal information</li>
+    <li>Use the Platform for any illegal activity under Nigerian or international law</li>
+  </ul>
+
+  <h2 id="s9" data-n="9"><i class="fas fa-gavel"></i>Suspension & Account Bans</h2>
+  <p>We reserve the right to suspend or permanently ban accounts that:</p>
+  <ul>
+    <li>Violate any provision of these Terms</li>
+    <li>Engage in fraudulent activity (fake referrals, chargebacks, LNX manipulation)</li>
+    <li>Post prohibited content (pornography, violence, hate speech)</li>
+    <li>Receive multiple verified reports from other users</li>
+    <li>Attempt to compromise platform security</li>
+  </ul>
+  <div class="hl red"><i class="fas fa-triangle-exclamation"></i>Banned accounts forfeit all LNX, badges, subscriptions, and data. No refunds are issued for banned accounts found to have violated these Terms.</div>
+
+  <h2 id="s10" data-n="10"><i class="fas fa-copyright"></i>Intellectual Property</h2>
+  <p>All platform design, branding, code, features, and content created by MC Tech are the exclusive intellectual property of MC Tech and are protected by Nigerian and international copyright law.</p>
+  <ul>
+    <li>The Lenovox name, logo, and brand identity are registered trademarks of MC Tech.</li>
+    <li>You may not copy, reproduce, or distribute our platform code or design without written permission.</li>
+    <li>The LNX coin economy system and its mechanics are proprietary to MC Tech.</li>
+  </ul>
+
+  <h2 id="s11" data-n="11"><i class="fas fa-lock"></i>Privacy</h2>
+  <p>Your privacy is important to us. Our <a href="privacy.html" style="color:var(--blue);font-weight:700">Privacy Policy</a> explains how we collect, use, and protect your personal data. By using the Platform, you consent to our data practices as described in the Privacy Policy.</p>
+
+  <h2 id="s12" data-n="12"><i class="fas fa-circle-exclamation"></i>Limitation of Liability</h2>
+  <p>To the maximum extent permitted by Nigerian law:</p>
+  <ul>
+    <li>MC Tech is not liable for any indirect, incidental, or consequential damages arising from your use of the Platform.</li>
+    <li>We do not guarantee uninterrupted or error-free access to the Platform.</li>
+    <li>We are not responsible for the accuracy of AI-generated content.</li>
+    <li>Our maximum liability to you for any claim shall not exceed the total amount you paid to us in the 3 months preceding the claim.</li>
+  </ul>
+
+  <h2 id="s13" data-n="13"><i class="fas fa-flag"></i>Governing Law</h2>
+  <p>These Terms are governed by the laws of the Federal Republic of Nigeria. Any disputes arising from these Terms or your use of the Platform shall be resolved through the courts of Nigeria. By using the Platform, you consent to the exclusive jurisdiction of Nigerian courts.</p>
+
+  <h2 id="s14" data-n="14"><i class="fas fa-envelope"></i>Contact Us</h2>
+  <p>If you have questions about these Terms, please contact us:</p>
+  <ul>
+    <li><strong>Email:</strong> lenovoxai.care@gmail.com</li>
+    <li><strong>Company:</strong> MC Tech, Nigeria</li>
+    <li><strong>Website:</strong> <a href="https://mctech.com.ng" style="color:var(--blue);font-weight:700" target="_blank">mctech.com.ng</a></li>
+    <li><strong>Response time:</strong> We aim to respond within 24–48 hours on working days.</li>
+  </ul>
+
+  <div class="divider"></div>
+  <div class="footer">
+    <p>© 2026 MC Tech · Lenovox AI</p>
+    <p>These Terms were last updated in March 2026.</p>
+    <p><a href="privacy.html">Privacy Policy</a> · <a href="about.html">About Us</a></p>
+  </div>
+</div>
+<script>
+function applyTheme(){const t=localStorage.getItem('lenovox_theme')||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t==='light'?'light':t==='dim'?'dim':'');}
+applyTheme();window.addEventListener('storage',applyTheme);
+window.goBack=()=>{if(window.history.length>1)history.back();else window.location.href='lenovox-settings.html';};
+</script>
+</body>
 </html>

@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lenovox AI — Global Rankings</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #4A90E2;
+    --gold: #FFD700;
+    --silver: #C0C0C0;
+    --bronze: #CD7F32;
+    --bg: #0A0E1A;
+    --card: #111827;
+    --card2: #1a2235;
+    --glow: rgba(74,144,226,0.35);
+    --text: #E2E8F0;
+    --muted: #64748B;
+    --success: #10B981;
+    --accent: #F2994A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Quicksand', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* === ANIMATED BACKGROUND === */
+  .bg-glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(74,144,226,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 35% at 80% 80%, rgba(111,207,151,0.08) 0%, transparent 70%);
+  }
+
+  /* === PARTICLE STARS === */
+  .stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: white;
+    opacity: 0;
+    animation: twinkle var(--d) ease-in-out infinite;
+    animation-delay: var(--delay);
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.5); }
+  }
+
+  .page-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px 100px;
+  }
+
+  /* === HEADER === */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .back-btn {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.07);
+    color: var(--text);
+    padding: 10px 18px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+  }
+  .back-btn:hover { background: var(--card2); transform: translateX(-4px); }
+
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), #357ABD);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1rem;
+    color: white;
+    box-shadow: 0 0 20px rgba(74,144,226,0.4);
+  }
+  .brand-name { font-weight: 800; font-size: 1.1rem; color: white; }
+
+  .refresh-btn {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.07);
+    color: var(--primary);
+    padding: 10px 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s;
+  }
+  .refresh-btn:hover { transform: rotate(180deg); background: var(--card2); }
+
+  /* === HERO TITLE === */
+  .hero {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(74,144,226,0.15);
+    border: 1px solid rgba(74,144,226,0.3);
+    color: var(--primary);
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+  }
+  .hero h1 {
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 800;
+    color: white;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--primary), #6FCF97);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p { color: var(--muted); font-size: 1rem; font-weight: 600; }
+
+  /* === TABS === */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    background: var(--card);
+    padding: 6px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .tab {
+    flex: 1;
+    padding: 10px;
+    border-radius: 13px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .tab.active {
+    background: linear-gradient(135deg, var(--primary), #357ABD);
+    color: white;
+    box-shadow: 0 6px 20px rgba(74,144,226,0.3);
+  }
+
+  /* === LIVE TICKER === */
+  .ticker {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 12px 18px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow: hidden;
+  }
+  .ticker-label {
+    background: #EF4444;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    white-space: nowrap;
+    animation: pulse-red 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse-red {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  .ticker-scroll {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ticker-text {
+    display: inline-block;
+    animation: scroll-left 18s linear infinite;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  @keyframes scroll-left {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* === YOUR RANK CARD === */
+  .my-rank-card {
+    background: linear-gradient(135deg, rgba(74,144,226,0.2), rgba(111,207,151,0.1));
+    border: 1px solid rgba(74,144,226,0.4);
+    border-radius: 24px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+  }
+  .my-rank-card::before {
+    content: 'YOUR RANK';
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 2px;
+    opacity: 0.7;
+  }
+  .my-rank-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    min-width: 60px;
+    text-align: center;
+    text-shadow: 0 0 20px rgba(74,144,226,0.5);
+  }
+  .my-rank-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--primary), #357ABD);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: white;
+    border: 2px solid rgba(74,144,226,0.5);
+    box-shadow: 0 0 16px rgba(74,144,226,0.3);
+  }
+  .my-rank-info { flex: 1; }
+  .my-rank-name { font-weight: 800; font-size: 1.1rem; color: white; }
+  .my-rank-coins { color: var(--primary); font-weight: 700; font-size: 0.95rem; }
+  .my-rank-badge {
+    background: rgba(16,185,129,0.15);
+    border: 1px solid rgba(16,185,129,0.3);
+    color: var(--success);
+    padding: 6px 14px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  /* === TOP 3 PODIUM === */
+  .podium {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding: 0 8px;
+  }
+  .podium-item {
+    flex: 1;
+    max-width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    animation: riseUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  .podium-item:nth-child(1) { animation-delay: 0.2s; }
+  .podium-item:nth-child(2) { animation-delay: 0s; }
+  .podium-item:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes riseUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .podium-avatar {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    color: white;
+    font-weight: 800;
+  }
+  .podium-item:nth-child(2) .podium-avatar {
+    width: 78px;
+    height: 78px;
+    border-radius: 24px;
+    font-size: 2rem;
+    box-shadow: 0 0 30px rgba(255,215,0,0.4);
+    border: 3px solid var(--gold);
+    background: linear-gradient(135deg, #4A90E2, #357ABD);
+  }
+  .podium-item:nth-child(1) .podium-avatar {
+    box-shadow: 0 0 20px rgba(192,192,192,0.3);
+    border: 2px solid var(--silver);
+    background: linear-gradient(135deg, #6FCF97, #2ECC71);
+  }
+  .podium-item:nth-child(3) .podium-avatar {
+    box-shadow: 0 0 20px rgba(205,127,50,0.3);
+    border: 2px solid var(--bronze);
+    background: linear-gradient(135deg, #F2994A, #E67E22);
+  }
+
+  .crown {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.2rem;
+    animation: float-crown 2s ease-in-out infinite;
+  }
+  @keyframes float-crown {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-4px); }
+  }
+
+  .podium-name {
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: white;
+    text-align: center;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .podium-coins {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .podium-coins i { color: var(--gold); margin-right: 3px; }
+
+  .podium-stage {
+    width: 100%;
+    border-radius: 14px 14px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: white;
+    padding: 14px 0 10px;
+  }
+  .podium-item:nth-child(2) .podium-stage {
+    height: 90px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,215,0,0.1));
+    border: 1px solid rgba(255,215,0,0.3);
+  }
+  .podium-item:nth-child(1) .podium-stage {
+    height: 65px;
+    background: linear-gradient(135deg, rgba(192,192,192,0.15), rgba(192,192,192,0.08));
+    border: 1px solid rgba(192,192,192,0.2);
+  }
+  .podium-item:nth-child(3) .podium-stage {
+    height: 50px;
+    background: linear-gradient(135deg, rgba(205,127,50,0.15), rgba(205,127,50,0.08));
+    border: 1px solid rgba(205,127,50,0.2);
+  }
+
+  /* === RANK LIST === */
+  .rank-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .rank-item {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 18px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.25s;
+    animation: fadeSlide 0.5s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+  .rank-item:hover {
+    transform: translateY(-3px);
+    border-color: rgba(74,144,226,0.3);
+    background: var(--card2);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+  }
+  .rank-item.is-me {
+    border-color: rgba(74,144,226,0.5);
+    background: rgba(74,144,226,0.08);
+  }
+  .rank-item.is-me::after {
+    content: 'YOU';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 1.5px;
+    opacity: 0.8;
+  }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .rank-pos {
+    font-size: 1rem;
+    font-weight: 800;
+    min-width: 32px;
+    text-align: center;
+    color: var(--muted);
+  }
+  .rank-pos.top1 { color: var(--gold); font-size: 1.2rem; }
+  .rank-pos.top2 { color: var(--silver); }
+  .rank-pos.top3 { color: var(--bronze); }
+
+  .rank-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .rank-info { flex: 1; min-width: 0; }
+  .rank-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .rank-sub {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .rank-right { display: flex; align-items: center; gap: 10px; }
+  .rank-coins {
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .rank-coins i { font-size: 0.85rem; }
+
+  .rank-tier {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  .tier-legend { background: rgba(255,215,0,0.15); color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
+  .tier-diamond { background: rgba(74,144,226,0.15); color: #60A5FA; border: 1px solid rgba(74,144,226,0.3); }
+  .tier-gold { background: rgba(242,153,74,0.15); color: var(--accent); border: 1px solid rgba(242,153,74,0.3); }
+  .tier-silver { background: rgba(192,192,192,0.12); color: #CBD5E1; border: 1px solid rgba(192,192,192,0.2); }
+  .tier-bronze { background: rgba(205,127,50,0.12); color: #CD7F32; border: 1px solid rgba(205,127,50,0.2); }
+
+  /* === PROGRESS BAR === */
+  .progress-wrap { margin-top: 4px; }
+  .progress-bar {
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.07);
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--primary), #6FCF97);
+    transition: width 1s ease;
+  }
+
+  /* === STATS ROW === */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 18px;
+    padding: 16px;
+    text-align: center;
+    transition: 0.3s;
+  }
+  .stat-card:hover { transform: translateY(-4px); border-color: rgba(74,144,226,0.2); }
+  .stat-icon {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
+  .stat-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: white;
+    display: block;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+
+  /* === SECTION HEADER === */
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title i { color: var(--primary); }
+
+  /* === ACHIEVEMENT BADGES === */
+  .achievements {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 4px 0 12px;
+    margin-bottom: 24px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .achievements::-webkit-scrollbar { height: 3px; }
+  .achievements::-webkit-scrollbar-track { background: var(--card); }
+  .achievements::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 999px; }
+
+  .badge-card {
+    flex-shrink: 0;
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 12px 16px;
+    text-align: center;
+    min-width: 90px;
+    transition: 0.3s;
+    cursor: default;
+  }
+  .badge-card:hover { transform: translateY(-4px); border-color: rgba(74,144,226,0.3); }
+  .badge-card.locked { opacity: 0.4; filter: grayscale(1); }
+  .badge-icon { font-size: 1.8rem; margin-bottom: 6px; display: block; }
+  .badge-name { font-size: 0.72rem; font-weight: 700; color: var(--text); }
+  .badge-req { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
+
+  /* === EMPTY STATE === */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+  .empty-state i { font-size: 3rem; margin-bottom: 14px; display: block; color: rgba(74,144,226,0.3); }
+
+  /* === FILTER BAR === */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .filter-chip {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--card);
+    color: var(--muted);
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .filter-chip.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(74,144,226,0.3);
+  }
+
+  /* === TOAST === */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--card2);
+    border: 1px solid rgba(74,144,226,0.4);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    z-index: 9999;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 600px) {
+    .stats-row { grid-template-columns: repeat(3, 1fr); }
+    .podium-item:nth-child(2) .podium-avatar { width: 64px; height: 64px; font-size: 1.6rem; }
+    .rank-tier { display: none; }
+    .tabs { gap: 4px; }
+    .tab { font-size: 0.8rem; padding: 8px 6px; }
+    .my-rank-card { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="stars" id="stars"></div>
+
+<div class="page-wrap">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <button class="back-btn" onclick="window.location.href='userdashboard.html'">
+      <i class="fas fa-arrow-left"></i> Dashboard
+    </button>
+    <div class="brand-logo">
+      <div class="logo-icon">LX</div>
+      <div class="brand-name">Lenovox AI</div>
+    </div>
+    <button class="refresh-btn" id="refreshBtn" title="Refresh Rankings">
+      <i class="fas fa-sync-alt"></i>
+    </button>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">
+      <i class="fas fa-bolt"></i> LIVE RANKINGS
+    </div>
+    <h1>Global <span>Leaderboard</span></h1>
+    <p>Compete. Earn. Dominate. 🏆</p>
+  </div>
+
+  <!-- LIVE TICKER -->
+  <div class="ticker">
+    <div class="ticker-label">LIVE</div>
+    <div class="ticker-scroll">
+      <span class="ticker-text" id="tickerText">Loading leaderboard data...</span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" data-tab="leaderboard" onclick="switchTab('leaderboard', this)">
+      <i class="fas fa-trophy"></i> Rankings
+    </button>
+    <button class="tab" data-tab="achievements" onclick="switchTab('achievements', this)">
+      <i class="fas fa-medal"></i> Badges
+    </button>
+    <button class="tab" data-tab="stats" onclick="switchTab('stats', this)">
+      <i class="fas fa-chart-line"></i> My Stats
+    </button>
+  </div>
+
+  <!-- ===== LEADERBOARD TAB ===== -->
+  <div id="tab-leaderboard">
+
+    <!-- YOUR RANK -->
+    <div class="my-rank-card" id="myRankCard">
+      <div class="my-rank-number" id="myRankNum">—</div>
+      <div class="my-rank-avatar" id="myAvatar">🎓</div>
+      <div class="my-rank-info">
+        <div class="my-rank-name" id="myRankName">Loading...</div>
+        <div class="my-rank-coins"><i class="fas fa-coins" style="color:var(--gold);margin-right:4px"></i><span id="myRankCoins">0</span> LNX Coins</div>
+      </div>
+      <div class="my-rank-badge" id="myTierBadge">—</div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <button class="filter-chip active" onclick="setFilter('all', this)">All Time</button>
+      <button class="filter-chip" onclick="setFilter('week', this)">This Week</button>
+      <button class="filter-chip" onclick="setFilter('top10', this)">Top 10</button>
+      <button class="filter-chip" onclick="setFilter('legend', this)">Legends Only</button>
+    </div>
+
+    <!-- PODIUM TOP 3 -->
+    <div class="podium" id="podiumWrap">
+      <div class="podium-item">
+        <div class="podium-avatar" id="pod2Avatar">2</div>
+        <div class="podium-name" id="pod2Name">—</div>
+        <div class="podium-coins"><i class="fas fa-coins"></i> <span id="pod2Coins">0</span></div>
+        <div class="podium-stage">🥈</div>
+      </div>
+      <div class="podium-item">
+        <div class="podium-avatar" id="pod1Avatar">
+          <span class="crown">👑</span>1
+        </div>
+        <div class="podium-name" id="pod1Name">—</div>
+        <div class="podium-coins"><i class="fas fa-coins"></i> <span id="pod1Coins">0</span></div>
+        <div class="podium-stage">🥇</div>
+      </div>
+      <div class="podium-item">
+        <div class="podium-avatar" id="pod3Avatar">3</div>
+        <div class="podium-name" id="pod3Name">—</div>
+        <div class="podium-coins"><i class="fas fa-coins"></i> <span id="pod3Coins">0</span></div>
+        <div class="podium-stage">🥉</div>
+      </div>
+    </div>
+
+    <!-- RANK LIST (4+) -->
+    <div class="section-head">
+      <div class="section-title"><i class="fas fa-list-ol"></i> Full Leaderboard</div>
+      <span style="font-size:0.8rem;color:var(--muted);font-weight:600;" id="totalPlayers">— players</span>
+    </div>
+    <div class="rank-list" id="rankList">
+      <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading rankings...</p></div>
+    </div>
+
+  </div>
+
+  <!-- ===== ACHIEVEMENTS TAB ===== -->
+  <div id="tab-achievements" style="display:none">
+    <div class="section-head">
+      <div class="section-title"><i class="fas fa-star"></i> Achievement Badges</div>
+    </div>
+    <p style="color:var(--muted);font-size:0.85rem;font-weight:600;margin-bottom:16px;">Earn badges by collecting LNX Coins. Locked badges are grayed out.</p>
+    <div class="achievements" id="badgeList"></div>
+
+    <div class="section-head" style="margin-top:8px">
+      <div class="section-title"><i class="fas fa-road"></i> Your Progress Path</div>
+    </div>
+    <div id="progressPath" style="display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+
+  <!-- ===== STATS TAB ===== -->
+  <div id="tab-stats" style="display:none">
+    <div class="stats-row" id="statsRow">
+      <div class="stat-card">
+        <div class="stat-icon">🪙</div>
+        <span class="stat-value" id="stat-coins">0</span>
+        <div class="stat-label">Total Coins</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <span class="stat-value" id="stat-rank">#—</span>
+        <div class="stat-label">Global Rank</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⚡</div>
+        <span class="stat-value" id="stat-tier">—</span>
+        <div class="stat-label">Tier</div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <div class="section-title"><i class="fas fa-history"></i> Coin Activity</div>
+    </div>
+    <div id="activityList" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle" style="color:var(--success)"></i>
+  <span id="toastMsg">Rankings updated!</span>
+</div>
+
+<script>
+// ===== STAR FIELD =====
+(function() {
+  const wrap = document.getElementById('stars');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*4}s;`;
+    wrap.appendChild(s);
+  }
+})();
+
+// ===== TIER SYSTEM =====
+const TIERS = [
+  { name: 'Legend',  min: 500,  class: 'tier-legend',  emoji: '👑' },
+  { name: 'Diamond', min: 200,  class: 'tier-diamond', emoji: '💎' },
+  { name: 'Gold',    min: 100,  class: 'tier-gold',    emoji: '🥇' },
+  { name: 'Silver',  min: 40,   class: 'tier-silver',  emoji: '🥈' },
+  { name: 'Bronze',  min: 0,    class: 'tier-bronze',  emoji: '🥉' },
+];
+
+function getTier(coins) {
+  return TIERS.find(t => coins >= t.min) || TIERS[TIERS.length - 1];
+}
+
+const BADGE_DEFS = [
+  { emoji: '🌱', name: 'Sprout',     req: 1,    label: '1 coin' },
+  { emoji: '⚡', name: 'Charged',    req: 10,   label: '10 coins' },
+  { emoji: '🔥', name: 'On Fire',    req: 25,   label: '25 coins' },
+  { emoji: '🥉', name: 'Bronze',     req: 40,   label: '40 coins' },
+  { emoji: '🥈', name: 'Silver',     req: 100,  label: '100 coins' },
+  { emoji: '🥇', name: 'Gold',       req: 200,  label: '200 coins' },
+  { emoji: '💎', name: 'Diamond',    req: 350,  label: '350 coins' },
+  { emoji: '👑', name: 'Legend',     req: 500,  label: '500 coins' },
+  { emoji: '🚀', name: 'Rocket',     req: 750,  label: '750 coins' },
+  { emoji: '🌌', name: 'Galaxy',     req: 1000, label: '1,000 coins' },
+];
+
+// ===== DATA LAYER (reads from coinbase.js localStorage format) =====
+function getAllAccounts() {
+  const raw = localStorage.getItem('lenovox_accounts');
+  if (!raw) return {};
+  try { return JSON.parse(raw); } catch { return {}; }
+}
+
+function getAllTransactions() {
+  const raw = localStorage.getItem('lenovox_transactions');
+  if (!raw) return {};
+  try { return JSON.parse(raw); } catch { return {}; }
+}
+
+function getCurrentUserId() {
+  // Try to get from session storage (matches session.js pattern)
+  const keys = Object.keys(sessionStorage);
+  for (const k of keys) {
+    if (k.startsWith('lenovox_session_')) return k.replace('lenovox_session_', '');
+  }
+  // Fallback: check localStorage for any session key
+  const lsKeys = Object.keys(localStorage);
+  for (const k of lsKeys) {
+    if (k.startsWith('lenovox_session_')) return k.replace('lenovox_session_', '');
+  }
+  return null;
+}
+
+// ===== BUILD LEADERBOARD DATA =====
+function buildLeaderboard() {
+  const accounts = getAllAccounts();
+  const entries = Object.entries(accounts).map(([uid, acc]) => ({
+    uid,
+    name: acc.name || 'Anonymous',
+    coins: acc.balance || 0,
+  }));
+  entries.sort((a, b) => b.coins - a.coins);
+  return entries;
+}
+
+// ===== AVATAR GRADIENT =====
+const GRADIENTS = [
+  ['#4A90E2','#357ABD'],
+  ['#6FCF97','#27AE60'],
+  ['#F2994A','#E67E22'],
+  ['#9B59B6','#8E44AD'],
+  ['#E74C3C','#C0392B'],
+  ['#1ABC9C','#16A085'],
+  ['#F39C12','#D68910'],
+  ['#2980B9','#1A5276'],
+];
+function getGradient(uid) {
+  const idx = uid ? uid.charCodeAt(0) % GRADIENTS.length : 0;
+  const [a, b] = GRADIENTS[idx];
+  return `linear-gradient(135deg, ${a}, ${b})`;
+}
+function getInitial(name) {
+  return (name || '?').trim()[0].toUpperCase();
+}
+
+// ===== TICKER =====
+function updateTicker(lb) {
+  if (!lb.length) { document.getElementById('tickerText').textContent = 'No rankings yet — start quizzing!'; return; }
+  const parts = lb.slice(0, 5).map((p, i) => `#${i+1} ${p.name} — ${p.coins} LNX`);
+  document.getElementById('tickerText').textContent = '🏆 ' + parts.join('   •   ') + '   🔥 Keep earning to climb the ranks!';
+}
+
+// ===== PODIUM =====
+function renderPodium(lb) {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  const p1 = lb[0], p2 = lb[1], p3 = lb[2];
+  if (p1) {
+    document.getElementById('pod1Avatar').innerHTML = `<span class="crown">👑</span>${getInitial(p1.name)}`;
+    document.getElementById('pod1Avatar').style.background = getGradient(p1.uid);
+    set('pod1Name', p1.name); set('pod1Coins', p1.coins.toLocaleString());
+  }
+  if (p2) {
+    document.getElementById('pod2Avatar').textContent = getInitial(p2.name);
+    document.getElementById('pod2Avatar').style.background = getGradient(p2.uid);
+    set('pod2Name', p2.name); set('pod2Coins', p2.coins.toLocaleString());
+  }
+  if (p3) {
+    document.getElementById('pod3Avatar').textContent = getInitial(p3.name);
+    document.getElementById('pod3Avatar').style.background = getGradient(p3.uid);
+    set('pod3Name', p3.name); set('pod3Coins', p3.coins.toLocaleString());
+  }
+}
+
+// ===== RANK LIST =====
+let activeFilter = 'all';
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderAll();
+}
+
+function getFilteredLb(lb) {
+  switch (activeFilter) {
+    case 'top10': return lb.slice(0, 10);
+    case 'legend': return lb.filter(p => p.coins >= 500);
+    case 'week': return lb; // No timestamp filter available in simple localStorage; treat as all
+    default: return lb;
+  }
+}
+
+function renderRankList(lb, myUid) {
+  const list = document.getElementById('rankList');
+  if (!lb.length) {
+    list.innerHTML = `<div class="empty-state"><i class="fas fa-users"></i><p>No players yet. Start quizzing to appear here!</p></div>`;
+    return;
+  }
+  list.innerHTML = lb.slice(3).map((p, i) => {
+    const rank = i + 4;
+    const tier = getTier(p.coins);
+    const posClass = rank === 1 ? 'top1' : rank === 2 ? 'top2' : rank === 3 ? 'top3' : '';
+    const isMe = p.uid === myUid;
+    const pct = Math.min(100, Math.round((p.coins / (lb[0]?.coins || 1)) * 100));
+    return `
+      <div class="rank-item${isMe ? ' is-me' : ''}" style="animation-delay:${(i*0.04).toFixed(2)}s">
+        <div class="rank-pos ${posClass}">${rank}</div>
+        <div class="rank-avatar" style="background:${getGradient(p.uid)}">${getInitial(p.name)}</div>
+        <div class="rank-info">
+          <div class="rank-name">${escHtml(p.name)}</div>
+          <div class="progress-wrap">
+            <div class="rank-sub">${tier.emoji} ${tier.name} · ${p.coins.toLocaleString()} LNX</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+          </div>
+        </div>
+        <div class="rank-right">
+          <div class="rank-coins"><i class="fas fa-coins"></i> ${p.coins.toLocaleString()}</div>
+          <div class="rank-tier ${tier.class}">${tier.name}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderMyRank(lb, myUid) {
+  const idx = lb.findIndex(p => p.uid === myUid);
+  const me = lb[idx];
+  if (!me) {
+    document.getElementById('myRankNum').textContent = '—';
+    document.getElementById('myRankName').textContent = 'Not ranked yet';
+    document.getElementById('myRankCoins').textContent = '0';
+    document.getElementById('myTierBadge').textContent = 'Play to rank!';
+    return;
+  }
+  const tier = getTier(me.coins);
+  document.getElementById('myRankNum').textContent = `#${idx + 1}`;
+  document.getElementById('myAvatar').textContent = getInitial(me.name);
+  document.getElementById('myAvatar').style.background = getGradient(me.uid);
+  document.getElementById('myRankName').textContent = me.name;
+  document.getElementById('myRankCoins').textContent = me.coins.toLocaleString();
+  const badge = document.getElementById('myTierBadge');
+  badge.textContent = `${tier.emoji} ${tier.name}`;
+  badge.className = 'my-rank-badge ' + tier.class;
+
+  // Stats tab
+  document.getElementById('stat-coins').textContent = me.coins.toLocaleString();
+  document.getElementById('stat-rank').textContent = `#${idx + 1}`;
+  document.getElementById('stat-tier').textContent = tier.name;
+}
+
+// ===== ACHIEVEMENTS TAB =====
+function renderBadges(myCoins) {
+  const badgeList = document.getElementById('badgeList');
+  badgeList.innerHTML = BADGE_DEFS.map(b => `
+    <div class="badge-card${myCoins < b.req ? ' locked' : ''}">
+      <span class="badge-icon">${b.emoji}</span>
+      <div class="badge-name">${b.name}</div>
+      <div class="badge-req">${b.label}</div>
+    </div>`).join('');
+
+  // Progress path
+  const progressPath = document.getElementById('progressPath');
+  progressPath.innerHTML = BADGE_DEFS.map(b => {
+    const unlocked = myCoins >= b.req;
+    const pct = Math.min(100, Math.round((myCoins / b.req) * 100));
+    return `
+      <div style="background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:14px;">
+        <span style="font-size:1.4rem">${b.emoji}</span>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-weight:700;font-size:0.9rem;color:${unlocked?'white':'var(--muted)'}">${b.name}</span>
+            <span style="font-size:0.78rem;font-weight:600;color:var(--muted)">${b.label}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${pct}%;background:${unlocked?'linear-gradient(90deg,#10B981,#6FCF97)':'linear-gradient(90deg,var(--primary),#6FCF97)'}"></div>
+          </div>
+        </div>
+        ${unlocked ? '<i class="fas fa-check-circle" style="color:var(--success);font-size:1.2rem"></i>' : ''}
+      </div>`;
+  }).join('');
+}
+
+// ===== ACTIVITY FEED =====
+function renderActivity(myUid) {
+  const txns = getAllTransactions();
+  const myTxns = (txns[myUid] || []).slice().reverse().slice(0, 15);
+  const list = document.getElementById('activityList');
+  if (!myTxns.length) {
+    list.innerHTML = `<div class="empty-state"><i class="fas fa-history"></i><p>No activity yet. Complete quizzes to earn coins!</p></div>`;
+    return;
+  }
+  list.innerHTML = myTxns.map(tx => `
+    <div style="background:var(--card);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:12px;">
+      <div style="width:38px;height:38px;border-radius:12px;background:rgba(16,185,129,0.15);display:flex;align-items:center;justify-content:center;font-size:1.1rem">🪙</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:0.9rem;color:white">${escHtml(tx.type || 'Reward')}</div>
+        <div style="font-size:0.75rem;color:var(--muted);font-weight:600">${tx.date || ''}</div>
+      </div>
+      <div style="font-weight:800;font-size:1rem;color:var(--gold)">+${tx.amount} LNX</div>
+    </div>`).join('');
+}
+
+// ===== MAIN RENDER =====
+function renderAll() {
+  const lb = buildLeaderboard();
+  const filtered = getFilteredLb(lb);
+  const myUid = getCurrentUserId();
+  const me = myUid ? lb.find(p => p.uid === myUid) : null;
+  const myCoins = me ? me.coins : 0;
+
+  document.getElementById('totalPlayers').textContent = `${lb.length} player${lb.length !== 1 ? 's' : ''}`;
+
+  updateTicker(lb);
+  renderPodium(filtered.length ? filtered : lb);
+  renderRankList(filtered, myUid);
+  renderMyRank(lb, myUid);
+  renderBadges(myCoins);
+  renderActivity(myUid);
+}
+
+// ===== TAB SWITCHING =====
+function switchTab(tab, btn) {
+  ['leaderboard','achievements','stats'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ===== REFRESH =====
+document.getElementById('refreshBtn').addEventListener('click', () => {
+  document.getElementById('refreshBtn').querySelector('i').style.animation = 'spin 0.6s linear';
+  renderAll();
+  showToast('Rankings refreshed!');
+  setTimeout(() => document.getElementById('refreshBtn').querySelector('i').style.animation = '', 700);
+});
+
+// ===== HELPERS =====
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ===== FIREBASE WIRING =====
+// Load real leaderboard from Firestore, fallback to demo data
+async function loadFirebaseLeaderboard() {
+  try {
+    const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const { getFirestore, collection, query, orderBy, limit, onSnapshot, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBT4Be5OU9m8U2zx9PpvfHVfyuggtq2Wb8",
+      authDomain: "lenovox-ai.firebaseapp.com",
+      projectId: "lenovox-ai",
+      storageBucket: "lenovox-ai.firebasestorage.app",
+      messagingSenderId: "824794636900",
+      appId: "1:824794636900:web:249c980e24a49d0a39f571"
+    };
+
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Load real leaderboard
+    const lbQ = query(collection(db, 'leaderboard'), orderBy('totalLNX', 'desc'), limit(100));
+    onSnapshot(lbQ, snap => {
+      if (!snap.empty) {
+        const realData = snap.docs.map((d, i) => ({
+          rank: i + 1,
+          name: d.data().displayName || 'Student',
+          coins: d.data().totalLNX || 0,
+          country: d.data().country || 'NG',
+          uid: d.id,
+          weeklyCoins: d.data().weeklyLNX || 0,
+        }));
+        // Update global players array used by renderAll
+        window._fbPlayers = realData;
+        renderAll();
+      }
+    });
+
+    // Get current user rank
+    onAuthStateChanged(auth, async user => {
+      if (!user) return;
+      try {
+        const userSnap = await getDoc(doc(db, 'leaderboard', user.uid));
+        if (userSnap.exists()) {
+          const d = userSnap.data();
+          // Update the "You" entry in demo data
+          const theme = localStorage.getItem('lenovox_theme');
+          const attr = theme === 'light' ? 'light' : theme === 'dim' ? 'dim' : '';
+          document.documentElement.setAttribute('data-theme', attr);
+        }
+      } catch {}
+    });
+
+  } catch (e) {
+    console.log('Firebase not connected yet, using demo data');
+  }
+}
+
+// Theme sync
+function applyTheme(){const t=localStorage.getItem('lenovox_theme')||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t==='light'?'light':t==='dim'?'dim':'');}
+applyTheme();window.addEventListener('storage',applyTheme);
+
+// Back navigation
+window.goBack=()=>{if(window.parent?.navigateTo)window.parent.navigateTo('dashboard');else history.back();};
+
+// ===== INIT =====
+renderAll();
+loadFirebaseLeaderboard();
+
+// Live update when coins change
+window.addEventListener('coinbaseUpdate', () => {
+  renderAll();
+  showToast('🎉 Your coins updated!');
+});
+
+// Auto-refresh every 30s
+setInterval(renderAll, 30000);
+</script>
+</body>
+</html>

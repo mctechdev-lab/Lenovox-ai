@@ -1,408 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Privacy Policy - Lenovox AI</title>
-
-  <!-- Font Awesome for Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --space-bg: #0a0a1a;
-      --nebula-purple: rgba(93, 63, 211, 0.4);
-      --nebula-blue: rgba(0, 210, 255, 0.3);
-      --accent-blue: #00d2ff;
-      --accent-purple: #9d50bb;
-      --accent-pink: #ff006e;
-      --accent-orange: #ff9500;
-      --accent-green: #00d98e;
-      --glass: rgba(255, 255, 255, 0.05);
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body, html {
-      width: 100%;
-      font-family: 'Inter', sans-serif;
-      background-color: var(--space-bg);
-      color: white;
-      overflow-x: hidden;
-      scroll-behavior: smooth;
-    }
-
-    /* BACKGROUND EFFECTS */
-    .universe-bg {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -2;
-      background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0f0f1e 100%);
-    }
-
-    .nebula {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: 
-        radial-gradient(circle at 20% 30%, var(--nebula-purple) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, var(--nebula-blue) 0%, transparent 50%);
-      z-index: -1;
-      filter: blur(100px);
-      opacity: 0.6;
-    }
-
-    /* NAVIGATION */
-    nav {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      padding: 20px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      backdrop-filter: blur(20px);
-      background: linear-gradient(90deg, rgba(10, 10, 26, 0.9), rgba(26, 10, 46, 0.9));
-      border-bottom: 1px solid rgba(0, 210, 255, 0.2);
-      z-index: 1000;
-      box-shadow: 0 10px 40px rgba(0, 210, 255, 0.1);
-    }
-
-    .nav-logo {
-      font-size: 24px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      background: linear-gradient(90deg, #ff006e, #ff9500, #00d2ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .nav-logo a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 30px;
-      align-items: center;
-    }
-
-    .nav-links a {
-      color: #aaa;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      transition: 0.3s;
-    }
-
-    .nav-links a:hover {
-      color: var(--accent-blue);
-    }
-
-    .nav-cta {
-      background: linear-gradient(90deg, #ff006e, #ff9500) !important;
-      color: white !important;
-      padding: 10px 24px !important;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 13px;
-      transition: 0.3s;
-    }
-
-    .nav-cta:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(255, 0, 110, 0.4);
-    }
-
-    /* CONTENT */
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 140px 40px 60px;
-    }
-
-    .page-header {
-      text-align: center;
-      margin-bottom: 60px;
-    }
-
-    .page-header h1 {
-      font-size: 42px;
-      font-weight: 900;
-      margin-bottom: 15px;
-      background: linear-gradient(90deg, #ff006e, #ff9500, #00d2ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .page-header p {
-      color: #aaa;
-      font-size: 16px;
-    }
-
-    .policy-content {
-      background: linear-gradient(135deg, rgba(0, 210, 255, 0.05), rgba(157, 80, 187, 0.05));
-      border: 1px solid rgba(0, 210, 255, 0.2);
-      border-radius: 20px;
-      padding: 40px;
-      line-height: 1.8;
-    }
-
-    .policy-section {
-      margin-bottom: 40px;
-    }
-
-    .policy-section h2 {
-      font-size: 24px;
-      font-weight: 800;
-      margin-bottom: 15px;
-      color: #fff;
-      border-left: 4px solid var(--accent-blue);
-      padding-left: 15px;
-    }
-
-    .policy-section h3 {
-      font-size: 18px;
-      font-weight: 700;
-      margin-top: 20px;
-      margin-bottom: 10px;
-      color: #00d2ff;
-    }
-
-    .policy-section p {
-      color: #aaa;
-      margin-bottom: 15px;
-      font-size: 15px;
-    }
-
-    .policy-section ul {
-      color: #aaa;
-      margin-left: 20px;
-      margin-bottom: 15px;
-    }
-
-    .policy-section li {
-      margin-bottom: 10px;
-      font-size: 15px;
-    }
-
-    .last-updated {
-      color: #666;
-      font-size: 13px;
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .note {
-      background: rgba(255, 149, 0, 0.1);
-      border-left: 4px solid #ff9500;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 40px;
-      color: #aaa;
-      font-size: 14px;
-    }
-
-    /* FOOTER */
-    footer {
-      padding: 60px 40px;
-      border-top: 2px solid rgba(255, 0, 110, 0.2);
-      text-align: center;
-      background: linear-gradient(180deg, transparent, rgba(93, 63, 211, 0.1));
-      margin-top: 60px;
-    }
-
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .footer-logo {
-      font-size: 24px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      margin-bottom: 20px;
-      background: linear-gradient(90deg, #ff006e, #ff9500, #00d2ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 30px;
-      justify-content: center;
-      margin: 30px 0;
-      flex-wrap: wrap;
-    }
-
-    .footer-links a {
-      color: #aaa;
-      text-decoration: none;
-      font-size: 13px;
-      transition: 0.3s;
-    }
-
-    .footer-links a:hover {
-      color: var(--accent-blue);
-    }
-
-    .footer-copyright {
-      color: #555;
-      font-size: 12px;
-      margin-top: 30px;
-    }
-
-    @media (max-width: 768px) {
-      nav {
-        padding: 15px 20px;
-      }
-
-      .nav-links {
-        gap: 15px;
-        font-size: 12px;
-      }
-
-      .container {
-        padding: 120px 20px 40px;
-      }
-
-      .page-header h1 {
-        font-size: 28px;
-      }
-
-      .policy-content {
-        padding: 25px;
-      }
-
-      .policy-section h2 {
-        font-size: 20px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lenovox — Privacy Policy</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03030b;--card:rgba(11,11,30,.93);--blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--orange:#ff9500;--red:#ef4444;--purple:#9d50bb;--border:rgba(255,255,255,0.07);--text:#e8eaf6;--muted:#8892a4}
+[data-theme="light"]{--bg:#f8fafc;--card:rgba(255,255,255,.98);--border:rgba(0,0,0,.09);--text:#1e293b;--muted:#64748b}
+[data-theme="dim"]{--bg:#0f1117;--card:rgba(20,22,36,.95);--border:rgba(255,255,255,.08);--text:#d4d8e8;--muted:#7a8499}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;padding-bottom:50px;line-height:1.7;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased}
+.bg-glow{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 80% 20%,rgba(16,185,129,.04) 0%,transparent 55%)}
+.page{max-width:700px;margin:0 auto;padding:0 16px}
+.pg-hdr{display:flex;align-items:center;gap:11px;padding:18px 0 14px;border-bottom:1px solid var(--border);margin-bottom:24px}
+.back-c{width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.back-c i{color:var(--muted);font-size:.85rem}
+.back-c:hover i{color:var(--green)}
+.hdr-title{font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;color:var(--text)}
+.hdr-sub{font-size:.7rem;color:var(--muted);margin-top:1px}
+.cover{margin-bottom:24px}
+.cover h1{font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;color:var(--text);margin-bottom:7px}
+.cover-meta{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cover-meta i{font-size:.72rem;color:var(--green)}
+.green-box{background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.2);border-left:4px solid var(--green);border-radius:0 12px 12px 0;padding:12px 15px;margin-bottom:22px;font-size:.82rem;color:var(--text);line-height:1.65;display:flex;gap:9px}
+.green-box i{color:var(--green);flex-shrink:0;margin-top:2px}
+h2{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:700;color:var(--text);margin:26px 0 10px;padding-top:6px;display:flex;align-items:center;gap:8px}
+h2::before{content:attr(data-n);width:26px;height:26px;border-radius:7px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:var(--green);flex-shrink:0}
+p{font-size:.84rem;color:var(--text);line-height:1.8;margin-bottom:10px}
+ul{padding-left:20px;margin-bottom:10px}
+li{font-size:.82rem;color:var(--text);line-height:1.75;margin-bottom:4px}
+li strong{color:var(--text);font-weight:800}
+.data-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.79rem}
+.data-table th{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);padding:9px 11px;text-align:left;font-weight:700;color:var(--green)}
+.data-table td{border:1px solid var(--border);padding:9px 11px;vertical-align:top;line-height:1.55}
+.data-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.hl{background:rgba(0,210,255,.07);border:1px solid rgba(0,210,255,.18);border-radius:10px;padding:11px 14px;margin:10px 0;font-size:.82rem;color:var(--text);line-height:1.65;display:flex;gap:8px;align-items:flex-start}
+.hl i{color:var(--blue);flex-shrink:0;margin-top:2px}
+.rights-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0}
+.right-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;gap:9px;align-items:flex-start}
+.right-card i{font-size:.9rem;margin-top:2px;flex-shrink:0}
+.right-body{flex:1}
+.right-title{font-size:.79rem;font-weight:800;color:var(--text);margin-bottom:2px}
+.right-sub{font-size:.71rem;color:var(--muted);line-height:1.5}
+.divider{height:1px;background:var(--border);margin:20px 0}
+.footer{margin-top:30px;padding:18px;background:var(--card);border:1px solid var(--border);border-radius:14px;text-align:center}
+.footer p{font-size:.78rem;color:var(--muted);margin-bottom:5px}
+.footer a{color:var(--green);text-decoration:none;font-weight:700}
+@media(max-width:480px){.rights-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-
-  <div class="universe-bg"></div>
-  <div class="nebula"></div>
-
-  <!-- NAVIGATION -->
-  <nav>
-    <div class="nav-logo"><a href="index.html">LENOVOX-AI</a></div>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="terms.html">Terms</a>
-      <a href="login.html" class="nav-cta">Login</a>
-      <a href="signup.html" class="nav-cta">Sign Up</a>
-    </div>
-  </nav>
-
-  <!-- CONTENT -->
-  <div class="container">
-    <div class="page-header">
-      <h1>Privacy Policy</h1>
-      <p>Your privacy is important to us. Learn how we protect your data.</p>
-    </div>
-
-    <div class="policy-content">
-      <div class="policy-section">
-        <p><strong>Last Updated: February 15, 2026</strong></p>
-      </div>
-
-      <div class="policy-section">
-        <p>This Privacy Policy explains how Lenovox-ai collects and uses your information.</p>
-      </div>
-
-      <div class="policy-section">
-        <h2>1. Information We Collect</h2>
-        <p>We may collect:</p>
-        <ul>
-          <li>Name and contact details (if provided)</li>
-          <li>Account login information</li>
-          <li>Device or usage data (for improving the service)</li>
-        </ul>
-      </div>
-
-      <div class="policy-section">
-        <h2>2. How We Use Information</h2>
-        <p>We use your information to:</p>
-        <ul>
-          <li>Provide and maintain our services</li>
-          <li>Improve user experience</li>
-          <li>Communicate updates or support</li>
-          <li>Ensure platform security</li>
-        </ul>
-      </div>
-
-      <div class="policy-section">
-        <h2>3. Data Protection</h2>
-        <p>We take reasonable steps to protect your information, but no system is 100% secure.</p>
-      </div>
-
-      <div class="policy-section">
-        <h2>4. Sharing of Information</h2>
-        <p>We do NOT sell user data. We may share information only:</p>
-        <ul>
-          <li>When required by law</li>
-          <li>To protect our legal rights</li>
-          <li>With trusted service providers (if needed)</li>
-        </ul>
-      </div>
-
-      <div class="policy-section">
-        <h2>5. Cookies / Tracking</h2>
-        <p>Our platform may use cookies or similar technologies to improve functionality.</p>
-      </div>
-
-      <div class="policy-section">
-        <h2>6. Your Rights</h2>
-        <p>You may request to:</p>
-        <ul>
-          <li>Access your data</li>
-          <li>Correct your data</li>
-          <li>Delete your account (where applicable)</li>
-        </ul>
-      </div>
-
-      <div class="policy-section">
-        <h2>7. Updates to This Policy</h2>
-        <p>We may update this Privacy Policy from time to time. Changes will be posted on this page.</p>
-      </div>
-
-      <div class="policy-section">
-        <h2>8. Contact Us</h2>
-        <p>For privacy-related questions, contact:</p>
-        <p><strong>Email: support@lenovox-ai.com</strong></p>
-      </div>
-
-      <div class="note">
-        <strong><i class="fas fa-exclamation-triangle"></i> IMPORTANT NOTE</strong><br><br>
-        This is a general template and should be reviewed or customized to match your exact business operations and local legal requirements.
-      </div>
-
-      <div class="last-updated">
-        <strong>Last Updated:</strong> February 15, 2026
-      </div>
+<div class="bg-glow"></div>
+<div class="page">
+  <div class="pg-hdr">
+    <div class="back-c" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
+    <div>
+      <div class="hdr-title">Privacy Policy</div>
+      <div class="hdr-sub">Lenovox AI · MC Tech</div>
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-content">
-      <div class="footer-logo">LENOVOX-AI</div>
-      <div class="footer-links">
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="terms.html">Terms of Service</a>
-        <a href="#">Contact Us</a>
-        <a href="#">Blog</a>
-        <a href="#">Careers</a>
-      </div>
-      <div class="footer-copyright">© 2026 Lenovox-ai. All rights reserved. | Empowering students worldwide</div>
+  <div class="cover">
+    <h1>Privacy Policy</h1>
+    <div class="cover-meta">
+      <span><i class="fas fa-calendar"></i> Effective: 1 January 2026</span>
+      <span><i class="fas fa-rotate"></i> Last updated: March 2026</span>
     </div>
-  </footer>
+  </div>
 
+  <div class="green-box"><i class="fas fa-shield-halved"></i>At MC Tech and Lenovox, we take your privacy seriously. This policy explains exactly what data we collect, why we collect it, how we use it, and the rights you have over your own data.</div>
+
+  <h2 data-n="1"><i class="fas fa-building"></i>Who We Are</h2>
+  <p>Lenovox AI is a product of <strong>MC Tech</strong>, a technology company based in Nigeria. We are the data controller for all personal data processed through the Lenovox platform.</p>
+  <ul>
+    <li><strong>Company:</strong> MC Tech</li>
+    <li><strong>Product:</strong> Lenovox AI</li>
+    <li><strong>Website:</strong> mctech.com.ng</li>
+    <li><strong>Contact:</strong> lenovoxai.care@gmail.com</li>
+  </ul>
+
+  <h2 data-n="2"><i class="fas fa-database"></i>What Data We Collect</h2>
+  <table class="data-table">
+    <thead><tr><th>Data Type</th><th>What We Collect</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Account Data</strong></td><td>Name, email address, phone number, profile photo</td><td>Account creation and identification</td></tr>
+      <tr><td><strong>Usage Data</strong></td><td>AI messages sent, quizzes completed, features used, login times</td><td>Platform functionality and LNX rewards</td></tr>
+      <tr><td><strong>Financial Data</strong></td><td>Paystack transaction references, LNX balance and history</td><td>Payment processing and LNX economy</td></tr>
+      <tr><td><strong>Content Data</strong></td><td>MeetUp posts, images, comments you share</td><td>Social platform functionality</td></tr>
+      <tr><td><strong>Device Data</strong></td><td>Browser type, device type, IP address</td><td>Security and fraud prevention</td></tr>
+      <tr><td><strong>Brain Box</strong></td><td>Personal context you add to AI memory</td><td>AI personalisation — stored locally on your device only</td></tr>
+    </tbody>
+  </table>
+  <div class="hl"><i class="fas fa-circle-info"></i>Brain Box data is stored <strong>locally on your device</strong> in your browser. We do not transmit Brain Box data to our servers.</div>
+
+  <h2 data-n="3"><i class="fas fa-gear"></i>How We Use Your Data</h2>
+  <ul>
+    <li>To create and manage your Lenovox account</li>
+    <li>To provide AI tutoring, quizzes, and all platform features</li>
+    <li>To process LNX coin transactions and maintain your wallet</li>
+    <li>To process subscription payments through Paystack</li>
+    <li>To calculate and award referral bonuses</li>
+    <li>To detect and prevent fraud, abuse, and policy violations</li>
+    <li>To maintain the leaderboard and badge system</li>
+    <li>To send important account notifications (not marketing without consent)</li>
+    <li>To improve the platform based on anonymised usage patterns</li>
+  </ul>
+
+  <h2 data-n="4"><i class="fas fa-share-nodes"></i>Data Sharing</h2>
+  <p>We do <strong>not</strong> sell your personal data. We share your data only with trusted third-party services that help us operate the platform:</p>
+  <ul>
+    <li><strong>Firebase (Google):</strong> User authentication and database storage</li>
+    <li><strong>OpenAI:</strong> Processing AI messages (your messages are sent to OpenAI's servers to generate responses)</li>
+    <li><strong>Paystack:</strong> Secure payment processing</li>
+    <li><strong>Supabase:</strong> MeetUp media file storage (photos and videos)</li>
+    <li><strong>Vercel:</strong> Server hosting and API routing</li>
+  </ul>
+  <p>All third-party providers are contractually obligated to keep your data secure and use it only for the specified purposes.</p>
+
+  <h2 data-n="5"><i class="fas fa-robot"></i>AI & OpenAI</h2>
+  <p>When you send messages to Lenovox AI, those messages are transmitted to <strong>OpenAI's API</strong> to generate responses. Please be aware:</p>
+  <ul>
+    <li>Do not share sensitive personal information (passwords, financial details, national ID numbers) in AI messages.</li>
+    <li>OpenAI processes your messages according to their own privacy policy.</li>
+    <li>We retain AI conversation history in your session for context but do not store long-term conversation history on our servers.</li>
+    <li>Image uploads for Vision analysis are sent to OpenAI and are not stored by us after processing.</li>
+  </ul>
+
+  <h2 data-n="6"><i class="fas fa-clock"></i>Data Retention</h2>
+  <ul>
+    <li><strong>Account data:</strong> Retained as long as your account is active, then deleted within 30 days of account closure.</li>
+    <li><strong>Transaction records:</strong> Retained for 7 years for financial compliance.</li>
+    <li><strong>MeetUp content:</strong> Deleted within 30 days of removal or account closure.</li>
+    <li><strong>Inactive accounts:</strong> Accounts with no activity for 12 months may be deleted with 30 days' prior email notice.</li>
+  </ul>
+
+  <h2 data-n="7"><i class="fas fa-user-shield"></i>Your Rights</h2>
+  <div class="rights-grid">
+    <div class="right-card"><i class="fas fa-eye" style="color:var(--blue)"></i><div class="right-body"><div class="right-title">Access</div><div class="right-sub">Request a copy of your personal data</div></div></div>
+    <div class="right-card"><i class="fas fa-pen" style="color:var(--gold)"></i><div class="right-body"><div class="right-title">Correction</div><div class="right-sub">Update inaccurate data in settings</div></div></div>
+    <div class="right-card"><i class="fas fa-trash" style="color:var(--red)"></i><div class="right-body"><div class="right-title">Deletion</div><div class="right-sub">Request deletion of your account and data</div></div></div>
+    <div class="right-card"><i class="fas fa-download" style="color:var(--green)"></i><div class="right-body"><div class="right-title">Portability</div><div class="right-sub">Export your data in a readable format</div></div></div>
+    <div class="right-card"><i class="fas fa-hand" style="color:var(--orange)"></i><div class="right-body"><div class="right-title">Objection</div><div class="right-sub">Object to certain data processing</div></div></div>
+    <div class="right-card"><i class="fas fa-envelope" style="color:var(--purple)"></i><div class="right-body"><div class="right-title">Contact</div><div class="right-sub">lenovoxai.care@gmail.com</div></div></div>
+  </div>
+
+  <h2 data-n="8"><i class="fas fa-cookie"></i>Cookies & Local Storage</h2>
+  <p>We use browser localStorage (not traditional cookies) to store:</p>
+  <ul>
+    <li>Your theme preference (dark/light/dim)</li>
+    <li>Brain Box AI memory (stored locally, never sent to servers)</li>
+    <li>Daily image upload count</li>
+    <li>Daily LNX earning tracker for games</li>
+    <li>Blocked users list (MeetUp)</li>
+  </ul>
+  <p>This local storage data can be cleared at any time by clearing your browser data or reinstalling the app.</p>
+
+  <h2 data-n="9"><i class="fas fa-child"></i>Children's Privacy</h2>
+  <p>Lenovox is designed for students aged 13 and above. We do not knowingly collect personal data from children under 13. If you believe a child under 13 has created an account, please contact us immediately at <strong>lenovoxai.care@gmail.com</strong> and we will delete the account.</p>
+
+  <h2 data-n="10"><i class="fas fa-lock"></i>Security</h2>
+  <p>We implement industry-standard security measures:</p>
+  <ul>
+    <li>All data transmission is encrypted using HTTPS/TLS</li>
+    <li>Firebase Authentication handles secure login — we never store raw passwords</li>
+    <li>Payments are handled entirely by Paystack — we never see your card details</li>
+    <li>Firestore security rules restrict data access to the owner's account only</li>
+    <li>API keys are stored as server-side environment variables, never in frontend code</li>
+  </ul>
+
+  <h2 data-n="11"><i class="fas fa-rotate"></i>Policy Updates</h2>
+  <p>We may update this Privacy Policy from time to time. When we make significant changes, we will notify you through the app. Continued use of Lenovox after updates constitutes acceptance of the revised policy.</p>
+
+  <div class="divider"></div>
+  <div class="footer">
+    <p>Questions about your privacy? Contact us:</p>
+    <p><strong>lenovoxai.care@gmail.com</strong></p>
+    <p>© 2026 MC Tech · <a href="terms.html">Terms & Conditions</a> · <a href="about.html">About Us</a></p>
+  </div>
+</div>
+<script>
+function applyTheme(){const t=localStorage.getItem('lenovox_theme')||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t==='light'?'light':t==='dim'?'dim':'');}
+applyTheme();window.addEventListener('storage',applyTheme);
+window.goBack=()=>{if(window.history.length>1)history.back();else window.location.href='lenovox-settings.html';};
+</script>
 </body>
 </html>

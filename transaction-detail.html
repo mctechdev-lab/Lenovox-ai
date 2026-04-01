@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Lenovox — Transaction Detail</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03030b;--card:rgba(11,11,30,.93);--card2:rgba(16,16,42,.97);--blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--orange:#ff9500;--red:#ef4444;--border:rgba(255,255,255,0.07);--text:#e8eaf6;--muted:#8892a4}
+[data-theme="light"]{--bg:#f0f4f8;--card:rgba(255,255,255,.96);--card2:#fff;--border:rgba(0,0,0,.09);--text:#1e293b;--muted:#64748b}
+[data-theme="dim"]{--bg:#0f1117;--card:rgba(20,22,36,.95);--card2:rgba(26,28,44,.98);--border:rgba(255,255,255,.08);--text:#d4d8e8;--muted:#7a8499}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;padding-bottom:80px;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased}
+.bg-glow{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 60% 40% at 25% 15%,rgba(16,185,129,.06) 0%,transparent 60%)}
+.page{max-width:520px;margin:0 auto;padding:0 14px}
+
+/* HEADER */
+.pg-hdr{display:flex;align-items:center;gap:10px;padding:16px 0 12px}
+.back-c{width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.back-c i{color:var(--muted);font-size:.85rem}
+.back-c:hover i{color:var(--blue)}
+.hdr-title{font-size:.95rem;font-weight:800;color:var(--text)}
+.hdr-sub{font-size:.68rem;color:var(--muted);margin-top:1px}
+
+/* HERO AMOUNT CARD */
+.hero-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:26px 20px;text-align:center;margin-bottom:14px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;opacity:.04}
+.hero-ic{width:58px;height:58px;border-radius:17px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 12px;position:relative;z-index:1}
+.hero-type{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;position:relative;z-index:1}
+.hero-amount{font-family:'Orbitron',monospace;font-size:2.2rem;font-weight:900;position:relative;z-index:1;margin-bottom:6px}
+.hero-amount.credit{color:var(--green)}
+.hero-amount.debit{color:var(--red)}
+.hero-amount.neutral{color:var(--text)}
+.hero-status{display:inline-flex;align-items:center;gap:5px;padding:4px 13px;border-radius:999px;font-size:.74rem;font-weight:700;position:relative;z-index:1}
+.hs-success{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.22);color:var(--green)}
+.hs-pending{background:rgba(255,204,51,.12);border:1px solid rgba(255,204,51,.22);color:var(--gold)}
+.hs-failed{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.22);color:var(--red)}
+
+/* PROGRESS STEPS (OPay style) */
+.progress-steps{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.ps-step{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1}
+.ps-circle{width:30px;height:30px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:.72rem}
+.ps-circle.done{background:rgba(16,185,129,.15);border-color:var(--green);color:var(--green)}
+.ps-circle.active{background:rgba(0,210,255,.12);border-color:var(--blue);color:var(--blue);animation:pulse .9s ease-in-out infinite}
+.ps-circle.wait{background:rgba(255,255,255,.04);border-color:var(--border);color:var(--muted)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,210,255,.3)}50%{box-shadow:0 0 0 6px rgba(0,210,255,.0)}}
+.ps-line{flex:1;height:2px;background:var(--border);position:relative;margin:0 2px;margin-bottom:18px}
+.ps-line.done{background:var(--green)}
+.ps-label{font-size:.62rem;font-weight:700;color:var(--muted);text-align:center;line-height:1.3}
+.ps-time{font-size:.58rem;color:var(--muted)}
+
+/* DETAILS CARD */
+.detail-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:14px}
+.dc-hdr{padding:12px 15px;border-bottom:1px solid var(--border);font-size:.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;display:flex;align-items:center;gap:5px}
+.dc-hdr i{font-size:.68rem;color:var(--blue)}
+.dc-row{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid var(--border)}
+.dc-row:last-child{border-bottom:none}
+.dc-label{font-size:.78rem;color:var(--muted);font-weight:600}
+.dc-value{font-size:.82rem;font-weight:700;color:var(--text);text-align:right;max-width:60%;word-break:break-all;line-height:1.4}
+.dc-value.green{color:var(--green)}
+.dc-value.red{color:var(--red)}
+.dc-value.mono{font-family:'Orbitron',monospace;font-size:.76rem;color:var(--blue)}
+.copy-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:2px 6px;border-radius:5px;font-size:.68rem;transition:.18s;margin-left:4px}
+.copy-btn:hover{color:var(--blue);background:rgba(0,210,255,.1)}
+
+/* ACTION BUTTONS */
+.action-row{display:flex;gap:9px;margin-bottom:14px}
+.ab{flex:1;padding:13px;border:none;border-radius:13px;font-family:'Nunito',sans-serif;font-size:.86rem;font-weight:800;cursor:pointer;transition:.25s;display:flex;align-items:center;justify-content:center;gap:7px}
+.ab i{font-size:.82rem}
+.ab:hover{transform:translateY(-2px)}
+.ab-share{background:var(--card);border:1px solid var(--border);color:var(--text)}
+.ab-share:hover{border-color:rgba(0,210,255,.3);color:var(--blue)}
+.ab-report{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--red)}
+.ab-report:hover{background:rgba(239,68,68,.14)}
+
+/* REPORT MODAL */
+.modal-ov{position:fixed;inset:0;z-index:9999;background:rgba(3,3,11,.88);backdrop-filter:blur(8px);display:none;align-items:flex-end;justify-content:center}
+.modal-ov.show{display:flex}
+.modal-box{background:var(--card2);border:1px solid var(--border);border-radius:22px 22px 0 0;width:100%;max-width:520px;padding:20px 15px 32px;animation:mSlide .32s cubic-bezier(.34,1.56,.64,1)}
+@keyframes mSlide{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:99px;margin:0 auto 16px}
+.modal-title{font-family:'Orbitron',monospace;font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:5px}
+.modal-sub{font-size:.78rem;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.report-opts{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.ro{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1.5px solid var(--border);border-radius:11px;cursor:pointer;font-size:.82rem;font-weight:700;color:var(--text);transition:.18s;background:none;width:100%;text-align:left;font-family:'Nunito',sans-serif}
+.ro i{font-size:.8rem;color:var(--muted);flex-shrink:0;width:16px;text-align:center}
+.ro:hover{border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.06);color:var(--red)}
+.ro:hover i{color:var(--red)}
+.modal-inp{width:100%;padding:10px 12px;background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:600;outline:none;resize:none;min-height:70px;line-height:1.55;margin-bottom:10px;transition:.22s;-webkit-appearance:none}
+.modal-inp::placeholder{color:rgba(136,146,164,.4)}
+.modal-inp:focus{border-color:rgba(239,68,68,.4)}
+.modal-submit{width:100%;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--red),#c82333);color:#fff;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:.25s;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:7px}
+.modal-submit:hover{transform:translateY(-2px)}
+.modal-cancel{width:100%;padding:10px;border:1px solid var(--border);border-radius:11px;background:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:700;cursor:pointer}
+
+/* TOAST */
+#toasts{position:fixed;top:14px;right:14px;z-index:99999;display:flex;flex-direction:column;gap:6px;max-width:270px}
+.toast{padding:9px 12px;border-radius:10px;font-size:.77rem;font-weight:700;display:flex;align-items:center;gap:7px;border:1px solid;animation:tIn .3s ease}
+.toast i{font-size:.85rem;flex-shrink:0}.toast span{flex:1}
+.toast.success{background:rgba(16,185,129,.14);border-color:rgba(16,185,129,.26);color:#6ee7b7}
+.toast.error{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.26);color:#fca5a5}
+.toast.info{background:rgba(0,210,255,.11);border-color:rgba(0,210,255,.22);color:#a5f3ff}
+.toast.removing{animation:tOut .25s ease forwards}
+@keyframes tIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tOut{to{opacity:0;transform:translateX(28px)}}
+.tc{margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;opacity:.44;padding:0 0 0 4px}
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div id="toasts"></div>
+
+<!-- REPORT MODAL -->
+<div class="modal-ov" id="reportModal" onclick="closeReport()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Report an Issue</div>
+    <div class="modal-sub">What's wrong with this transaction? We'll review it within 24–48 hours.</div>
+    <div class="report-opts">
+      <button class="ro" onclick="selectIssue(this)"><i class="fas fa-coins"></i> LNX not credited to my wallet</button>
+      <button class="ro" onclick="selectIssue(this)"><i class="fas fa-rotate-left"></i> Wrong amount deducted</button>
+      <button class="ro" onclick="selectIssue(this)"><i class="fas fa-ban"></i> Transaction shows as failed but charged</button>
+      <button class="ro" onclick="selectIssue(this)"><i class="fas fa-credit-card"></i> Payment issue or duplicate charge</button>
+      <button class="ro" onclick="selectIssue(this)"><i class="fas fa-circle-question"></i> Other issue</button>
+    </div>
+    <textarea class="modal-inp" id="reportNote" placeholder="Describe the issue in more detail (optional)..."></textarea>
+    <button class="modal-submit" id="submitReportBtn" onclick="submitReport()"><i class="fas fa-paper-plane"></i> Submit Report</button>
+    <button class="modal-cancel" onclick="closeReport()">Cancel</button>
+  </div>
+</div>
+
+<div class="page">
+  <div class="pg-hdr">
+    <div class="back-c" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
+    <div>
+      <div class="hdr-title">Transaction Details</div>
+      <div class="hdr-sub" id="hdrSub">Loading...</div>
+    </div>
+  </div>
+
+  <!-- HERO AMOUNT -->
+  <div class="hero-card" id="heroCard">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-ic" id="heroIc"></div>
+    <div class="hero-type" id="heroType">—</div>
+    <div class="hero-amount" id="heroAmount">—</div>
+    <div class="hero-status" id="heroStatus"></div>
+  </div>
+
+  <!-- PROGRESS STEPS -->
+  <div class="progress-steps" id="progressSteps" style="display:none">
+    <div class="ps-step">
+      <div class="ps-circle done" id="step1"><i class="fas fa-check"></i></div>
+      <div class="ps-label">Transaction<br>Initiated</div>
+      <div class="ps-time" id="step1Time"></div>
+    </div>
+    <div class="ps-line done" id="line1"></div>
+    <div class="ps-step">
+      <div class="ps-circle" id="step2"><i class="fas fa-gear"></i></div>
+      <div class="ps-label">Processing</div>
+      <div class="ps-time" id="step2Time"></div>
+    </div>
+    <div class="ps-line" id="line2"></div>
+    <div class="ps-step">
+      <div class="ps-circle" id="step3"><i class="fas fa-circle-check"></i></div>
+      <div class="ps-label">Completed</div>
+      <div class="ps-time" id="step3Time"></div>
+    </div>
+  </div>
+
+  <!-- TRANSACTION DETAILS -->
+  <div class="detail-card">
+    <div class="dc-hdr"><i class="fas fa-receipt"></i> Transaction Details</div>
+    <div class="dc-row"><div class="dc-label">Type</div><div class="dc-value" id="dType">—</div></div>
+    <div class="dc-row"><div class="dc-label">Amount</div><div class="dc-value" id="dAmount">—</div></div>
+    <div class="dc-row"><div class="dc-label">Date & Time</div><div class="dc-value" id="dDate">—</div></div>
+    <div class="dc-row"><div class="dc-label">Status</div><div class="dc-value" id="dStatus">—</div></div>
+    <div class="dc-row" id="dRefRow" style="display:none"><div class="dc-label">Reference</div><div class="dc-value mono" id="dRef">—<button class="copy-btn" onclick="copyRef()" title="Copy"><i class="fas fa-copy"></i></button></div></div>
+    <div class="dc-row"><div class="dc-label">Balance After</div><div class="dc-value" id="dBalance">—</div></div>
+    <div class="dc-row"><div class="dc-label">Transaction ID</div><div class="dc-value mono" id="dId" style="font-size:.66rem">—<button class="copy-btn" onclick="copyId()" title="Copy"><i class="fas fa-copy"></i></button></div></div>
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="action-row">
+    <button class="ab ab-share" onclick="shareReceipt()"><i class="fas fa-share-nodes"></i> Share</button>
+    <button class="ab ab-report" onclick="openReport()"><i class="fas fa-flag"></i> Report Issue</button>
+  </div>
+
+  <!-- HELP NOTE -->
+  <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:13px;padding:13px 14px;font-size:.76rem;color:var(--muted);line-height:1.65;display:flex;gap:9px;align-items:flex-start">
+    <i class="fas fa-circle-info" style="color:var(--blue);font-size:.82rem;margin-top:2px;flex-shrink:0"></i>
+    <span>If you believe this transaction has an error, tap <b style="color:var(--text)">Report Issue</b> above. Our support team responds within 24–48 hours. For urgent issues email <b style="color:var(--blue)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="523e373c3d243d2a333b7c3133203712353f333b3e7c313d3f">[email&#160;protected]</a></b></span>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
+import { watchAuth, db } from './auth.js';
+import { doc, getDoc, addDoc, collection, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+let _uid=null, _txData=null, _selectedIssue='';
+
+function applyTheme(){const t=localStorage.getItem('lenovox_theme')||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t==='light'?'light':t==='dim'?'dim':'');}
+applyTheme();window.addEventListener('storage',applyTheme);
+
+function toast(m,t='success'){const el=document.createElement('div');el.className=`toast ${t}`;const ic={success:'fas fa-circle-check',error:'fas fa-circle-exclamation',info:'fas fa-circle-info'};el.innerHTML=`<i class="${ic[t]||ic.info}"></i><span>${m}</span><button class="tc" onclick="this.parentElement.classList.add('removing');setTimeout(()=>this.parentElement.remove(),250)"><i class="fas fa-xmark"></i></button>`;document.getElementById('toasts').appendChild(el);setTimeout(()=>{if(el.parentElement){el.classList.add('removing');setTimeout(()=>el.remove(),250);}},5000);}
+
+window.goBack=()=>history.back();
+
+// Get txId from URL params
+const params=new URLSearchParams(window.location.search);
+const txId=params.get('id');
+const txFromStorage=sessionStorage.getItem('lnx_tx_detail');
+
+function getTypeIcon(type=''){
+  const t=type.toLowerCase();
+  if(t.includes('ai chat')||t.includes('ai'))return{emoji:'🤖',bg:'rgba(0,210,255,.12)',border:'rgba(0,210,255,.22)'};
+  if(t.includes('quiz'))return{emoji:'📝',bg:'rgba(255,204,51,.12)',border:'rgba(255,204,51,.22)'};
+  if(t.includes('game'))return{emoji:'🎮',bg:'rgba(255,61,112,.12)',border:'rgba(255,61,112,.22)'};
+  if(t.includes('referral')||t.includes('refer'))return{emoji:'🤝',bg:'rgba(16,185,129,.12)',border:'rgba(16,185,129,.22)'};
+  if(t.includes('daily')||t.includes('claim'))return{emoji:'🎁',bg:'rgba(255,204,51,.12)',border:'rgba(255,204,51,.22)'};
+  if(t.includes('purchase')||t.includes('topup')||t.includes('top up'))return{emoji:'💳',bg:'rgba(0,210,255,.12)',border:'rgba(0,210,255,.22)'};
+  if(t.includes('ad'))return{emoji:'📺',bg:'rgba(157,80,187,.12)',border:'rgba(157,80,187,.22)'};
+  if(t.includes('subscription')||t.includes('plan'))return{emoji:'⭐',bg:'rgba(255,204,51,.12)',border:'rgba(255,204,51,.22)'};
+  if(t.includes('badge'))return{emoji:'🏅',bg:'rgba(255,149,0,.12)',border:'rgba(255,149,0,.22)'};
+  if(t.includes('tutor'))return{emoji:'🧠',bg:'rgba(157,80,187,.12)',border:'rgba(157,80,187,.22)'};
+  if(t.includes('image')||t.includes('vision'))return{emoji:'🖼️',bg:'rgba(255,61,112,.12)',border:'rgba(255,61,112,.22)'};
+  return{emoji:'💰',bg:'rgba(255,204,51,.12)',border:'rgba(255,204,51,.22)'};
+}
+
+function renderTx(tx){
+  _txData=tx;
+  const isCredit=tx.amount>0;
+  const isDebit=tx.amount<0;
+  const abs=Math.abs(tx.amount);
+  const{emoji,bg,border}=getTypeIcon(tx.type||'');
+  const date=tx.date||tx.timestamp?.toDate?.()?.toLocaleString()||'—';
+  const txIdDisplay=tx.id||txId||'—';
+
+  document.getElementById('hdrSub').textContent=date;
+
+  // Hero
+  document.getElementById('heroBg').style.background=isCredit?'var(--green)':'var(--red)';
+  document.getElementById('heroIc').style.cssText=`background:${bg};border:1px solid ${border};width:58px;height:58px;border-radius:17px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 12px`;
+  document.getElementById('heroIc').textContent=emoji;
+  document.getElementById('heroType').textContent=tx.type||'Transaction';
+  const amtEl=document.getElementById('heroAmount');
+  amtEl.className='hero-amount '+(isCredit?'credit':isDebit?'debit':'neutral');
+  amtEl.textContent=(isCredit?'+':isDebit?'-':'')+abs.toLocaleString()+' LNX';
+
+  const statusEl=document.getElementById('heroStatus');
+  statusEl.className='hero-status hs-success';
+  statusEl.innerHTML='<i class="fas fa-circle-check"></i> Successful';
+
+  // Progress steps — always show for payment types
+  const isPayment=tx.type?.toLowerCase().includes('purchase')||tx.type?.toLowerCase().includes('subscription')||tx.type?.toLowerCase().includes('topup');
+  if(isPayment){
+    document.getElementById('progressSteps').style.display='flex';
+    document.getElementById('step2').className='ps-circle done';document.getElementById('step2').innerHTML='<i class="fas fa-check"></i>';
+    document.getElementById('step3').className='ps-circle done';document.getElementById('step3').innerHTML='<i class="fas fa-check"></i>';
+    document.getElementById('line1').className='ps-line done';document.getElementById('line2').className='ps-line done';
+    document.getElementById('step1Time').textContent=date.split(',')[1]?.trim()||'';
+    document.getElementById('step2Time').textContent=date.split(',')[1]?.trim()||'';
+    document.getElementById('step3Time').textContent=date.split(',')[1]?.trim()||'';
+  }
+
+  // Details
+  document.getElementById('dType').textContent=tx.type||'Transaction';
+  document.getElementById('dAmount').className='dc-value '+(isCredit?'green':isDebit?'red':'');
+  document.getElementById('dAmount').textContent=(isCredit?'+':isDebit?'-':'')+abs.toLocaleString()+' LNX';
+  document.getElementById('dDate').textContent=date;
+  document.getElementById('dStatus').innerHTML='<span style="color:var(--green);font-weight:800"><i class="fas fa-circle-check" style="font-size:.72rem;margin-right:3px"></i>Successful</span>';
+  document.getElementById('dBalance').textContent=tx.balanceAfter?tx.balanceAfter.toLocaleString()+' LNX':'See wallet';
+
+  if(tx.paystackRef){document.getElementById('dRefRow').style.display='flex';document.getElementById('dRef').innerHTML=tx.paystackRef+'<button class="copy-btn" onclick="copyRef()" title="Copy"><i class="fas fa-copy"></i></button>';}
+
+  document.getElementById('dId').innerHTML=txIdDisplay.slice(0,24)+(txIdDisplay.length>24?'…':'')+'<button class="copy-btn" onclick="copyId()" title="Copy"><i class="fas fa-copy"></i></button>';
+}
+
+window.copyRef=()=>{const r=document.getElementById('dRef').textContent.replace('Copy','').trim();navigator.clipboard.writeText(r);toast('Reference copied!','success');};
+window.copyId=()=>{navigator.clipboard.writeText(txId||'');toast('Transaction ID copied!','success');};
+
+window.shareReceipt=()=>{
+  if(!_txData)return;
+  const text=`Lenovox AI Transaction\nType: ${_txData.type}\nAmount: ${Math.abs(_txData.amount)} LNX\nDate: ${_txData.date}\nStatus: Successful`;
+  if(navigator.share)navigator.share({title:'Lenovox Transaction',text});
+  else{navigator.clipboard.writeText(text);toast('Receipt copied!','info');}
+};
+
+// REPORT
+let _selIssue='';
+window.selectIssue=btn=>{document.querySelectorAll('.ro').forEach(b=>b.style.borderColor='');btn.style.borderColor='var(--red)';_selIssue=btn.textContent.trim();};
+window.openReport=()=>document.getElementById('reportModal').classList.add('show');
+window.closeReport=()=>document.getElementById('reportModal').classList.remove('show');
+window.submitReport=async()=>{
+  if(!_selIssue){toast('Please select an issue type.','error');return;}
+  if(!_uid){toast('Sign in required.','error');return;}
+  const note=document.getElementById('reportNote').value.trim();
+  const btn=document.getElementById('submitReportBtn');btn.innerHTML='<div class="spinner"></div> Submitting...';btn.disabled=true;
+  try{
+    await addDoc(collection(db,'support_tickets'),{uid:_uid,issue:_selIssue,note,txId:txId||null,txType:_txData?.type||'',txAmount:_txData?.amount||0,timestamp:serverTimestamp(),status:'open'});
+    toast('Report submitted! We\'ll respond within 24–48 hours.','success');
+    closeReport();
+  }catch{toast('Submission failed. Email lenovoxai.care@gmail.com directly.','error');}
+  btn.innerHTML='<i class="fas fa-paper-plane"></i> Submit Report';btn.disabled=false;
+};
+
+watchAuth(async user=>{
+  if(!user){window.location.replace('login.html');return;}
+  _uid=user.uid;
+
+  // Try from sessionStorage first (passed from dashboard)
+  if(txFromStorage){
+    try{const tx=JSON.parse(txFromStorage);renderTx(tx);return;}catch{}
+  }
+
+  // Fallback: load from Firestore by txId
+  if(txId){
+    try{
+      const snap=await getDoc(doc(db,'wallets',_uid,'transactions',txId));
+      if(snap.exists())renderTx({id:snap.id,...snap.data()});
+      else toast('Transaction not found.','error');
+    }catch{
