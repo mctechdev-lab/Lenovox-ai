@@ -36,7 +36,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
 .tab.active{color:var(--text)}
 .tab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),#3a7bd5);border-radius:2px 2px 0 0}
 .panel{display:none;flex-direction:column;flex:1;overflow:hidden}
-.panel.active{display:flex}
+.panel.active{display:flex;overflow:hidden}
 
 /* SCROLL */
 .scroll{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
@@ -79,7 +79,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
 .ans-hdr{display:flex;align-items:center;gap:8px;padding:11px 13px;border-bottom:1px solid var(--border);background:rgba(0,210,255,.04)}
 .ans-hdr i{color:var(--blue);font-size:.86rem}
 .ans-hdr span{font-size:.78rem;font-weight:700;color:var(--text);flex:1}
-.ans-body{padding:13px;font-size:.86rem;line-height:1.8;color:var(--text)}
+.ans-body{padding:13px;font-size:.86rem;line-height:1.8;color:var(--text);overflow-y:auto}
 .ans-body h1,.ans-body h2,.ans-body h3{font-weight:800;color:var(--blue);margin:12px 0 5px;font-size:.9rem}
 .ans-body h2{font-size:.84rem}.ans-body h3{font-size:.78rem;color:#a5d8ff}
 .ans-body p{margin-bottom:8px}
@@ -441,7 +441,7 @@ window.doSearch=async()=>{
   const btn=document.getElementById('sendBtn');btn.innerHTML='<div class="spinner"></div>';btn.disabled=true;
   ta.value='';ta.style.height='auto';
   const iv=showThinking();
-  const systemPrompt=`You are Lenovox Smart Tutor, an expert educational AI for Nigerian students. Give a clear, thorough explanation with ## headings, examples, and key points in bold. Explain clearly for a student studying for WAEC/JAMB. Format in clean markdown.${_aiPrefs.context?' Student context: '+_aiPrefs.context:''}`;
+  const systemPrompt=`You are Lenovox Smart Tutor, an expert educational AI on the Lenovox learning platform. Give a thorough explanation with ## headings, real-world examples, and **bold** key points. Adapt to any curriculum (WAEC, JAMB, GCSE, SAT, A-Level, IB, university). Format in clean markdown. Be clear and educational for students worldwide.${_aiPrefs.context?' Student context: '+_aiPrefs.context:''}`;
   try{
     const r=await fetch('/api/getData',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:`Explain this thoroughly for a student: ${q}`}],model:_aiPrefs.model||'fast',systemPrompt,uid:_uid})});
     const data=await r.json();

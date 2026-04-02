@@ -370,38 +370,72 @@ function startCd(nextMs){const btn=document.getElementById('claimBtn'),cd=docume
 }
 
 // DAILY CLAIM
+// Mon-Thu (days 1-4) = higher amount, Fri-Sun (days 5-7) = lower
+// Resets every 7 days based on day of week
 const {getUserProfile}=await import('./auth.js');
+
+function getDailyClaimAmt(plan){
+  // getDay(): 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
+  const day=new Date().getDay();
+  // Mon(1),Tue(2),Wed(3),Thu(4) = first 4 days = higher reward
+  // Sun(0),Fri(5),Sat(6) = last 3 days = lower reward
+  const isHighDay=day>=1&&day<=4;
+  const baseAmts={
+    free:    isHighDay?200:150,
+    starter: isHighDay?600:500,
+    standard:isHighDay?800:700,
+    pro:     isHighDay?1200:1000,
+    elite:   isHighDay?2200:2000,
+  };
+  return baseAmts[plan]||( isHighDay?200:150 );
+}
+
 window.doClaim=async()=>{
   if(!_uid)return;
   const p=await getUserProfile(_uid);if(!p)return;
   const last=p.lastClaim?p.lastClaim.toMillis():0;const cool=24*60*60*1000;
-  if(Date.now()-last<cool){toast('Already claimed! Come back later.','info');startCd(last+cool);return;}
-  const rewards={free:300,starter:500,standard:700,pro:1000,elite:2000};
-  const amt=rewards[p.plan]||300;
+  if(Date.now()-last<cool){toast('Already claimed today. Come back in 24 hours.','info');startCd(last+cool);return;}
+  const amt=getDailyClaimAmt(p.plan||'free');
+  const day=new Date().getDay();const isHighDay=day>=1&&day<=4;
   try{
     await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(amt),lastClaim:serverTimestamp()});
     await updateDoc(doc(db,'wallets',_uid),{balance:increment(amt),totalEarned:increment(amt)});
     await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Daily Reward',amount:amt,timestamp:serverTimestamp(),date:new Date().toLocaleString()});
-    launchConf();toast(`+${amt} LNX claimed! Keep grinding 🔥`,'success');startCd(Date.now()+cool);
+    document.getElementById('claimAmt').textContent=amt.toLocaleString();
+    launchConf();toast(`+${amt} LNX claimed!${isHighDay?' Bonus weekday rate!':''}','success');
+    startCd(Date.now()+cool);
   }catch{toast('Claim failed. Try again.','error');}
 };
 
 // AD WATCH
 window.watchAd=async()=>{
   if(!_uid)return;
-  toast('Ad loading... (+15 LNX on completion)','info');
-  setTimeout(async()=>{
-    try{
-      const r=await fetch('/api/ads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:_uid,adType:'rewarded_video',platform:'web'})});
-      const d=await r.json();
-      if(d.success){
-        await updateDoc(doc(db,'wallets',_uid),{balance:increment(d.lnxReward),totalEarned:increment(d.lnxReward)});
-        await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(d.lnxReward)});
-        await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Ad Reward',amount:d.lnxReward,timestamp:serverTimestamp(),date:new Date().toLocaleString()});
-        toast(`+${d.lnxReward} LNX from watching ad!`,'success');
-      }else toast(d.error||'Ad not available right now.','error');
-    }catch{toast('Ad service unavailable.','error');}
-  },1500);
+  // Show the ad — in production this triggers Google AdSense rewarded ad
+  // adShown = ad actually loaded, adCompleted = user watched full ad
+  let adShown=false,adCompleted=false;
+  toast('Ad loading...','info');
+  try{
+    // Simulate ad display (replace with real AdSense adBreak in production)
+    await new Promise(res=>setTimeout(res,2000)); // simulate ad load
+    adShown=true;
+    // For now assume completed — production will use adBreak adViewed callback
+    adCompleted=true;
+    const r=await fetch('/api/ads',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({uid:_uid,adType:'rewarded_video',platform:'web',adShown,adCompleted})});
+    const d=await r.json();
+    if(d.success){
+      await updateDoc(doc(db,'wallets',_uid),{balance:increment(d.lnxReward),totalEarned:increment(d.lnxReward)});
+      await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(d.lnxReward)});
+      await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Ad Reward',amount:d.lnxReward,timestamp:serverTimestamp(),date:new Date().toLocaleString()});
+      toast(`+${d.lnxReward} LNX earned from ad!`,'success');
+    }else if(d.noAd){
+      toast('No ad available right now. Try again shortly.','info');
+    }else if(d.dismissed){
+      toast('Ad closed early. No reward granted.','error');
+    }else{
+      toast(d.error||'Ad not available.','error');
+    }
+  }catch{toast('Ad service unavailable.','error');}
 };
 
 window.showAdInfo=()=>{toast('Watch up to 20 ads/day for LNX rewards. 3-min cooldown between ads. Free users must watch 2 ads to activate referral rewards.','info');};
@@ -523,7 +557,7 @@ watchAuth(async user=>{
   document.getElementById('userName').textContent=name.split(' ')[0];
   document.getElementById('avatarEl').textContent=name[0].toUpperCase();
   onSnapshot(doc(db,'wallets',_uid),s=>{if(!s.exists())return;const d=s.data();_bal=d.balance||0;document.getElementById('lnxBal').textContent=_bal.toLocaleString();document.getElementById('nairaVal').textContent=`≈ ₦${(_bal*0.124).toFixed(2)}`;document.getElementById('statEarned').textContent=(d.totalEarned||0).toLocaleString();document.getElementById('statSpent').textContent=(d.totalSpent||0).toLocaleString();});
-  onSnapshot(doc(db,'users',_uid),s=>{if(!s.exists())return;const p=s.data();const name2=p.name||name;document.getElementById('userName').textContent=name2.split(' ')[0];document.getElementById('avatarEl').textContent=name2[0].toUpperCase();const pm={free:'Free Plan',starter:'Starter Plan',standard:'Standard Plan',pro:'Pro Plan',elite:'Elite Plan'};document.getElementById('planLabel').textContent=pm[p.plan]||'Free Plan';document.getElementById('refCodeLbl').textContent=p.referralCode||'LNX-——';document.getElementById('statPlan').textContent=(p.plan||'free').charAt(0).toUpperCase()+(p.plan||'free').slice(1);document.getElementById('claimAmt').textContent=({free:300,starter:500,standard:700,pro:1000,elite:2000}[p.plan]||300).toLocaleString();const last=p.lastClaim?p.lastClaim.toMillis():0;if(Date.now()-last<24*60*60*1000)startCd(last+24*60*60*1000);});
+  onSnapshot(doc(db,'users',_uid),s=>{if(!s.exists())return;const p=s.data();const name2=p.name||name;document.getElementById('userName').textContent=name2.split(' ')[0];document.getElementById('avatarEl').textContent=name2[0].toUpperCase();const pm={free:'Free Plan',starter:'Starter Plan',standard:'Standard Plan',pro:'Pro Plan',elite:'Elite Plan'};document.getElementById('planLabel').textContent=pm[p.plan]||'Free Plan';document.getElementById('refCodeLbl').textContent=p.referralCode||'LNX-——';document.getElementById('statPlan').textContent=(p.plan||'free').charAt(0).toUpperCase()+(p.plan||'free').slice(1);const _day=new Date().getDay();const _hi=_day>=1&&_day<=4;document.getElementById('claimAmt').textContent=({free:_hi?200:150,starter:_hi?600:500,standard:_hi?800:700,pro:_hi?1200:1000,elite:_hi?2200:2000}[p.plan]||(_hi?200:150)).toLocaleString();const last=p.lastClaim?p.lastClaim.toMillis():0;if(Date.now()-last<24*60*60*1000)startCd(last+24*60*60*1000);});
   subTx();loadNews();
 });
 </script>

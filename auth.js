@@ -56,8 +56,8 @@ async function createUserProfile(user, extras = {}) {
       country: extras.country || "",
       plan: "free",
       planExpiry: null,
-      lnxBalance: 300,
-      dailyLNX: 300,
+      lnxBalance: 200,  // Welcome bonus — Mon-Thu rate
+      dailyLNX: 200,  // Mon-Thu=200, Fri-Sun=150 (set dynamically by claim)
       lastClaim: null,
       referralCode: generateReferralCode(user.uid),
       referredBy: extras.referredBy || null,
@@ -68,8 +68,8 @@ async function createUserProfile(user, extras = {}) {
     // Create wallet
     await setDoc(doc(db, "wallets", user.uid), {
       uid: user.uid,
-      balance: 300,
-      totalEarned: 300,
+      balance: 200,  // Welcome wallet
+      totalEarned: 200,  // Welcome bonus included
       totalSpent: 0,
       lastUpdated: serverTimestamp()
     });

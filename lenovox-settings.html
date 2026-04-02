@@ -522,4 +522,41 @@ window.doLogout=async()=>{
 };
 
 // DELETE
-window.confirmDelete=()=>{if(confirm('Permanently delete your account? This cannot be
+window.confirmDelete=()=>{
+  if(!confirm('Permanently delete your Lenovox account? All data, LNX and history will be lost permanently.'))return;
+  toast('Contact lenovoxai.care@gmail.com to delete your account.','info');
+};
+
+// ── TABS ─────────────────────────────────────────────────────
+document.querySelectorAll('.tb[data-tab]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tb').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById('tab-'+b.dataset.tab).classList.add('active');
+  });
+});
+
+// ── THEME ─────────────────────────────────────────────────────
+const savedTheme=localStorage.getItem('lenovox_theme')||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');
+applyTheme(savedTheme);
+function applyTheme(t){
+  localStorage.setItem('lenovox_theme',t);
+  document.documentElement.setAttribute('data-theme',t==='dark'?'':t==='light'?'light':'dim');
+  ['dark','light','dim'].forEach(x=>document.getElementById('th-'+x)?.classList.remove('selected'));
+  document.getElementById('th-'+t)?.classList.add('selected');
+  try{window.parent.document.querySelectorAll('iframe').forEach(f=>{try{f.contentDocument?.documentElement?.setAttribute('data-theme',t==='dark'?'':t==='light'?'light':'dim');}catch{}});}catch{}
+  window.dispatchEvent(new StorageEvent('storage',{key:'lenovox_theme',newValue:t}));
+}
+window.setTheme=t=>{applyTheme(t);toast('Theme updated!','success');};
+
+// ── AUTH — FIXED: watchAuth now called ─────────────────────────
+watchAuth(async user=>{
+  if(!user){window.location.replace('login');return;}
+  _uid=user.uid;
+  await loadProfile(_uid);
+});
+
+</script>
+</body>
+</html>
