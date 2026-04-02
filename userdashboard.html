@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229569177818177" crossorigin="anonymous"></script>
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Lenovox — Home</title>
@@ -286,7 +290,7 @@ canvas#claimCv{position:fixed;inset:0;z-index:9998;pointer-events:none}
     <div class="ac" onclick="navParent('gaming')"><div class="ac-icon" style="background:rgba(255,61,112,.1);border:1px solid rgba(255,61,112,.18)"><i class="fas fa-gamepad" style="color:var(--pink)"></i></div><div class="ac-name">Games</div><div class="ac-hint">Play & earn</div></div>
     <div class="ac" onclick="goTo('ranking.html')"><div class="ac-badge ab-new">NEW</div><div class="ac-icon" style="background:rgba(255,204,51,.1);border:1px solid rgba(255,204,51,.18)"><i class="fas fa-trophy" style="color:var(--gold)"></i></div><div class="ac-name">Rankings</div><div class="ac-hint">Leaderboard</div></div>
     <div class="ac" onclick="goTo('referral.html')"><div class="ac-badge ab-earn">+600</div><div class="ac-icon" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.18)"><i class="fas fa-share-nodes" style="color:var(--green)"></i></div><div class="ac-name">Referral</div><div class="ac-hint">Earn per friend</div></div>
-    <div class="ac" onclick="goTo('smart tutor.html')"><div class="ac-icon" style="background:rgba(157,80,187,.1);border:1px solid rgba(157,80,187,.18)"><i class="fas fa-brain" style="color:#c084fc"></i></div><div class="ac-name">Smart Tutor</div><div class="ac-hint">Deep study</div></div>
+    <div class="ac" onclick="goTo('smart-tutor')"><div class="ac-icon" style="background:rgba(157,80,187,.1);border:1px solid rgba(157,80,187,.18)"><i class="fas fa-brain" style="color:#c084fc"></i></div><div class="ac-name">Smart Tutor</div><div class="ac-hint">Deep study</div></div>
   </div>
 
   <!-- STATS -->
@@ -345,7 +349,7 @@ applyTheme();window.addEventListener('storage',applyTheme);
 function toast(m,t='success'){const el=document.createElement('div');el.className=`toast ${t}`;const ic={success:'fas fa-circle-check',error:'fas fa-circle-exclamation',info:'fas fa-circle-info'};el.innerHTML=`<i class="${ic[t]||ic.info}"></i><span>${m}</span><button class="tc" onclick="this.parentElement.classList.add('removing');setTimeout(()=>this.parentElement.remove(),280)"><i class="fas fa-xmark"></i></button>`;document.getElementById('toasts').appendChild(el);setTimeout(()=>{if(el.parentElement){el.classList.add('removing');setTimeout(()=>el.remove(),280);}},4500);}
 
 window.goTo=p=>{window.location.href=p;};
-window.navParent=n=>{if(window.parent?.navigateTo)window.parent.navigateTo(n);else window.location.href='appskeleton.html';};
+window.navParent=n=>{if(window.parent?.navigateTo)window.parent.navigateTo(n);else window.location.href='appskeleton';};
 window.scrollTx=()=>document.getElementById('txSection').scrollIntoView({behavior:'smooth'});
 window.shareRef=()=>{const code=document.getElementById('refCodeLbl').textContent;const url=`${location.origin}/signup.html?ref=${code}`;if(navigator.share)navigator.share({title:'Join Lenovox AI',text:'Join me on Lenovox — get 300 LNX free!',url});else navigator.clipboard.writeText(url).then(()=>toast('Referral link copied!','info'));};
 
@@ -508,12 +512,12 @@ function renderTx(txs){
 
 function subTx(){if(_unsubTx)_unsubTx();const q=query(collection(db,'wallets',_uid,'transactions'),orderBy('timestamp','desc'),limit(_txLimit));_unsubTx=onSnapshot(q,s=>renderTx(s.docs.map(d=>d.data())));}
 window.loadMoreTx=()=>{_txLimit+=10;subTx();};
-window.openTxDetail=(txJson)=>{try{const tx=JSON.parse(txJson);sessionStorage.setItem('lnx_tx_detail',JSON.stringify(tx));window.location.href='transaction-detail.html';}catch{window.location.href='transaction-detail.html';}};
+window.openTxDetail=(txJson)=>{try{const tx=JSON.parse(txJson);sessionStorage.setItem('lnx_tx_detail',JSON.stringify(tx));window.location.href='transaction-detail';}catch{window.location.href='transaction-detail';}};
 
 
 // AUTH
 watchAuth(async user=>{
-  if(!user){window.location.replace('login.html');return;}
+  if(!user){window.location.replace('login');return;}
   _uid=user.uid;
   const name=user.displayName||user.email?.split('@')[0]||'User';
   document.getElementById('userName').textContent=name.split(' ')[0];

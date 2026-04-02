@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229569177818177" crossorigin="anonymous"></script>
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
 <title>Lenovox</title>
@@ -123,7 +127,7 @@ const shell = document.getElementById('appShell');
 
 // AUTH
 watchAuth(user => {
-  if (!user) { window.location.replace('login.html'); return; }
+  if (!user) { window.location.replace('login'); return; }
   setTimeout(() => {
     guard.style.opacity = '0';
     setTimeout(() => { guard.style.display = 'none'; shell.style.visibility = 'visible'; }, 450);
