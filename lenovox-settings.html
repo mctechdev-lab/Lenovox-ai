@@ -158,6 +158,40 @@ body{overflow-x:hidden;padding-bottom:88px}
 .tc{margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;opacity:.48;padding:0 0 0 4px}
 .spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── 3D GLOSSY SETTINGS ── */
+.sblock{
+  box-shadow:0 8px 32px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.06)!important;
+  transition:all .25s cubic-bezier(.4,0,.2,1)!important;
+}
+.sr{transition:all .22s ease!important}
+.sr:hover{transform:translateX(4px);background:rgba(255,255,255,0.04)!important}
+.sr:active{transform:scale(0.98)}
+.save-btn{
+  box-shadow:0 6px 20px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.15)!important;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1)!important;
+}
+.save-btn:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,0.45)!important}
+.save-btn:active{transform:translateY(0) scale(0.97)}
+.tb{transition:all .22s cubic-bezier(.4,0,.2,1)!important}
+.tb.active{
+  box-shadow:0 4px 14px rgba(0,210,255,0.2),inset 0 1px 0 rgba(255,255,255,0.15)!important;
+}
+.profile-strip{
+  box-shadow:0 12px 40px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)!important;
+  background:linear-gradient(145deg,rgba(16,16,36,0.97),rgba(10,10,24,0.98))!important;
+}
+.profile-av{
+  box-shadow:0 6px 20px rgba(0,0,0,0.5),0 0 0 3px rgba(255,255,255,0.06)!important;
+}
+.inp{
+  transition:all .22s ease!important;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,0.2)!important;
+}
+.inp:focus{
+  box-shadow:inset 0 2px 6px rgba(0,0,0,0.2),0 0 0 2px rgba(0,210,255,0.2)!important;
+}
+
 </style>
 </head>
 <body>

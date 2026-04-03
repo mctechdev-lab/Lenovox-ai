@@ -215,6 +215,98 @@ body{overflow-x:hidden;padding-bottom:88px}
 
 canvas#claimCv{position:fixed;inset:0;z-index:9998;pointer-events:none}
 @media(max-width:340px){.act-grid{grid-template-columns:repeat(2,1fr)}.mini-row{grid-template-columns:1fr}}
+
+/* ── 3D GLOSSY DESIGN SYSTEM ── */
+:root{
+  --glass:rgba(255,255,255,0.04);
+  --glass-border:rgba(255,255,255,0.09);
+  --glass-shine:rgba(255,255,255,0.12);
+  --glow-blue:rgba(0,210,255,0.18);
+  --glow-gold:rgba(255,204,51,0.18);
+  --glow-green:rgba(16,185,129,0.18);
+  --shadow-deep:0 20px 60px rgba(0,0,0,0.5);
+  --shadow-card:0 8px 32px rgba(0,0,0,0.35);
+  --transition:all .28s cubic-bezier(.4,0,.2,1);
+}
+
+/* Glossy card base */
+.card,.claim-card,.mini-card,.stat-card,.ad-card,.sec-card{
+  background:linear-gradient(145deg,rgba(22,22,48,0.97),rgba(14,14,32,0.98));
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:var(--shadow-card),inset 0 1px 0 rgba(255,255,255,0.06);
+  transition:var(--transition);
+  position:relative;
+  overflow:hidden;
+}
+.card::before,.claim-card::before,.mini-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+  pointer-events:none;
+}
+
+/* Balance card - 3D glossy deep blue */
+.balance-card{
+  background:linear-gradient(145deg,#0a1628,#0d1f3c,#071224)!important;
+  border:1px solid rgba(0,210,255,0.2)!important;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 40px rgba(0,210,255,0.08),inset 0 1px 0 rgba(0,210,255,0.12)!important;
+}
+.balance-card::after{
+  content:'';
+  position:absolute;
+  top:-50%;left:-20%;
+  width:60%;height:100%;
+  background:radial-gradient(ellipse,rgba(0,210,255,0.06) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+/* Claim card - gold glossy */
+.claim-card{
+  background:linear-gradient(145deg,rgba(30,22,5,0.97),rgba(20,15,3,0.98))!important;
+  border:1px solid rgba(255,204,51,0.2)!important;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 20px rgba(255,204,51,0.06),inset 0 1px 0 rgba(255,204,51,0.1)!important;
+}
+
+/* Quick action cards - 3D lift on tap */
+.ac{
+  transform:translateZ(0);
+  transition:var(--transition);
+  box-shadow:0 4px 16px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.06)!important;
+}
+.ac:active{transform:scale(0.94) translateY(2px);box-shadow:0 2px 8px rgba(0,0,0,0.4)!important}
+.ac:hover{transform:translateY(-3px) translateZ(0);box-shadow:0 12px 28px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.08)!important}
+
+/* Buttons - glossy 3D */
+.bcb,.btn-claim.ready,.adb-watch{
+  box-shadow:0 4px 14px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.15)!important;
+  transition:var(--transition)!important;
+}
+.bcb:active,.btn-claim.ready:active,.adb-watch:active{transform:translateY(1px);box-shadow:0 2px 6px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.1)!important}
+.bcb:hover,.btn-claim.ready:hover,.adb-watch:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.18)!important}
+
+/* Transaction items - smooth hover */
+.tx-item{transition:var(--transition)!important}
+.tx-item:hover{transform:translateX(3px);background:rgba(255,255,255,0.04)!important}
+.tx-item:active{transform:scale(0.98)}
+
+/* News cards */
+.nc{transition:var(--transition)}
+.nc:active{transform:scale(0.97)}
+
+/* Mini cards */
+.mini-card{transition:var(--transition)}
+.mini-card:active{transform:scale(0.97)}
+
+/* Smooth scrolling for the whole page */
+html{scroll-behavior:smooth}
+
+/* Bottom nav icons - glossy active state */
+.nav-icon.active{
+  box-shadow:0 0 16px rgba(0,210,255,0.3),0 4px 12px rgba(0,0,0,0.3);
+}
+
 </style>
 </head>
 <body>
@@ -371,21 +463,41 @@ window.setTxFilter=(f,el)=>{
 };
 function renderTxOverlay(){
   const c2=document.getElementById('txOverlayList');
-  const all=_posts.length?_posts:[];
-  // Use the same _txAll variable that subTx fills
+  if(!c2)return;
   const txs=window._allTxs||[];
-  const filtered=_txFilter==='all'?txs:txs.filter(t=>_txFilter==='credit'?(t.amount||0)>0:_txFilter==='debit'?(t.amount||0)<0:true);
-  if(!filtered.length){c2.innerHTML='<div style="padding:32px;text-align:center;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:9px"><i class="fas fa-inbox" style="font-size:2rem;color:var(--border)"></i><div style="font-size:.82rem">No transactions yet</div></div>';return;}
+  const filtered=_txFilter==='all'?txs:txs.filter(function(t){
+    if(_txFilter==='credit')return(t.amount||0)>0;
+    if(_txFilter==='debit')return(t.amount||0)<0;
+    return true;
+  });
+  if(!filtered.length){
+    c2.innerHTML='<div style="padding:32px;text-align:center;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:9px"><i class="fas fa-inbox" style="font-size:2rem;color:var(--border)"></i><div style="font-size:.82rem">No transactions yet</div></div>';
+    return;
+  }
   const groups={};
-  filtered.forEach(tx=>{const date=tx.date?.split(',')[0]||'Today';if(!groups[date])groups[date]=[];groups[date].push(tx);});
-  c2.innerHTML=Object.entries(groups).map(([date,items])=>`
-    <div class="tx-date-sep">${date}</div>
-    ${items.map(tx=>{const cfg=getType(tx);const isC=tx.amount>=0;const t=isC?'credit':'debit';
-    return \`<div class="tx-item \${t}" onclick="openTxDetail(\${JSON.stringify(JSON.stringify(tx))})">
-      <div class="tx-ic" style="background:\${cfg.bg};border:1px solid \${cfg.bdr}"><i class="\${cfg.icon}" style="color:\${cfg.ic}"></i></div>
-      <div class="tx-mid"><div class="tx-nm">\${tx.type||'Transaction'}</div><div class="tx-dt"><i class="fas fa-clock"></i>\${tx.date||''}</div></div>
-      <div class="tx-rt"><div class="tx-am \${t}">\${isC?'+':''}\${tx.amount} LNX</div><i class="fas fa-chevron-right" style="font-size:.6rem;color:var(--muted)"></i></div>
-    </div>\`;}).join('')}`).join('');
+  filtered.forEach(function(tx){
+    const date=(tx.date||'').split(',')[0]||'Today';
+    if(!groups[date])groups[date]=[];
+    groups[date].push(tx);
+  });
+  let html='';
+  Object.entries(groups).forEach(function(entry){
+    const date=entry[0];const items=entry[1];
+    html+='<div class="tx-date-sep">'+date+'</div>';
+    items.forEach(function(tx){
+      const cfg=getType(tx);
+      const isC=(tx.amount||0)>=0;
+      const t=isC?'credit':'debit';
+      const sign=isC?'+':'';
+      const txJson=JSON.stringify(JSON.stringify(tx));
+      html+='<div class="tx-item '+t+'" onclick="openTxDetail('+txJson+')">';
+      html+='<div class="tx-ic" style="background:'+cfg.bg+';border:1px solid '+cfg.bdr+'"><i class="'+cfg.icon+'" style="color:'+cfg.ic+'"></i></div>';
+      html+='<div class="tx-mid"><div class="tx-nm">'+(tx.type||'Transaction')+'</div><div class="tx-dt"><i class="fas fa-clock"></i> '+(tx.date||'')+'</div></div>';
+      html+='<div class="tx-rt"><div class="tx-am '+t+'">'+sign+(tx.amount||0)+' LNX</div><i class="fas fa-chevron-right" style="font-size:.6rem;color:var(--muted)"></i></div>';
+      html+='</div>';
+    });
+  });
+  c2.innerHTML=html;
 }
 window.shareRef=()=>{const code=document.getElementById('refCodeLbl').textContent;const url=`${location.origin}/signup?ref=${code}`;if(navigator.share)navigator.share({title:'Join Lenovox AI',text:'Join me on Lenovox — get 200 LNX free!',url});else navigator.clipboard.writeText(url).then(()=>toast('Referral link copied!','info'));};
 
@@ -438,7 +550,7 @@ window.doClaim=async()=>{
     await updateDoc(doc(db,'wallets',_uid),{balance:increment(amt),totalEarned:increment(amt)});
     await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Daily Reward',amount:amt,timestamp:serverTimestamp(),date:new Date().toLocaleString()});
     document.getElementById('claimAmt').textContent=amt.toLocaleString();
-    launchConf();toast(`+${amt} LNX claimed!${isHighDay?' Bonus weekday rate!':''}','success');
+    launchConf();toast('+'+amt+' LNX claimed!'+(isHighDay?' Bonus day!':''),'success');
     startCd(Date.now()+cool);
   }catch{toast('Claim failed. Try again.','error');}
 };
