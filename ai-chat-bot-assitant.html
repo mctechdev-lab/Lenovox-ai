@@ -34,7 +34,7 @@
   --border:#2e2e2e;--text:#e0e0e0;--muted:#666;
   --user-bg:#1e2d4a;--ai-bg:#1c1c1c;
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}button,a,[onclick]{touch-action:manipulation;cursor:pointer}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
 .shell{display:flex;flex-direction:column;height:100vh}
 
@@ -121,7 +121,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
 .tb.active{color:var(--text)}
 .tb.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--blue-l);border-radius:2px 2px 0 0;animation:tabIn .2s ease}
 @keyframes tabIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.panel{display:none;flex-direction:column;flex:1;overflow:hidden}
+.panel{display:none;flex-direction:column;flex:1;overflow:hidden;position:relative}
 .panel.active{display:flex}
 
 /* ── MESSAGES ── */
@@ -215,7 +215,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
 .it:hover{background:var(--sur2);color:var(--blue-l)}
 .chat-ta{flex:1;background:none;border:none;color:var(--text);font-family:'Nunito',sans-serif;font-size:.87rem;font-weight:600;resize:none;outline:none;min-height:20px;max-height:120px;line-height:1.55;padding:2px 0}
 .chat-ta::placeholder{color:var(--muted)}
-.send-btn{width:31px;height:31px;border-radius:8px;border:none;background:var(--blue);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .18s;flex-shrink:0}
+.send-btn{width:31px;height:31px;border-radius:8px;border:none;background:var(--blue);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .18s;flex-shrink:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .send-btn:hover:not(:disabled){background:var(--blue-l);transform:scale(1.06)}
 .send-btn:disabled{opacity:.38;cursor:not-allowed}
 .inp-hint{display:flex;justify-content:space-between;align-items:center;margin-top:4px;padding:0 2px}
@@ -325,9 +325,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
 .bbl tr:hover td{background:rgba(255,255,255,.02)}
 
 /* ── ROBOT TASKS ── */
-.task-bar{display:flex;gap:6px;overflow-x:auto;padding:8px 12px 6px;border-bottom:1px solid var(--border);flex-shrink:0;scrollbar-width:none}
+.task-bar{display:flex;gap:6px;overflow-x:auto;padding:8px 12px 6px;border-bottom:1px solid var(--border);flex-shrink:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x}
 .task-bar::-webkit-scrollbar{display:none}
-.task-chip{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:6px 11px;border:1px solid var(--border);border-radius:8px;background:var(--sur);color:var(--muted);font-family:'Nunito',sans-serif;font-size:.73rem;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap}
+.task-chip{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:6px 11px;border:1px solid var(--border);border-radius:8px;background:var(--sur);color:var(--muted);font-family:'Nunito',sans-serif;font-size:.73rem;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap;touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .task-chip i{font-size:.7rem}
 .task-chip:hover{border-color:var(--blue-l);color:var(--blue-l);background:rgba(37,99,235,.07)}
 .task-chip:active{transform:scale(.96)}

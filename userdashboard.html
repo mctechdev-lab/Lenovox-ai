@@ -19,7 +19,7 @@
 }
 [data-theme="light"]{--bg:#f0f4f8;--card:rgba(255,255,255,.95);--card2:#fff;--border:rgba(0,0,0,.09);--text:#1e293b;--muted:#64748b}
 [data-theme="dim"]{--bg:#0f1117;--card:rgba(20,22,36,.95);--card2:rgba(26,28,44,.98);--border:rgba(255,255,255,.08);--text:#d4d8e8;--muted:#7a8499}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}button,a,[onclick]{touch-action:manipulation;cursor:pointer}
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
 body{overflow-x:hidden;padding-bottom:88px}
 .bg-glow{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 60% 40% at 15% 8%,rgba(0,210,255,.05) 0%,transparent 70%),radial-gradient(ellipse 50% 35% at 85% 85%,rgba(157,80,187,.04) 0%,transparent 70%)}
@@ -543,6 +543,17 @@ window.doClaim=async()=>{
   const p=await getUserProfile(_uid);if(!p)return;
   const last=p.lastClaim?p.lastClaim.toMillis():0;const cool=24*60*60*1000;
   if(Date.now()-last<cool){toast('Already claimed today. Come back in 24 hours.','info');startCd(last+cool);return;}
+  // Free users must watch 2 ads before first claim (if they've never claimed before)
+  if(!p.lastClaim&&(p.plan||'free')==='free'){
+    const watched=parseInt(localStorage.getItem('lnx_ads_watched_'+_uid)||'0');
+    if(watched<2){
+      const need=2-watched;
+      toast('Watch '+need+' more ad'+(need>1?'s':'')+' to activate your first claim!','info');
+      // Show ad automatically
+      watchAd('claim');
+      return;
+    }
+  }
   const amt=getDailyClaimAmt(p.plan||'free');
   const day=new Date().getDay();const isHighDay=day>=1&&day<=4;
   try{
@@ -556,34 +567,95 @@ window.doClaim=async()=>{
 };
 
 // AD WATCH
-window.watchAd=async()=>{
-  if(!_uid)return;
-  // Show the ad — in production this triggers Google AdSense rewarded ad
-  // adShown = ad actually loaded, adCompleted = user watched full ad
-  let adShown=false,adCompleted=false;
-  toast('Ad loading...','info');
-  try{
-    // Simulate ad display (replace with real AdSense adBreak in production)
-    await new Promise(res=>setTimeout(res,2000)); // simulate ad load
-    adShown=true;
-    // For now assume completed — production will use adBreak adViewed callback
-    adCompleted=true;
-    const r=await fetch('/api/ads',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({uid:_uid,adType:'rewarded_video',platform:'web',adShown,adCompleted})});
-    const d=await r.json();
-    if(d.success){
-      await updateDoc(doc(db,'wallets',_uid),{balance:increment(d.lnxReward),totalEarned:increment(d.lnxReward)});
-      await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(d.lnxReward)});
-      await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Ad Reward',amount:d.lnxReward,timestamp:serverTimestamp(),date:new Date().toLocaleString()});
-      toast(`+${d.lnxReward} LNX earned from ad!`,'success');
-    }else if(d.noAd){
-      toast('No ad available right now. Try again shortly.','info');
-    }else if(d.dismissed){
-      toast('Ad closed early. No reward granted.','error');
-    }else{
-      toast(d.error||'Ad not available.','error');
+// AD OVERLAY
+let _adWatching=false,_adInterval=null,_adContext=null;
+
+function showAdOverlay(context,onComplete,onDismiss){
+  _adContext=context;_adWatching=true;
+  // Remove existing overlay
+  const old=document.getElementById('adOverlay');if(old)old.remove();
+  const ov=document.createElement('div');ov.id='adOverlay';
+  ov.style.cssText='position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px';
+  ov.innerHTML=`
+    <div style="width:100%;max-width:420px;background:linear-gradient(145deg,#0d1f3c,#071224);border:1px solid rgba(0,210,255,.2);border-radius:18px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,rgba(0,210,255,.1),rgba(37,99,235,.1));padding:13px 15px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:.8rem;font-weight:700;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:6px"><i class="fas fa-play-circle" style="color:var(--blue)"></i> Advertisement</div>
+        <div id="adTimer" style="font-family:'Orbitron',monospace;font-size:.78rem;font-weight:700;color:var(--gold)">Watch to earn</div>
+      </div>
+      <div style="padding:32px 20px;text-align:center">
+        <div style="width:64px;height:64px;border-radius:16px;background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.7rem"><i class="fas fa-graduation-cap" style="color:var(--blue)"></i></div>
+        <div style="font-weight:800;font-size:.92rem;color:#fff;margin-bottom:6px">Lenovox AI — Study Smarter</div>
+        <div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:18px;line-height:1.6">The AI-powered learning platform for Nigerian students. Earn LNX, ace your exams.</div>
+        <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px;font-size:.75rem;color:rgba(255,255,255,.4)">Sponsored educational content</div>
+      </div>
+      <div style="padding:13px 15px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:9px">
+        <button id="adCloseBtn" onclick="dismissAd()" style="flex:1;padding:11px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:700;cursor:not-allowed;opacity:.4" disabled>Close (wait...)</button>
+        <button id="adClaimBtn" onclick="claimAdReward()" style="flex:1;padding:11px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;cursor:not-allowed;opacity:.4" disabled>Claim +8 LNX</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  
+  // Countdown — must watch at least 5 seconds
+  let secs=5;
+  document.getElementById('adTimer').textContent='Watch: '+secs+'s';
+  _adInterval=setInterval(()=>{
+    secs--;
+    const timerEl=document.getElementById('adTimer');
+    if(timerEl)timerEl.textContent=secs>0?'Watch: '+secs+'s':'Ready!';
+    if(secs<=0){
+      clearInterval(_adInterval);
+      // Enable close and claim buttons
+      const closeBtn=document.getElementById('adCloseBtn');
+      const claimBtn=document.getElementById('adClaimBtn');
+      if(closeBtn){closeBtn.disabled=false;closeBtn.style.cursor='pointer';closeBtn.style.opacity='1';closeBtn.textContent='Close (no reward)';}
+      if(claimBtn){claimBtn.disabled=false;claimBtn.style.cursor='pointer';claimBtn.style.opacity='1';}
     }
-  }catch{toast('Ad service unavailable.','error');}
+  },1000);
+  
+  window._adOnComplete=onComplete;
+  window._adOnDismiss=onDismiss;
+}
+
+window.dismissAd=()=>{
+  clearInterval(_adInterval);_adWatching=false;
+  const ov=document.getElementById('adOverlay');if(ov)ov.remove();
+  if(window._adOnDismiss)window._adOnDismiss();
+  toast('Ad closed. No reward granted.','info');
+};
+
+window.claimAdReward=async()=>{
+  clearInterval(_adInterval);_adWatching=false;
+  const ov=document.getElementById('adOverlay');if(ov)ov.remove();
+  if(window._adOnComplete)window._adOnComplete();
+};
+
+window.watchAd=async(context)=>{
+  if(!_uid){toast('Sign in first.','error');return;}
+  showAdOverlay(context||'reward',async()=>{
+    // User watched and clicked claim — ad was shown AND completed
+    try{
+      const r=await fetch('/api/ads',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({uid:_uid,adType:'rewarded_video',platform:'web',adShown:true,adCompleted:true})});
+      const d=await r.json();
+      if(d.success){
+        await updateDoc(doc(db,'wallets',_uid),{balance:increment(d.lnxReward),totalEarned:increment(d.lnxReward)});
+        await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(d.lnxReward)});
+        await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Ad Reward',amount:d.lnxReward,timestamp:serverTimestamp(),date:new Date().toLocaleString()});
+        // Track ads watched for referral unlock
+        const watched=(parseInt(localStorage.getItem('lnx_ads_watched_'+_uid)||'0'))+1;
+        localStorage.setItem('lnx_ads_watched_'+_uid,watched);
+        toast('+'+d.lnxReward+' LNX earned!','success');
+        // Update claim button if context is referral
+        if(d.referralUnlocked)toast('Referral reward unlocked!','success');
+      }else if(d.limitReached){
+        toast('Daily ad limit reached (15/day). Try tomorrow!','info');
+      }else{
+        toast(d.error||'Something went wrong.','error');
+      }
+    }catch{toast('Ad service error. Try again.','error');}
+  },()=>{
+    // dismissed — no reward
+  });
 };
 
 window.showAdInfo=()=>{toast('Watch up to 15 ads/day for LNX rewards. 3-min cooldown between ads. Watch 2 ads to activate referral rewards.','info');};
