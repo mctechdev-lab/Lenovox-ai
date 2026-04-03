@@ -9,8 +9,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
 <style>
 :root{
   --bg:#0f0f0f;--sur:#171717;--sur2:#222;
@@ -292,6 +297,52 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
 .r-item i{font-size:.7rem;margin-top:3px;flex-shrink:0}
 .r-item.ok i{color:var(--green)}.r-item.deny i{color:var(--red)}.r-item.warn i{color:var(--orange)}
 
+
+
+/* ── MATH & CHARTS & DIAGRAMS ── */
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:6px 0}
+.katex{font-size:1.05em}
+.chart-wrap{background:var(--sur);border:1px solid var(--border);border-radius:11px;padding:12px;margin:10px 0;position:relative}
+.chart-wrap canvas{max-height:260px!important;width:100%!important}
+[data-theme="light"] .chart-wrap{background:#f5f5f5;border-color:#e0e0e0}
+[data-theme="light"] .mermaid-wrap{background:#f9f9f9;border-color:#e0e0e0}
+.chart-title{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.chart-title i{font-size:.68rem;color:var(--blue-l)}
+.mermaid-wrap{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:11px;padding:14px;margin:10px 0;overflow-x:auto}
+.mermaid{font-size:.82rem}
+/* ── FEEDBACK ── */
+.fb-row{display:flex;align-items:center;gap:5px;margin-top:5px}
+.fb-btn{display:flex;align-items:center;gap:3px;padding:4px 9px;border:1px solid var(--border);border-radius:7px;background:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.67rem;font-weight:700;cursor:pointer;transition:.15s}
+.fb-btn:hover{background:var(--sur2)}
+.fb-btn.up:hover{border-color:rgba(16,185,129,.35);color:var(--green)}
+.fb-btn.dn:hover{border-color:rgba(239,68,68,.35);color:var(--red)}
+.fb-btn.voted{opacity:.5;cursor:default}
+.fb-btn i{font-size:.68rem}
+/* ── TABLE STYLES IN BUBBLE ── */
+.bbl table{width:100%;border-collapse:collapse;font-size:.78rem;margin:9px 0;border-radius:8px;overflow:hidden}
+.bbl th{background:rgba(37,99,235,.12);padding:7px 9px;text-align:left;font-weight:700;font-size:.72rem}
+.bbl td{padding:7px 9px;border-top:1px solid var(--border)}
+.bbl tr:hover td{background:rgba(255,255,255,.02)}
+
+/* ── ROBOT TASKS ── */
+.task-bar{display:flex;gap:6px;overflow-x:auto;padding:8px 12px 6px;border-bottom:1px solid var(--border);flex-shrink:0;scrollbar-width:none}
+.task-bar::-webkit-scrollbar{display:none}
+.task-chip{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:6px 11px;border:1px solid var(--border);border-radius:8px;background:var(--sur);color:var(--muted);font-family:'Nunito',sans-serif;font-size:.73rem;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap}
+.task-chip i{font-size:.7rem}
+.task-chip:hover{border-color:var(--blue-l);color:var(--blue-l);background:rgba(37,99,235,.07)}
+.task-chip:active{transform:scale(.96)}
+.file-card{background:var(--sur);border:1px solid var(--border);border-radius:11px;padding:11px 13px;margin-top:8px;display:flex;align-items:center;gap:10px}
+.file-card-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.88rem;flex-shrink:0}
+.file-card-name{font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
+.file-card-meta{font-size:.64rem;color:var(--muted)}
+.file-dl{padding:6px 12px;border:none;border-radius:8px;background:var(--blue);color:#fff;font-family:'Nunito',sans-serif;font-size:.73rem;font-weight:800;cursor:pointer;transition:.18s;display:flex;align-items:center;gap:4px;margin-left:auto;flex-shrink:0}
+.file-dl:hover{background:var(--blue-l);transform:translateY(-1px)}
+.file-dl i{font-size:.68rem}
+.voice-btn{width:31px;height:31px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;transition:.16s}
+.voice-btn:hover{background:var(--sur);color:var(--blue-l)}
+.voice-btn.recording{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.3);color:var(--red);animation:pulse .9s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.25)}50%{box-shadow:0 0 0 6px rgba(239,68,68,.0)}}
+
 /* ── TOAST ── */
 #toasts{position:fixed;top:11px;right:11px;z-index:9999;display:flex;flex-direction:column;gap:5px;max-width:262px}
 .toast{padding:9px 11px;border-radius:9px;font-size:.74rem;font-weight:700;display:flex;align-items:center;gap:6px;border:1px solid;animation:tIn .26s cubic-bezier(.34,1.56,.64,1)}
@@ -374,6 +425,27 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
 
   <!-- CHAT -->
   <div class="panel active" id="tab-chat">
+      <!-- ROBOT TASK QUICK-ACCESS BAR -->
+      <div class="task-bar">
+        <button class="task-chip" onclick="injectTask('Write and give me a downloadable Python script that ')"><i class="fas fa-code" style="color:#10b981"></i> Write Code</button>
+        <button class="task-chip" onclick="injectTask('Create a complete HTML page that ')"><i class="fas fa-file-code" style="color:#3b82f6"></i> Build HTML</button>
+        <button class="task-chip" onclick="injectTask('Generate an image prompt and detailed description for: ')"><i class="fas fa-image" style="color:#f59e0b"></i> Image Prompt</button>
+        <button class="task-chip" onclick="injectTask('Write a full essay about ')"><i class="fas fa-pen-nib" style="color:#a78bfa"></i> Write Essay</button>
+        <button class="task-chip" onclick="injectTask('Summarise this text for me: ')"><i class="fas fa-compress" style="color:#22d3ee"></i> Summarise</button>
+        <button class="task-chip" onclick="injectTask('Translate the following to French/Spanish/Arabic: ')"><i class="fas fa-language" style="color:#f97316"></i> Translate</button>
+        <button class="task-chip" onclick="injectTask('Debug this code and explain every error: ')"><i class="fas fa-bug" style="color:#ef4444"></i> Debug Code</button>
+        <button class="task-chip" onclick="injectTask('Create a detailed study plan for ')"><i class="fas fa-calendar-check" style="color:#10b981"></i> Study Plan</button>
+        <button class="task-chip" onclick="injectTask('Solve this maths problem step by step: ')"><i class="fas fa-square-root-variable" style="color:#f59e0b"></i> Solve Maths</button>
+        <button class="task-chip" onclick="injectTask('Write a professional CV/resume for a person who ')"><i class="fas fa-id-card" style="color:#8b5cf6"></i> Write CV</button>
+        <button class="task-chip" onclick="injectTask('Write a complete business plan for ')"><i class="fas fa-briefcase" style="color:#0ea5e9"></i> Business Plan</button>
+        <button class="task-chip" onclick="startVoiceInput()"><i class="fas fa-microphone" style="color:#ef4444"></i> Voice Input</button>
+        <button class="task-chip" onclick="injectTask('Draw a flowchart diagram for ')"><i class="fas fa-diagram-project" style="color:#8b5cf6"></i> Flowchart</button>
+        <button class="task-chip" onclick="injectTask('Show me a bar chart comparing ')"><i class="fas fa-chart-bar" style="color:#3b82f6"></i> Chart</button>
+        <button class="task-chip" onclick="injectTask('Solve this step by step using proper formulas: ')"><i class="fas fa-square-root-variable" style="color:#f59e0b"></i> Formula</button>
+        <button class="task-chip" onclick="injectTask('Create a statistics summary with charts for ')"><i class="fas fa-chart-pie" style="color:#10b981"></i> Statistics</button>
+        <button class="task-chip" onclick="injectTask('Generate quiz questions about ')"><i class="fas fa-graduation-cap" style="color:#f59e0b"></i> Quiz Me</button>
+        <button class="task-chip" onclick="injectTask('Give me a mind map for ')"><i class="fas fa-brain" style="color:#ef4444"></i> Mind Map</button>
+      </div>
     <div class="msgs" id="msgs">
       <div class="empty" id="emptyState">
         <div class="empty-ic"><i class="fas fa-robot"></i></div>
@@ -394,7 +466,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
           <button class="it" onclick="trigAtt()" title="Attach image"><i class="fas fa-paperclip"></i></button>
         </div>
         <textarea class="chat-ta" id="chatTa" placeholder="Message Lenovox AI..." rows="1"></textarea>
-        <button class="send-btn" id="sendBtn" onclick="doSend()"><i class="fas fa-arrow-up"></i></button>
+        <button class="voice-btn" id="voiceBtn" onclick="startVoiceInput()" title="Voice input"><i class="fas fa-microphone"></i></button><button class="send-btn" id="sendBtn" onclick="doSend()"><i class="fas fa-arrow-up"></i></button>
       </div>
       <div class="inp-hint">
         <div class="ih-l"><i class="fas fa-coins"></i> LNX deducted by tokens used</div>
@@ -763,12 +835,83 @@ function _appendUser(text,imgUrl,time){
 function _appendAI(text,lnx,time){
   const msgs=document.getElementById('msgs');
   const id='ai-'+Date.now();
+  const msgId='msg-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+  const {cleanText,files,chartData}=processAIResponse(text);
   const d=document.createElement('div');d.className='mg';
-  d.innerHTML=`<div class="mr ai"><div class="av ai"><i class="fas fa-robot" style="font-size:.62rem"></i></div><div class="bbl" id="${id}">${marked.parse(text)}</div></div><div class="mm"><span class="mt">${time||now()}</span>${lnx?`<span class="mt" style="color:var(--red)">-${lnx} LNX</span>`:''}<div style="margin-left:auto;display:flex;gap:3px"><button class="mac" title="Copy" onclick="copyMsg('${id}')"><i class="fas fa-copy"></i></button></div></div>`;
+  d.innerHTML=`<div class="mr ai"><div class="av ai"><i class="fas fa-robot" style="font-size:.62rem"></i></div><div class="bbl" id="${id}">${renderMarkdown(cleanText)}</div></div>
+    <div class="mm">
+      <span class="mt">${time||now()}</span>${lnx?`<span class="mt" style="color:var(--red)">-${lnx} LNX</span>`:''}
+      <div style="margin-left:auto;display:flex;gap:3px">
+        <button class="mac" title="Copy" onclick="copyMsg('${id}')"><i class="fas fa-copy"></i></button>
+        <button class="mac" title="Read aloud" onclick="speakText('${id}')"><i class="fas fa-volume-high"></i></button>
+      </div>
+    </div>
+    <div class="fb-row">
+      <button class="fb-btn up" id="up-${msgId}" onclick="feedback('${msgId}','up','${encodeURIComponent(text.slice(0,100))}')"><i class="fas fa-thumbs-up"></i> Helpful</button>
+      <button class="fb-btn dn" id="dn-${msgId}" onclick="feedback('${msgId}','dn','${encodeURIComponent(text.slice(0,100))}')"><i class="fas fa-thumbs-down"></i> Not helpful</button>
+    </div>`;
   msgs.appendChild(d);
+  // Syntax highlight code blocks
   d.querySelectorAll('pre code').forEach(b=>hljs.highlightElement(b));
+  // Render math (KaTeX)
+  try{renderMathInElement(d.querySelector('.bbl'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});}catch(e){}
+  // Render Mermaid diagrams
+  d.querySelectorAll('.language-mermaid,.mermaid').forEach(el=>{
+    const code=el.textContent;
+    const wrap=document.createElement('div');wrap.className='mermaid-wrap';
+    const m=document.createElement('div');m.className='mermaid';m.textContent=code;
+    wrap.appendChild(m);el.closest('pre')?.replaceWith(wrap)||el.replaceWith(wrap);
+    try{mermaid.run({nodes:[m]});}catch(e){}
+  });
+  // Render charts from chartData
+  if(chartData){
+    const cw=document.createElement('div');cw.className='chart-wrap';
+    cw.innerHTML=`<div class="chart-title"><i class="fas fa-chart-line"></i>${chartData.title||'Chart'}</div><canvas id="chart-${msgId}"></canvas>`;
+    d.appendChild(cw);
+    setTimeout(()=>{
+      try{
+        const ctx=document.getElementById('chart-'+msgId)?.getContext('2d');
+        if(ctx)new Chart(ctx,{type:chartData.type||'bar',data:chartData.data,options:{responsive:true,plugins:{legend:{labels:{color:'rgba(255,255,255,.7)',font:{family:'Nunito',size:11}}},tooltip:{callbacks:{}}},scales:{x:{ticks:{color:'rgba(255,255,255,.6)',font:{family:'Nunito',size:10}}},y:{ticks:{color:'rgba(255,255,255,.6)',font:{family:'Nunito',size:10}}}}}});
+      }catch(e){}
+    },100);
+  }
+  // Download cards
+  if(files.length){files.forEach(filename=>{const code=extractCodeFromResponse(cleanText,filename);appendFileCard(filename,code,d);});}
   scrollMsgs();
 }
+
+// ── MARKDOWN RENDERER with math support ───────────────────────
+function renderMarkdown(text){
+  // Pre-process: protect math blocks
+  return marked.parse(text);
+}
+
+// ── FEEDBACK ─────────────────────────────────────────────────
+window.feedback=(id,type,enc)=>{
+  const up=document.getElementById('up-'+id);
+  const dn=document.getElementById('dn-'+id);
+  if(!up||!dn)return;
+  if(up.classList.contains('voted')||dn.classList.contains('voted'))return;
+  up.classList.add('voted');dn.classList.add('voted');
+  if(type==='up'){up.style.color='var(--green)';up.style.borderColor='rgba(16,185,129,.4)';toast('Thanks for the feedback!','success');}
+  else{dn.style.color='var(--red)';dn.style.borderColor='rgba(239,68,68,.4)';toast('Got it — we will improve!','info');}
+  // Log to console (wire to Firestore when available)
+  console.log('Feedback:',type,'msg:',decodeURIComponent(enc));
+};
+
+// ── TEXT TO SPEECH ─────────────────────────────────────────────
+window.speakText=(id)=>{
+  const el=document.getElementById(id);if(!el)return;
+  const text=el.innerText.slice(0,500); // read first 500 chars
+  if('speechSynthesis' in window){
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang=_userProfile?.country==='NG'?'en-NG':'en-US';
+    u.rate=0.95;u.pitch=1;
+    window.speechSynthesis.speak(u);
+    toast('Reading aloud...','info');
+  }else toast('Text-to-speech not supported.','error');
+};
 window.copyMsg=id=>{const el=document.getElementById(id);if(el){navigator.clipboard.writeText(el.innerText).then(()=>toast('Copied!','success'));}};
 
 // ── SYSTEM PROMPT WITH FULL USER CONTEXT ──────────────────────
@@ -798,7 +941,81 @@ Your job is to help this specific user learn, study, solve problems, and think t
 Always personalise your responses based on the user's profile below.
 Format responses in clean markdown. Be clear, concise and educational.
 Never reveal your underlying model name — you are Lenovox AI, created by MC Tech.
-If the user asks who made you, say "I am Lenovox AI, created by MC Tech (mctech.com.ng)."
+If the user asks who made you or who created you, say: "I am Lenovox AI, created by MC Tech Nigeria."
+If asked for MC Tech contact details: email is lenovoxai.care@gmail.com, website is mctech.com.ng
+If asked for Lenovox support: email is lenovoxai.care@gmail.com
+Never say you don't have access to contact details — you DO know: lenovoxai.care@gmail.com
+
+## Your Robot Task Capabilities
+You can do ALL of the following when asked — always do them fully and completely:
+
+1. **Write & deliver code** — When asked to write code, write the COMPLETE working code. End your response with a special marker so the app can offer a download button:
+   After your code block, write exactly: <!--DOWNLOAD:filename.ext--> 
+   For example: <!--DOWNLOAD:calculator.py--> or <!--DOWNLOAD:app.html-->
+
+2. **Generate image prompts** — When asked to create/generate an image, write a detailed Stable Diffusion or DALL-E prompt the user can use, plus describe what the image looks like.
+
+3. **Write essays, reports, CVs, business plans** — Write the FULL document. End with: <!--DOWNLOAD:document.txt-->
+
+4. **Summarise, translate, explain** — Do it fully and completely.
+
+5. **Solve maths** — Show every step clearly.
+
+6. **Debug code** — Find ALL errors and explain each one, then provide the fixed version.
+
+7. **Study plans** — Create day-by-day detailed plans.
+
+8. **Voice responses** — Your text responses will be readable aloud to the user.
+
+## Your Full Capabilities — Do ALL of these when asked:
+
+### CODE & FILES
+- Write COMPLETE working code in any language (Python, JavaScript, HTML, CSS, Java, C++, etc.)
+- After ANY code response, end with: <!--DOWNLOAD:filename.ext-->
+- Example: <!--DOWNLOAD:calculator.py--> or <!--DOWNLOAD:index.html-->
+- The user gets a real download button automatically
+
+### MATHEMATICS & FORMULAS (Like Gemini)
+- Write ALL formulas using LaTeX notation so they render beautifully:
+  - Inline math: $E = mc^2$ or $x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}$
+  - Display math: $$\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}$$
+  - $$\sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}$$
+- Use proper LaTeX for: fractions, integrals, summations, matrices, Greek letters, vectors, physics equations
+- NEVER write formulas as plain text — ALWAYS use LaTeX $...$ or $$...$$
+
+### CHARTS & STATISTICS (Auto-rendered)
+- When showing statistics, comparisons, or data, include a chart using this exact format:
+  <!--CHART:{"type":"bar","title":"Chart Title","data":{"labels":["A","B","C"],"datasets":[{"label":"Values","data":[10,20,30],"backgroundColor":["rgba(37,99,235,0.7)","rgba(16,185,129,0.7)","rgba(245,158,11,0.7)"]}]}}-->
+- Chart types: "bar", "line", "pie", "doughnut", "radar", "polarArea"
+- Use line charts for trends over time, bar for comparisons, pie for proportions
+- Include charts whenever showing: statistics, exam results, population data, economic data, scientific measurements
+
+### DIAGRAMS & FLOWCHARTS (Mermaid)
+- For processes, flowcharts, timelines, mind maps — use Mermaid syntax in code blocks:
+  ```mermaid
+  graph TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Action]
+    B -->|No| D[Other]
+  ```
+- For timelines: timeline, for class diagrams: classDiagram, for sequences: sequenceDiagram
+
+### DOCUMENTS & ESSAYS
+- Write FULL complete documents — never truncate
+- End documents with: <!--DOWNLOAD:filename.txt--> or <!--DOWNLOAD:filename.md-->
+
+### PERSONALISATION
+- Always address the user by name (${_userProfile?.name||'there'})
+- Adapt depth to their education level
+- Remember context across the conversation
+
+### FEEDBACK
+- Users can rate responses — improve based on patterns
+
+### VOICE
+- Keep responses readable aloud — no symbols in key sentences
+
+IMPORTANT: For math — ALWAYS use LaTeX. For data — ALWAYS add a chart. For code — ALWAYS add download.
 ${userCtx}`;
 }
 
@@ -920,6 +1137,7 @@ window.doAnalyse=async()=>{
     document.getElementById('irCost').innerHTML=`<i class="fas fa-coins"></i> -${lnx} LNX`;
     document.getElementById('irBody').innerHTML=marked.parse(data.content||'');
     document.getElementById('irBody').querySelectorAll('pre code').forEach(b=>hljs.highlightElement(b));
+    try{renderMathInElement(document.getElementById('irBody'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});}catch(e){}
     document.getElementById('imgResult').style.display='block';
     document.getElementById('imgResult').scrollIntoView({behavior:'smooth'});
   }catch{toast('Analysis failed. Try again.','error');}
@@ -967,6 +1185,85 @@ function loadImgCount(){const t=new Date().toDateString();const s=JSON.parse(loc
 function persistImgCount(){localStorage.setItem('lnx_img_c',JSON.stringify({date:new Date().toDateString(),count:_imgUploads}));}
 function updateImgHint(){const l=Math.max(0,IMG_DAY_LIMIT-_imgUploads);const t=`${l} image upload${l!==1?'s':''}/day`;document.getElementById('imgHint').textContent=t;document.getElementById('uzLimTxt').textContent=`${l} upload${l!==1?'s':''} remaining today`;}
 
+
+// ── ROBOT TASKS ──────────────────────────────────────────────
+window.injectTask=text=>{
+  ta.value=text;ta.focus();
+  ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,120)+'px';
+};
+
+// Detect download marker in AI response and add download button
+function processAIResponse(text){
+  const dlRegex=/<!--DOWNLOAD:([^>]+)-->/g;
+  const chartRegex=/<!--CHART:([\s\S]*?)-->/;
+  const dlMatches=[...text.matchAll(dlRegex)];
+  const chartMatch=text.match(chartRegex);
+  let chartData=null;
+  if(chartMatch){try{chartData=JSON.parse(chartMatch[1]);}catch(e){}}
+  const cleanText=text.replace(dlRegex,'').replace(chartRegex,'').trim();
+  return {cleanText,files:dlMatches.map(m=>m[1]),chartData};
+}
+
+function extractCodeFromResponse(text,filename){
+  // Extract code from markdown code blocks
+  const ext=filename.split('.').pop().toLowerCase();
+  const langMap={py:'python',js:'javascript',html:'html',css:'css',java:'java',cpp:'cpp',c:'c',ts:'typescript',json:'json',sql:'sql',sh:'bash',txt:'',md:'markdown'};
+  const lang=langMap[ext]||'';
+  const re=new RegExp('```'+lang+'\\n([\\s\\S]*?)```','i');
+  const m=text.match(re)||text.match(/```[\w]*\n([\s\S]*?)```/);
+  return m?m[1].trim():text.replace(/<!--.*?-->/g,'').replace(/```[\w]*/g,'').replace(/```/g,'').trim();
+}
+
+function downloadFile(content,filename){
+  const blob=new Blob([content],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=filename;a.click();
+  URL.revokeObjectURL(url);
+  toast(`Downloaded ${filename}!`,'success');
+}
+
+function appendFileCard(filename,content,parentEl){
+  const ext=filename.split('.').pop().toLowerCase();
+  const icons={py:'fas fa-file-code',js:'fas fa-file-code',html:'fas fa-file-code',css:'fas fa-file-code',txt:'fas fa-file-alt',md:'fas fa-file-alt',java:'fas fa-file-code',json:'fas fa-file-alt',csv:'fas fa-file-csv',sh:'fas fa-terminal'};
+  const colors={py:'#10b981',js:'#f59e0b',html:'#f97316',css:'#3b82f6',txt:'#8b5cf6',md:'#6b7280',java:'#ef4444',json:'#22d3ee',csv:'#10b981',sh:'#374151'};
+  const ic=icons[ext]||'fas fa-file';
+  const col=colors[ext]||'var(--blue-l)';
+  const size=new Blob([content]).size;
+  const sizeStr=size>1024?Math.round(size/1024)+'KB':size+'B';
+  const card=document.createElement('div');card.className='file-card';
+  card.innerHTML=`<div class="file-card-ic" style="background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.15)"><i class="${ic}" style="color:${col}"></i></div><div style="flex:1;min-width:0"><div class="file-card-name">${filename}</div><div class="file-card-meta">${ext.toUpperCase()} file · ${sizeStr}</div></div><button class="file-dl" onclick="downloadFile(${JSON.stringify(content)},${JSON.stringify(filename)})"><i class="fas fa-download"></i> Download</button>`;
+  parentEl.appendChild(card);
+}
+
+// ── VOICE INPUT ───────────────────────────────────────────────
+let _recognition=null,_recording=false;
+window.startVoiceInput=()=>{
+  if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){
+    toast('Voice input not supported in this browser.','error');return;
+  }
+  const btn=document.getElementById('voiceBtn');
+  if(_recording){
+    _recognition?.stop();_recording=false;
+    btn.classList.remove('recording');btn.querySelector('i').className='fas fa-microphone';
+    return;
+  }
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  _recognition=new SR();
+  _recognition.continuous=false;_recognition.interimResults=false;
+  _recognition.lang=_userProfile?.aiPrefs?.language==='French'?'fr-FR':
+    _userProfile?.aiPrefs?.language==='Arabic'?'ar-SA':
+    _userProfile?.country==='NG'?'en-NG':'en-US';
+  _recognition.onstart=()=>{_recording=true;btn.classList.add('recording');btn.querySelector('i').className='fas fa-microphone-slash';toast('Listening...','info');};
+  _recognition.onresult=e=>{
+    const t=e.results[0][0].transcript;
+    ta.value=t;ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,120)+'px';
+    ta.focus();
+  };
+  _recognition.onerror=()=>{toast('Could not hear you. Try again.','error');};
+  _recognition.onend=()=>{_recording=false;btn.classList.remove('recording');btn.querySelector('i').className='fas fa-microphone';};
+  _recognition.start();
+};
+
 // ── AUTH ──────────────────────────────────────────────────────
 watchAuth(async user=>{
   if(!user){window.location.replace('login');return;}
@@ -1008,6 +1305,11 @@ watchAuth(async user=>{
     if(_hist.length)renderMsgsFromHistory(_hist);
   }
 });
+
+// ── INIT MERMAID ────────────────────────────────────────────
+if(typeof mermaid!=='undefined'){
+  mermaid.initialize({startOnLoad:false,theme:'dark',themeVariables:{primaryColor:'#2563eb',primaryTextColor:'#ececec',primaryBorderColor:'#3b82f6',lineColor:'#64748b',background:'#171717',mainBkg:'#1c1c1c',nodeBorder:'#3b82f6',clusterBkg:'#222'}});
+}
 </script>
 </body>
 </html>

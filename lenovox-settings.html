@@ -550,11 +550,20 @@ function applyTheme(t){
 }
 window.setTheme=t=>{applyTheme(t);toast('Theme updated!','success');};
 
-// ── AUTH — FIXED: watchAuth now called ─────────────────────────
+// ── AUTH — show name instantly from Auth, then load Firestore ──
 watchAuth(async user=>{
   if(!user){window.location.replace('login');return;}
   _uid=user.uid;
-  await loadProfile(_uid);
+  // Show name IMMEDIATELY from Firebase Auth — no Firestore wait
+  const name=user.displayName||user.email?.split('@')[0]||'User';
+  document.getElementById('piName').textContent=name;
+  document.getElementById('piEmail').textContent=user.email||'—';
+  document.getElementById('paInitial').textContent=name[0].toUpperCase();
+  document.getElementById('inpName').value=name;
+  document.getElementById('inpEmail').value=user.email||'';
+  document.getElementById('inpUid').value=user.uid;
+  // Then try to load Firestore profile (works once Firebase account restored)
+  try{ await loadProfile(_uid); }catch(e){ console.warn('Firestore unavailable',e); }
 });
 
 </script>
