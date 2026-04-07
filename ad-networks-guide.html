@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lenovox AI — Ad Network Integration Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080b12;--surface:#0d1120;--card:#111827;--border:rgba(255,255,255,0.07);
+  --text:#e8ecf4;--muted:#6b7a9a;--mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif;
+  --green:#0be881;--blue:#00d2ff;--gold:#ffcc33;--orange:#ff9500;--red:#ff4757;
+  --purple:#a55eea;--pink:#ff6b9d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.6;padding-bottom:60px}
+.hero{background:linear-gradient(135deg,#050810,#0a1628,#05080e);border-bottom:1px solid var(--border);padding:40px 24px 32px;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:999px;background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.2);font-family:var(--mono);font-size:.68rem;font-weight:700;color:var(--blue);margin-bottom:16px;letter-spacing:.5px}
+.hero h1{font-family:var(--mono);font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-1px}
+.hero p{color:var(--muted);font-size:.88rem;max-width:480px;margin:0 auto}
+.main{max-width:860px;margin:0 auto;padding:0 20px}
+
+/* NETWORK CARD */
+.net-card{background:var(--card);border:1px solid var(--border);border-radius:18px;margin:28px 0;overflow:hidden;transition:border-color .2s}
+.net-card:hover{border-color:rgba(255,255,255,.1)}
+.net-hdr{display:flex;align-items:center;gap:14px;padding:20px 22px 16px}
+.net-rank{font-family:var(--mono);font-size:1.4rem;font-weight:700;color:var(--muted);width:32px;flex-shrink:0}
+.net-logo{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;font-weight:700}
+.net-info{flex:1}
+.net-name{font-family:var(--mono);font-size:1rem;font-weight:700;color:#fff;margin-bottom:3px}
+.net-tagline{font-size:.76rem;color:var(--muted)}
+.net-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.nb{padding:2px 9px;border-radius:5px;font-size:.63rem;font-weight:700;font-family:var(--mono)}
+.nb-green{background:rgba(11,232,129,.12);border:1px solid rgba(11,232,129,.25);color:var(--green)}
+.nb-blue{background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.22);color:var(--blue)}
+.nb-gold{background:rgba(255,204,51,.1);border:1px solid rgba(255,204,51,.22);color:var(--gold)}
+.nb-orange{background:rgba(255,149,0,.1);border:1px solid rgba(255,149,0,.22);color:var(--orange)}
+.nb-purple{background:rgba(165,94,234,.12);border:1px solid rgba(165,94,234,.25);color:var(--purple)}
+.nb-red{background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.22);color:var(--red)}
+
+.net-body{padding:0 22px 22px;display:flex;flex-direction:column;gap:16px}
+.net-desc{font-size:.84rem;color:rgba(255,255,255,.6);line-height:1.7;padding:14px 16px;background:rgba(255,255,255,.03);border-radius:10px;border-left:3px solid}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:520px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+.stat-box{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:11px 12px;text-align:center}
+.stat-val{font-family:var(--mono);font-size:.88rem;font-weight:700;margin-bottom:2px}
+.stat-lbl{font-size:.62rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+
+/* STEPS */
+.steps-title{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.steps-title i{font-size:.65rem;color:var(--blue)}
+.step{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px}
+.step:last-child{margin-bottom:0}
+.step-num{width:24px;height:24px;border-radius:50%;border:1.5px solid;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.68rem;font-weight:700;flex-shrink:0;margin-top:1px}
+.step-body{flex:1}
+.step-title{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:2px}
+.step-desc{font-size:.76rem;color:var(--muted);line-height:1.6}
+.step-link{display:inline-flex;align-items:center;gap:4px;color:var(--blue);font-size:.74rem;font-weight:700;text-decoration:none;margin-top:4px;background:rgba(0,210,255,.08);padding:3px 9px;border-radius:5px;border:1px solid rgba(0,210,255,.18)}
+.step-link:hover{background:rgba(0,210,255,.14)}
+
+/* CODE BLOCK */
+.code-block{background:#050810;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px 16px;font-family:var(--mono);font-size:.74rem;line-height:1.8;color:#c9d1d9;overflow-x:auto;white-space:pre;margin-top:4px}
+.code-block .cm{color:var(--muted)}
+.code-block .kw{color:#ff79c6}
+.code-block .st{color:#f1fa8c}
+.code-block .nu{color:var(--orange)}
+.code-block .fn{color:var(--green)}
+.code-block .tg{color:var(--blue)}
+.code-block .at{color:var(--orange)}
+
+/* API BOX */
+.api-box{background:rgba(11,232,129,.05);border:1px solid rgba(11,232,129,.18);border-radius:12px;padding:14px 16px}
+.api-box-title{font-family:var(--mono);font-size:.7rem;font-weight:700;color:var(--green);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+.api-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.79rem}
+.api-row:last-child{border-bottom:none}
+.api-key-name{color:var(--text);font-weight:600}
+.api-key-val{font-family:var(--mono);font-size:.7rem;color:var(--green);background:rgba(11,232,129,.08);padding:2px 8px;border-radius:5px}
+.api-none{font-size:.76rem;color:var(--muted);font-style:italic}
+
+/* INTEGRATION BOX */
+.int-box{background:rgba(0,210,255,.05);border:1px solid rgba(0,210,255,.15);border-radius:12px;padding:14px 16px}
+.int-title{font-family:var(--mono);font-size:.7rem;font-weight:700;color:var(--blue);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+
+/* WARNING */
+.warn-box{background:rgba(255,204,51,.06);border:1px solid rgba(255,204,51,.2);border-radius:10px;padding:12px 14px;font-size:.78rem;color:rgba(255,255,255,.6);display:flex;gap:9px;align-items:flex-start;line-height:1.6}
+.warn-box i{color:var(--gold);font-size:.88rem;flex-shrink:0;margin-top:1px}
+
+/* COMPARISON TABLE */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.78rem;background:var(--card);border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.cmp-table th{background:rgba(255,255,255,.04);padding:11px 14px;text-align:left;font-weight:700;color:var(--muted);font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+.cmp-table td{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.cmp-table tr:last-child td{border-bottom:none}
+.cmp-table tr:hover td{background:rgba(255,255,255,.02)}
+.td-name{font-weight:700;color:var(--text)}
+.td-rate{font-family:var(--mono);font-size:.76rem;color:var(--green)}
+.td-min{font-family:var(--mono);font-size:.76rem;color:var(--orange)}
+.check{color:var(--green)}.cross{color:var(--red)}.soon{color:var(--orange);font-size:.7rem}
+
+/* DIVIDER */
+.section-hdr{display:flex;align-items:center;gap:10px;margin:36px 0 20px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.section-hdr h2{font-family:var(--mono);font-size:.88rem;font-weight:700;color:#fff}
+.section-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+
+.footer{max-width:860px;margin:40px auto 0;padding:24px 20px 0;border-top:1px solid var(--border);color:var(--muted);font-size:.76rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">💰 AD NETWORK INTEGRATION GUIDE</div>
+  <h1>5 Ad Networks for Lenovox AI</h1>
+  <p>Complete guide to sign up, get your ad code, and integrate each network into your app — with or without an API</p>
+</div>
+
+<div class="main">
+
+  <!-- COMPARISON TABLE -->
+  <div class="section-hdr" style="margin-top:28px">
+    <div class="section-icon" style="background:rgba(0,210,255,.1)">📊</div>
+    <h2>QUICK COMPARISON — All 5 Networks</h2>
+  </div>
+  <div style="overflow-x:auto;margin-bottom:8px">
+    <table class="cmp-table">
+      <tr>
+        <th>#</th><th>Network</th><th>CPM Rate</th><th>Min Payout</th><th>Approval</th><th>API Available</th><th>Best For</th>
+      </tr>
+      <tr>
+        <td style="font-family:var(--mono);color:var(--gold)">1</td>
+        <td class="td-name">Google AdSense</td>
+        <td class="td-rate">$0.50–$8.00</td>
+        <td class="td-min">$100</td>
+        <td><span style="color:var(--orange);font-size:.72rem">2–4 weeks strict</span></td>
+        <td><span class="check">✓ Yes</span></td>
+        <td style="font-size:.73rem;color:var(--muted)">Best rates, global</td>
+      </tr>
+      <tr>
+        <td style="font-family:var(--mono);color:#c9d1d9">2</td>
+        <td class="td-name">Adsterra</td>
+        <td class="td-rate">$0.50–$5.00</td>
+        <td class="td-min">$5</td>
+        <td><span style="color:var(--green);font-size:.72rem">24–72 hrs fast</span></td>
+        <td><span class="check">✓ Yes</span></td>
+        <td style="font-size:.73rem;color:var(--muted)">Fast approval, popups</td>
+      </tr>
+      <tr>
+        <td style="font-family:var(--mono);color:#c9d1d9">3</td>
+        <td class="td-name">PropellerAds</td>
+        <td class="td-rate">$0.40–$4.00</td>
+        <td class="td-min">$5</td>
+        <td><span style="color:var(--green);font-size:.72rem">Instant – 24 hrs</span></td>
+        <td><span class="check">✓ Yes</span></td>
+        <td style="font-size:.73rem;color:var(--muted)">Push + Interstitials</td>
+      </tr>
+      <tr>
+        <td style="font-family:var(--mono);color:#c9d1d9">4</td>
+        <td class="td-name">Media.net</td>
+        <td class="td-rate">$0.80–$6.00</td>
+        <td class="td-min">$100</td>
+        <td><span style="color:var(--orange);font-size:.72rem">5–7 days</span></td>
+        <td><span style="color:var(--muted);font-size:.72rem">— No public API</span></td>
+        <td style="font-size:.73rem;color:var(--muted)">US/UK traffic high CPM</td>
+      </tr>
+      <tr>
+        <td style="font-family:var(--mono);color:#c9d1d9">5</td>
+        <td class="td-name">Monetag</td>
+        <td class="td-rate">$0.30–$3.00</td>
+        <td class="td-min">$5</td>
+        <td><span style="color:var(--green);font-size:.72rem">Instant</span></td>
+        <td><span class="check">✓ Yes</span></td>
+        <td style="font-size:.73rem;color:var(--muted)">Africa/Nigeria traffic</td>
+      </tr>
+    </table>
+  </div>
+  <div class="warn-box">
+    <i class="fas fa-lightbulb"></i>
+    <span><b style="color:var(--gold)">Recommendation for Lenovox:</b> Start with <b style="color:#fff">Adsterra + Monetag</b> right now (instant/fast approval, low minimum payout, Nigeria traffic support). Add <b style="color:#fff">PropellerAds</b> for push notifications. Keep working on <b style="color:#fff">Google AdSense</b> — it pays the most once approved.</span>
+  </div>
+
+
+  <!-- ══════════════ NETWORK 1: GOOGLE ADSENSE ══════════════ -->
+  <div class="net-card" style="border-color:rgba(66,133,244,.25)">
+    <div class="net-hdr">
+      <div class="net-rank">#1</div>
+      <div class="net-logo" style="background:linear-gradient(135deg,#4285f4,#34a853)">G</div>
+      <div class="net-info">
+        <div class="net-name">Google AdSense</div>
+        <div class="net-tagline">The world's largest display ad network — highest CPM rates</div>
+        <div class="net-badges">
+          <span class="nb nb-gold">HIGHEST PAYING</span>
+          <span class="nb nb-blue">ALREADY SETUP</span>
+          <span class="nb nb-orange">PENDING APPROVAL</span>
+        </div>
+      </div>
+    </div>
+    <div class="net-body">
+      <div class="net-desc" style="border-color:#4285f4">
+        You already have AdSense set up with your publisher ID <code style="color:var(--blue);background:rgba(0,210,255,.1);padding:1px 6px;border-radius:4px">ca-pub-6229569177818177</code>. Your site is under review. The code is already live in all your HTML files. You just need to wait for Google to approve and start serving real ads. This guide explains what to do while you wait and what to fix to speed up approval.
+      </div>
+
+      <div>
+        <div class="steps-title"><i class="fas fa-list-check"></i> APPROVAL CHECKLIST — Speed Up Your Approval</div>
+        <div class="step">
+          <div class="step-num" style="border-color:#4285f4;color:#4285f4">1</div>
+          <div class="step-body">
+            <div class="step-title">Add a Privacy Policy page</div>
+            <div class="step-desc">Google requires this. Your <code style="color:var(--blue)">privacy.html</code> already exists — make sure it mentions Google AdSense data collection. Go to <a href="https://adsense.google.com" class="step-link" target="_blank">adsense.google.com</a> → Sites → check status</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:#4285f4;color:#4285f4">2</div>
+          <div class="step-body">
+            <div class="step-title">Make sure your site has real content</div>
+            <div class="step-desc">Google wants to see original, useful content on your pages. Your about.html, quiz.html, smart-tutor.html all count. Add at least 20 real questions to your quiz and make sure all pages load without errors.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:#4285f4;color:#4285f4">3</div>
+          <div class="step-body">
+            <div class="step-title">Verify your site URL in AdSense dashboard</div>
+            <div class="step-desc">Login → Sites → Add site → enter your Vercel domain (e.g. lenovox.vercel.app or your custom domain). Make sure your DNS is verified.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:#4285f4;color:#4285f4">4</div>
+          <div class="step-body">
+            <div class="step-title">Wait 2–4 weeks then check email</div>
+            <div class="step-desc">Google will email you when approved. Once approved, your existing ad units will start showing real ads automatically — no code change needed since your publisher ID is already on all pages.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-box">
+        <div class="api-box-title"><i class="fas fa-key"></i> Your Current AdSense Setup</div>
+        <div class="api-row"><span class="api-key-name">Publisher ID</span><span class="api-key-val">ca-pub-6229569177818177</span></div>
+        <div class="api-row"><span class="api-key-name">Script (already on all pages)</span><span class="api-none">✓ Already in HTML head</span></div>
+        <div class="api-row"><span class="api-key-name">Status</span><span style="font-size:.7rem;color:var(--orange);font-family:var(--mono)">UNDER REVIEW</span></div>
+        <div class="api-row"><span class="api-key-name">AdSense API</span><span class="api-none">Not needed for basic ads</span></div>
+      </div>
+
+      <div class="int-box">
+        <div class="int-title">📋 Ad Unit Code Already in Your Files</div>
+        <div class="code-block"><span class="tg">&lt;ins</span> <span class="at">class</span>=<span class="st">"adsbygoogle"</span>
+     <span class="at">data-ad-client</span>=<span class="st">"ca-pub-6229569177818177"</span>
+     <span class="at">data-ad-slot</span>=<span class="st">"auto"</span>
+     <span class="at">data-ad-format</span>=<span class="st">"fluid"</span><span class="tg">&gt;&lt;/ins&gt;</span>
+<span class="tg">&lt;script&gt;</span>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+<span class="tg">&lt;/script&gt;</span></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════ NETWORK 2: ADSTERRA ══════════════ -->
+  <div class="net-card" style="border-color:rgba(0,188,212,.25)">
+    <div class="net-hdr">
+      <div class="net-rank">#2</div>
+      <div class="net-logo" style="background:linear-gradient(135deg,#00bcd4,#006064);font-size:1rem;font-family:'Space Mono',monospace;color:#fff">Ad</div>
+      <div class="net-info">
+        <div class="net-name">Adsterra</div>
+        <div class="net-tagline">Fast approval, great for Africa, minimum $5 payout, has API</div>
+        <div class="net-badges">
+          <span class="nb nb-green">FAST APPROVAL 24-72H</span>
+          <span class="nb nb-green">$5 MIN PAYOUT</span>
+          <span class="nb nb-blue">HAS API</span>
+          <span class="nb nb-orange">NIGERIA FRIENDLY</span>
+        </div>
+      </div>
+    </div>
+    <div class="net-body">
+      <div class="net-desc" style="border-color:#00bcd4">
+        Adsterra is one of the best alternatives to Google AdSense. It approves sites in 24–72 hours, pays out at just $5 minimum (via Crypto, PayPal, WebMoney), and has great rates for African traffic. It supports Display, Pop-under, Social Bar (like push), and Native ads. This is the one you should set up TODAY while waiting for AdSense.
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-val" style="color:var(--green)">24–72h</div><div class="stat-lbl">Approval Time</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--orange)">$5</div><div class="stat-lbl">Min Payout</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--blue)">$0.50–$5</div><div class="stat-lbl">CPM Rate</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--green)">✓</div><div class="stat-lbl">API Exists</div></div>
+      </div>
+
+      <div>
+        <div class="steps-title"><i class="fas fa-list-check"></i> HOW TO SET UP ADSTERRA (Step by Step)</div>
+        <div class="step">
+          <div class="step-num" style="border-color:#00bcd4;color:#00bcd4">1</div>
+          <div class="step-body">
+            <div class="step-title">Create Publisher Account</div>
+            <div class="step-desc">Go to Adsterra and click "Sign up as Publisher". Use your email. Choose Publisher (not Advertiser).</div>
+            <a href="https://publishers.adsterra.com/register" class="step-link" target="_blank">→ publishers.adsterra.com/register</a>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:#00bcd4;color:#00bcd4">2</div>
+          <div class="step-body">
+            <div class="step-title">Add Your Website</div>
+            <div class="step-desc">Dashboard → Sites → Add Site → Enter your Vercel URL (e.g. lenovoxai.vercel.app). Category: <b style="color:#fff">Education</b>. They will review and approve within 24–72 hours.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:#00bcd4;color:#00bcd4">3</div>
+          <div class="step-body">
+            <div class="step-title">Create Ad Units</div>
+            <div class="step-desc">After approval: Sites → Your Site → Create Ad Code. Choose these formats for Lenovox:<br>
+            • <b style="color:#fff">Display Banner</b> (300×250) — put in dashboard<br>
+            • <b style="color:#fff">Social Bar</b> — looks like push notification, great for mobile<br>
+            • <b style="color:#fff">In-Page Push</b> — for rewarded-style notifications</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:#00bcd4;color:#00bcd4">4</div>
+          <div class="step-body">
+            <div class="step-title">Copy Your Publisher Key and Ad Zone IDs</div>
+            <div class="step-desc">Each ad unit gets a unique Zone ID. Copy these — you'll need them in your code. Also copy your API key from Account → API.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:#00bcd4;color:#00bcd4">5</div>
+          <div class="step-body">
+            <div class="step-title">Add to Lenovox</div>
+            <div class="step-desc">Replace or add alongside your AdSense code. Adsterra banner code looks like this:</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-box">
+        <div class="api-box-title"><i class="fas fa-key"></i> Keys You Will Get From Adsterra</div>
+        <div class="api-row"><span class="api-key-name">Publisher Key</span><span class="api-none">Found in Account → API Keys</span></div>
+        <div class="api-row"><span class="api-key-name">Zone ID (per ad unit)</span><span class="api-none">Found in Sites → Ad Units</span></div>
+        <div class="api-row"><span class="api-key-name">API Key (optional)</span><span class="api-none">Account → API → Generate</span></div>
+        <div class="api-row"><span class="api-key-name">Vercel env var name</span><span class="api-key-val">ADSTERRA_KEY</span></div>
+      </div>
+
+      <div class="int-box">
+        <div class="int-title">📋 Adsterra Banner Ad Code (add to your HTML)</div>
+        <div class="code-block"><span class="cm">&lt;!-- Adsterra Display Banner — paste after site approval --&gt;</span>
+<span class="tg">&lt;script </span><span class="at">async</span> <span class="at">src</span>=<span class="st">"//www.highperformanceformat.com/YOUR_ZONE_ID/invoke.js"</span><span class="tg">&gt;&lt;/script&gt;</span>
+
+<span class="cm">&lt;!-- Adsterra Social Bar (recommended for mobile apps) --&gt;</span>
+<span class="tg">&lt;script&gt;</span>
+  <span class="fn">atOptions</span> = {
+    <span class="st">'key'</span>: <span class="st">'YOUR_PUBLISHER_KEY'</span>,
+    <span class="st">'format'</span>: <span class="st">'iframe'</span>,
+    <span class="st">'height'</span>: <span class="nu">300</span>,
+    <span class="st">'width'</span>: <span class="nu">160</span>,
+    <span class="st">'params'</span>: {}
+  };
+<span class="tg">&lt;/script&gt;</span>
+<span class="tg">&lt;script</span> <span class="at">src</span>=<span class="st">"//www.highperformanceformat.com/YOUR_ZONE_ID/invoke.js"</span><span class="tg">&gt;&lt;/script&gt;</span></div>
+      </div>
+
+      <div class="warn-box">
+        <i class="fas fa-coins"></i>
+        <span><b style="color:var(--gold)">Adsterra + Lenovox LNX:</b> When Adsterra pays you, that money goes to your wallet. You can then use a percentage of it to fund the LNX reward economy. For example: if you earn $50/month from Adsterra, use $10 to top up the LNX reward pool for ad-watching.</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════ NETWORK 3: PROPELLERADS ══════════════ -->
+  <div class="net-card" style="border-color:rgba(255,149,0,.2)">
+    <div class="net-hdr">
+      <div class="net-rank">#3</div>
+      <div class="net-logo" style="background:linear-gradient(135deg,#ff9500,#ff5f00);font-size:.75rem;font-family:'Space Mono',monospace;color:#fff;text-align:center;line-height:1.2">PA</div>
+      <div class="net-info">
+        <div class="net-name">PropellerAds</div>
+        <div class="net-tagline">Best for push notifications + interstitials — perfect for Lenovox's rewarded ads section</div>
+        <div class="net-badges">
+          <span class="nb nb-green">INSTANT APPROVAL</span>
+          <span class="nb nb-green">$5 MIN PAYOUT</span>
+          <span class="nb nb-orange">PUSH NOTIFICATIONS</span>
+          <span class="nb nb-blue">HAS API</span>
+        </div>
+      </div>
+    </div>
+    <div class="net-body">
+      <div class="net-desc" style="border-color:var(--orange)">
+        PropellerAds is ideal for Lenovox because it specialises in the exact ad formats you need: <b style="color:#fff">Interstitials</b> (full-screen between actions) and <b style="color:#fff">Push Notifications</b> (users subscribe and get ads). It has instant approval, a real API, and works extremely well with mobile-first apps like yours. Great for Africa.
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-val" style="color:var(--green)">Instant</div><div class="stat-lbl">Approval</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--orange)">$5</div><div class="stat-lbl">Min Payout</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--blue)">$0.40–$4</div><div class="stat-lbl">CPM Rate</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--green)">✓</div><div class="stat-lbl">API Exists</div></div>
+      </div>
+
+      <div>
+        <div class="steps-title"><i class="fas fa-list-check"></i> HOW TO SET UP PROPELLERADS</div>
+        <div class="step">
+          <div class="step-num" style="border-color:var(--orange);color:var(--orange)">1</div>
+          <div class="step-body">
+            <div class="step-title">Register as Publisher</div>
+            <div class="step-desc">Sign up with email. Choose "Publisher". Instant approval — no waiting.</div>
+            <a href="https://publishers.propellerads.com/signup" class="step-link" target="_blank">→ publishers.propellerads.com/signup</a>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:var(--orange);color:var(--orange)">2</div>
+          <div class="step-body">
+            <div class="step-title">Add Your Site & Create Ad Zones</div>
+            <div class="step-desc">Sites → Add Site → add your Vercel URL. Then create these zones for Lenovox:<br>
+            • <b style="color:#fff">Interstitial</b> — shows between page transitions (great for gaming section)<br>
+            • <b style="color:#fff">Push Notification</b> — users opt-in, you get paid per subscriber click<br>
+            • <b style="color:#fff">OnClick / Popunder</b> — earns when user clicks anywhere on page</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:var(--orange);color:var(--orange)">3</div>
+          <div class="step-body">
+            <div class="step-title">Get Your Zone ID and API Token</div>
+            <div class="step-desc">Dashboard → API → Generate Token. Each zone has a unique ID you use in the ad script. Save these as Vercel env vars.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:var(--orange);color:var(--orange)">4</div>
+          <div class="step-body">
+            <div class="step-title">Add the Push Notification Subscribe Script</div>
+            <div class="step-desc">This is the most valuable — users subscribe once and you earn every time they click a push notification, even when they're not on your site.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-box">
+        <div class="api-box-title"><i class="fas fa-key"></i> Keys You Will Get</div>
+        <div class="api-row"><span class="api-key-name">Zone ID</span><span class="api-none">Sites → Your Zone → Zone ID</span></div>
+        <div class="api-row"><span class="api-key-name">API Token</span><span class="api-none">Account → API Tokens → Create</span></div>
+        <div class="api-row"><span class="api-key-name">Vercel env var</span><span class="api-key-val">PROPELLER_ZONE_ID</span></div>
+      </div>
+
+      <div class="int-box">
+        <div class="int-title">📋 PropellerAds Interstitial Code</div>
+        <div class="code-block"><span class="cm">// Add to your gaming section between game rounds:</span>
+<span class="kw">function</span> <span class="fn">showInterstitialAd</span>() {
+  <span class="cm">// PropellerAds Interstitial</span>
+  <span class="kw">const</span> script = document.<span class="fn">createElement</span>(<span class="st">'script'</span>);
+  script.src = <span class="st">'//gc.kis.v2.scr.kaspersky-labs.com/YOUR_ZONE_ID/invoke.js'</span>;
+  <span class="cm">// Replace with your actual PropellerAds script URL from dashboard</span>
+  document.head.<span class="fn">appendChild</span>(script);
+}
+
+<span class="cm">// Push notification subscription widget:</span>
+<span class="tg">&lt;script</span> <span class="at">src</span>=<span class="st">"//push.propellerads.com/subscribe/YOUR_ZONE_ID"</span> <span class="at">async</span><span class="tg">&gt;&lt;/script&gt;</span></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════ NETWORK 4: MEDIA.NET ══════════════ -->
+  <div class="net-card" style="border-color:rgba(165,94,234,.2)">
+    <div class="net-hdr">
+      <div class="net-rank">#4</div>
+      <div class="net-logo" style="background:linear-gradient(135deg,#a55eea,#5c27d5);font-size:.85rem;font-family:'Space Mono',monospace;color:#fff">M</div>
+      <div class="net-info">
+        <div class="net-name">Media.net (Yahoo/Bing Ads)</div>
+        <div class="net-tagline">Powered by Yahoo & Bing — excellent CPM for US/UK/Canada traffic</div>
+        <div class="net-badges">
+          <span class="nb nb-orange">5–7 DAYS APPROVAL</span>
+          <span class="nb nb-purple">HIGH CPM US/UK</span>
+          <span class="nb nb-gold">CONTEXTUAL ADS</span>
+        </div>
+      </div>
+    </div>
+    <div class="net-body">
+      <div class="net-desc" style="border-color:var(--purple)">
+        Media.net is powered by Yahoo and Microsoft Bing's advertising network. It's the second largest contextual ad network after Google. It shows ads relevant to your content — so on an education site like Lenovox, it will show ads for universities, books, and courses. Best for US/UK traffic but works globally.
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-val" style="color:var(--orange)">5–7 days</div><div class="stat-lbl">Approval</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--orange)">$100</div><div class="stat-lbl">Min Payout</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--blue)">$0.80–$6</div><div class="stat-lbl">CPM Rate</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--red)">✗</div><div class="stat-lbl">Public API</div></div>
+      </div>
+
+      <div>
+        <div class="steps-title"><i class="fas fa-list-check"></i> HOW TO SET UP MEDIA.NET</div>
+        <div class="step">
+          <div class="step-num" style="border-color:var(--purple);color:var(--purple)">1</div>
+          <div class="step-body">
+            <div class="step-title">Apply for Account</div>
+            <div class="step-desc">Fill in an application form. You need your website URL, your contact email, and information about your traffic sources. They manually review applications.</div>
+            <a href="https://www.media.net/signup" class="step-link" target="_blank">→ media.net/signup</a>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:var(--purple);color:var(--purple)">2</div>
+          <div class="step-body">
+            <div class="step-title">Requirements to Know</div>
+            <div class="step-desc">• Your site must be in English<br>• Good content (your site qualifies — AI + education)<br>• They prefer US/UK/Canada traffic — but Nigeria traffic still accepted<br>• No minimum traffic requirement officially, but ~500 daily visitors helps</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:var(--purple);color:var(--purple)">3</div>
+          <div class="step-body">
+            <div class="step-title">Get Your Publisher ID and Ad Unit Code</div>
+            <div class="step-desc">After approval, you get a Publisher ID (like a 7-digit number). Create ad units from the dashboard and paste the script into your HTML.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-box">
+        <div class="api-box-title"><i class="fas fa-key"></i> Keys You Will Get</div>
+        <div class="api-row"><span class="api-key-name">Publisher ID (CID)</span><span class="api-none">Shown after approval in dashboard</span></div>
+        <div class="api-row"><span class="api-key-name">Ad Unit ID</span><span class="api-none">Created per ad placement</span></div>
+        <div class="api-row"><span class="api-key-name">Public API</span><span class="api-none">❌ Not available — only dashboard</span></div>
+        <div class="api-row"><span class="api-key-name">Vercel env var</span><span class="api-key-val">MEDIANET_CID</span></div>
+      </div>
+
+      <div class="int-box">
+        <div class="int-title">📋 Media.net Ad Code</div>
+        <div class="code-block"><span class="cm">&lt;!-- Paste in your HTML head after approval --&gt;</span>
+<span class="tg">&lt;script</span> <span class="at">src</span>=<span class="st">"//contextual.media.net/dmedianet.js?cid=YOUR_CID"</span> <span class="at">async</span><span class="tg">&gt;&lt;/script&gt;</span>
+
+<span class="cm">&lt;!-- Ad Unit placement --&gt;</span>
+<span class="tg">&lt;div</span> <span class="at">id</span>=<span class="st">"YOUR_AD_UNIT_ID"</span><span class="tg">&gt;&lt;/div&gt;</span>
+<span class="tg">&lt;script&gt;</span>
+  window._mNHandle = window._mNHandle || {};
+  window._mNHandle.queue = window._mNHandle.queue || [];
+  window._mNDetails = window._mNDetails || {};
+  window._mNDetails.loadTag = <span class="fn">function</span>(a, b, c) {
+    window._mNHandle.queue.<span class="fn">push</span>(<span class="fn">function</span>() {
+      mNDetails.<span class="fn">loadTag</span>(a, b, c);
+    });
+  };
+<span class="tg">&lt;/script&gt;</span></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════ NETWORK 5: MONETAG ══════════════ -->
+  <div class="net-card" style="border-color:rgba(11,232,129,.18)">
+    <div class="net-hdr">
+      <div class="net-rank">#5</div>
+      <div class="net-logo" style="background:linear-gradient(135deg,#0be881,#00a651);font-size:.78rem;font-family:'Space Mono',monospace;color:#fff">MT</div>
+      <div class="net-info">
+        <div class="net-name">Monetag (formerly PropellerAds Monetag)</div>
+        <div class="net-tagline">Instant approval, great for Nigeria/Africa, $5 minimum, rewarded-friendly</div>
+        <div class="net-badges">
+          <span class="nb nb-green">INSTANT APPROVAL</span>
+          <span class="nb nb-green">$5 MIN PAYOUT</span>
+          <span class="nb nb-orange">AFRICA OPTIMISED</span>
+          <span class="nb nb-blue">HAS API</span>
+        </div>
+      </div>
+    </div>
+    <div class="net-body">
+      <div class="net-desc" style="border-color:var(--green)">
+        Monetag is a spin-off from PropellerAds specifically built for publishers with traffic from tier 2/3 countries including Nigeria, Ghana, Kenya, India. It has instant approval, pays as low as $5, and supports Crypto + PayPal. It's also the most flexible with ad formats for mobile apps — including a rewarded/interstitial format perfect for Lenovox.
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-val" style="color:var(--green)">Instant</div><div class="stat-lbl">Approval</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--orange)">$5</div><div class="stat-lbl">Min Payout</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--blue)">$0.30–$3</div><div class="stat-lbl">CPM Rate</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--green)">✓</div><div class="stat-lbl">API Exists</div></div>
+      </div>
+
+      <div>
+        <div class="steps-title"><i class="fas fa-list-check"></i> HOW TO SET UP MONETAG</div>
+        <div class="step">
+          <div class="step-num" style="border-color:var(--green);color:var(--green)">1</div>
+          <div class="step-body">
+            <div class="step-title">Sign Up as Publisher</div>
+            <div class="step-desc">Instant registration. No waiting period. Accepts Nigerian addresses and bank accounts.</div>
+            <a href="https://monetag.com/publishers/register" class="step-link" target="_blank">→ monetag.com/publishers/register</a>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:var(--green);color:var(--green)">2</div>
+          <div class="step-body">
+            <div class="step-title">Add Your Website & Get Zone Code</div>
+            <div class="step-desc">Dashboard → Websites → Add Website → your Vercel URL. Instantly get a script tag. Create these zones:<br>
+            • <b style="color:#fff">Smart Interstitial</b> — full screen ad between actions<br>
+            • <b style="color:#fff">In-Stream Video</b> — video ad (perfect for rewarded LNX)<br>
+            • <b style="color:#fff">Push Notification</b> — earn even when user leaves</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:var(--green);color:var(--green)">3</div>
+          <div class="step-body">
+            <div class="step-title">Get Your API Key</div>
+            <div class="step-desc">Account Settings → API → Generate key. This lets you query earnings, impressions and stats from your Vercel serverless functions.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="border-color:var(--green);color:var(--green)">4</div>
+          <div class="step-body">
+            <div class="step-title">Set Payment Method</div>
+            <div class="step-desc">Add payout: PayPal (preferred), USDT/crypto, WebMoney, Paxum. Crypto is fastest for Nigerian publishers (no bank restrictions).</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-box">
+        <div class="api-box-title"><i class="fas fa-key"></i> Keys You Will Get</div>
+        <div class="api-row"><span class="api-key-name">Zone ID</span><span class="api-none">Websites → Zone → Zone ID number</span></div>
+        <div class="api-row"><span class="api-key-name">API Key</span><span class="api-none">Account Settings → API</span></div>
+        <div class="api-row"><span class="api-key-name">Publisher ID</span><span class="api-none">Top of dashboard</span></div>
+        <div class="api-row"><span class="api-key-name">Vercel env var</span><span class="api-key-val">MONETAG_ZONE_ID</span></div>
+      </div>
+
+      <div class="int-box">
+        <div class="int-title">📋 Monetag In-Stream Video (Rewarded Ad — perfect for LNX)</div>
+        <div class="code-block"><span class="cm">&lt;!-- Monetag Smart Interstitial — add to your pages --&gt;</span>
+<span class="tg">&lt;script</span> <span class="at">src</span>=<span class="st">"https://alwingulla.com/88/tag.min.js"</span>
+        <span class="at">data-zone</span>=<span class="st">"YOUR_ZONE_ID"</span>
+        <span class="at">async</span> <span class="at">data-cfasync</span>=<span class="st">"false"</span><span class="tg">&gt;&lt;/script&gt;</span>
+
+<span class="cm">// Trigger interstitial programmatically for LNX reward:</span>
+<span class="kw">function</span> <span class="fn">showRewardedAd</span>(onComplete) {
+  <span class="cm">// Monetag fires a callback when ad completes</span>
+  <span class="kw">if</span> (window.MonetAd) {
+    window.MonetAd.<span class="fn">showAd</span>({
+      zone: <span class="st">'YOUR_ZONE_ID'</span>,
+      <span class="fn">onComplete</span>: () => {
+        <span class="cm">// Ad watched fully — credit LNX</span>
+        <span class="fn">onComplete</span>(<span class="kw">true</span>);
+      },
+      <span class="fn">onClose</span>: () => <span class="fn">onComplete</span>(<span class="kw">false</span>)
+    });
+  }
+}</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ACTION PLAN -->
+  <div class="section-hdr">
+    <div class="section-icon" style="background:rgba(255,204,51,.1)">⚡</div>
+    <h2>YOUR ACTION PLAN — Do This Today</h2>
+  </div>
+
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)">
+      <div style="background:var(--card);padding:18px 20px">
+        <div style="font-family:var(--mono);font-size:.7rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">⚡ THIS WEEK — Do Right Now</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:9px;font-size:.8rem"><span style="color:var(--green);flex-shrink:0">→</span><span>Sign up for <b style="color:#fff">Adsterra</b> publisher account</span></div>
+          <div style="display:flex;gap:9px;font-size:.8rem"><span style="color:var(--green);flex-shrink:0">→</span><span>Sign up for <b style="color:#fff">Monetag</b> publisher account</span></div>
+          <div style="display:flex;gap:9px;font-size:.8rem"><span style="color:var(--green);flex-shrink:0">→</span><span>Add your Vercel URL to both dashboards</span></div>
+          <div style="display:flex;gap:9px;font-size:.8rem"><span style="color:var(--green);flex-shrink:0">→</span><span>Wait for Adsterra 24-72h approval</span></div>
+          <div style="display:flex;gap:9px;font-size:.8rem"><span style="color:var(--green);flex-shrink:0">→</span><span>Get Zone IDs and save as Vercel env vars</span></div>
+        </div>
+      </div>
+      <div style="background:var(--card);padding:18px 20px">
+        <div style="font-family:var(--mono);font-size:.7rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">📅 NEXT 30 DAYS</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:9px;font-size:.8rem"><span style="color:var(--blue);flex-shrink:0">→</span><span>Sign up for <b style="color:#fff">PropellerAds</b> for push notifications</span></div>
+          <div style="display:flex;gap:9px;font-size:.8rem"><span style="color:var(--blue);flex-shrink:0">→</span><span>Apply for <b style="color:#fff">Media.net</b> (needs more traffic)</span></div>
+          <div style="display:flex;gap:9px;font-size:.8rem"><span style="color:var(--blue);flex-shrink:0">→</span><span>Keep building content for <b style="color:#fff">AdSense</b></span></div>
+          <div style="display:flex;gap:9px;font-size:.8rem"><span style="color:var(--blue);flex-shrink:0">→</span><span>Connect Adsterra to api/ads.js for LNX</span></div>
+          <div style="display:flex;gap:9px;font-size:.8rem"><span style="color:var(--blue);flex-shrink:0">→</span><span>Integrate Monetag rewarded video for daily claim</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERCEL ENV VARS SUMMARY -->
+  <div class="section-hdr">
+    <div class="section-icon" style="background:rgba(11,232,129,.1)">🔑</div>
+    <h2>ALL ENVIRONMENT VARIABLES TO ADD IN VERCEL</h2>
+  </div>
+
+  <div class="api-box" style="margin-bottom:24px">
+    <div class="api-box-title"><i class="fas fa-server"></i> Add These to Vercel Dashboard → Settings → Environment Variables</div>
+    <div class="api-row"><span class="api-key-name">ADSTERRA_KEY</span><span class="api-none">Your Adsterra publisher/API key</span></div>
+    <div class="api-row"><span class="api-key-name">ADSTERRA_ZONE_ID</span><span class="api-none">Zone ID for your main ad unit</span></div>
+    <div class="api-row"><span class="api-key-name">MONETAG_ZONE_ID</span><span class="api-none">Zone ID from Monetag dashboard</span></div>
+    <div class="api-row"><span class="api-key-name">MONETAG_API_KEY</span><span class="api-none">API key from Monetag account settings</span></div>
+    <div class="api-row"><span class="api-key-name">PROPELLER_ZONE_ID</span><span class="api-none">Zone ID from PropellerAds (when ready)</span></div>
+    <div class="api-row"><span class="api-key-name">MEDIANET_CID</span><span class="api-none">Publisher CID from Media.net (when approved)</span></div>
+    <div class="api-row"><span class="api-key-name">OPENAI_API_KEY</span><span class="api-key-val">Already set ✓</span></div>
+    <div class="api-row"><span class="api-key-name">PAYSTACK_SECRET_KEY</span><span class="api-key-val">Already set ✓</span></div>
+    <div class="api-row"><span class="api-key-name">FIREBASE_SERVICE_ACCOUNT</span><span class="api-key-val">Already set ✓</span></div>
+  </div>
+
+  <div class="warn-box" style="margin-bottom:24px">
+    <i class="fas fa-star"></i>
+    <span><b style="color:var(--gold)">Most Important Thing:</b> Your <b style="color:#fff">api/ads.js</b> currently uses in-memory storage (resets on cold start — bug we identified). Once you have Adsterra/Monetag running, move the ad tracking to Firestore and wire the actual network scripts to confirm real ad views before crediting LNX. This makes your LNX economy bulletproof and trustworthy.</span>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>Lenovox AI · Ad Network Integration Guide · 5 Networks Covered</span>
+  <span>Built by MC Tech 🇳🇬</span>
+</div>
+
+</body>
+</html>
