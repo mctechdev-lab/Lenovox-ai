@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229569177818177" crossorigin="anonymous"></script>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>Lenovox</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03030b;--nav-bg:rgba(8,8,22,.97);
+  --blue:#00d2ff;--gold:#ffcc33;--green:#10b981;
+  --border:rgba(255,255,255,.07);--nav-h:64px;
+  --red:#ef4444;--orange:#ff9500;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',sans-serif}
+
+/* ── SHELL ── */
+.shell{display:flex;flex-direction:column;width:100%;position:fixed;inset:0}
+.content-window{flex:1;position:relative;overflow:hidden;min-height:0}
+
+/* ── SECTIONS (iframe panels) ── */
+.section{position:absolute;inset:0;display:none;opacity:0;pointer-events:none;transition:opacity .2s ease}
+.section.active{display:block;opacity:1;pointer-events:all}
+iframe{width:100%;height:100%;border:none;display:block;pointer-events:all;touch-action:auto}
+
+/* ── FULLSCREEN OVERLAY (MeetUp / any section that needs full screen) ── */
+/* When a section is "fullscreen", the bottom nav hides */
+.shell.fullscreen-mode .nav{transform:translateY(100%);pointer-events:none}
+.shell.fullscreen-mode .content-window{height:100vh}
+
+/* ── SKELETON LOADER ── */
+.sk{
+  position:absolute;inset:0;background:var(--bg);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;
+  z-index:10;transition:opacity .32s ease;pointer-events:none
+}
+.sk.done{opacity:0;pointer-events:none;transition:opacity .32s ease}
+.sk-logo{
+  font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;
+  background:linear-gradient(90deg,#fff,var(--blue));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:skP 1.5s ease-in-out infinite
+}
+@keyframes skP{0%,100%{opacity:.4}50%{opacity:1}}
+.sk-rings{position:relative;width:40px;height:40px}
+.sk-rings div{
+  position:absolute;inset:0;border:3px solid transparent;
+  border-radius:50%;animation:skR 1.1s cubic-bezier(.5,0,.5,1) infinite
+}
+.sk-rings div:nth-child(1){border-top-color:var(--blue);animation-delay:-.45s}
+.sk-rings div:nth-child(2){border-top-color:var(--gold);animation-delay:-.3s}
+.sk-rings div:nth-child(3){border-top-color:var(--green);animation-delay:-.15s}
+@keyframes skR{
+  0%{transform:rotateX(35deg) rotateY(-45deg) rotateZ(0)}
+  100%{transform:rotateX(35deg) rotateY(-45deg) rotateZ(360deg)}
+}
+.sk-status{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.22);letter-spacing:.8px;text-transform:uppercase;margin-top:4px}
+
+/* ── NO INTERNET OVERLAY ── */
+.no-net{
+  position:fixed;inset:0;z-index:99998;
+  background:rgba(3,3,11,.96);backdrop-filter:blur(12px);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;text-align:center;padding:28px
+}
+.no-net.show{display:flex}
+.no-net-icon{
+  width:72px;height:72px;border-radius:22px;
+  background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;color:var(--red);margin-bottom:4px
+}
+.no-net-title{font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;color:#fff;margin-bottom:4px}
+.no-net-sub{font-size:.8rem;color:rgba(255,255,255,.4);line-height:1.65;max-width:260px}
+.no-net-retry{
+  display:flex;align-items:center;gap:7px;padding:12px 22px;
+  border:none;border-radius:12px;
+  background:linear-gradient(135deg,var(--blue),#0077b6);
+  color:#fff;font-family:'Nunito',sans-serif;font-size:.86rem;font-weight:800;
+  cursor:pointer;transition:.22s;margin-top:4px
+}
+.no-net-retry:hover{transform:translateY(-2px)}
+.no-net-retry i{font-size:.8rem}
+
+/* ── NETWORK SPEED BADGE ── */
+.net-badge{
+  position:fixed;top:10px;right:10px;z-index:9997;
+  display:flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:999px;
+  font-size:.65rem;font-weight:800;
+  backdrop-filter:blur(10px);
+  transition:all .4s ease;opacity:0;pointer-events:none;
+  border:1px solid
+}
+.net-badge.show{opacity:1}
+.net-badge.fast{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.25);color:#6ee7b7}
+.net-badge.medium{background:rgba(255,204,51,.1);border-color:rgba(255,204,51,.22);color:var(--gold)}
+.net-badge.slow{background:rgba(255,149,0,.1);border-color:rgba(255,149,0,.22);color:var(--orange)}
+.net-badge.offline{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.25);color:#fca5a5}
+.net-badge i{font-size:.6rem}
+
+/* ── BACK BAR (shown for fullscreen sections like MeetUp) ── */
+/* MeetUp opens as full page redirect — no back bar needed in iframe mode */
+/* But for sections that have a back button inside them via navigateTo, this is handled in JS */
+
+/* ── BOTTOM NAV ── */
+.nav{
+  height:var(--nav-h);background:var(--nav-bg);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  display:flex;justify-content:space-around;align-items:center;
+  border-top:1px solid var(--border);padding:0 4px;
+  padding-bottom:env(safe-area-inset-bottom);
+  box-shadow:0 -10px 36px rgba(0,0,0,.55);
+  z-index:9999;flex-shrink:0;
+  transition:transform .3s cubic-bezier(.4,0,.2,1)
+}
+.nav-item{
+  flex:1;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  cursor:pointer;color:rgba(255,255,255,.3);transition:all .32s cubic-bezier(.34,1.56,.64,1);
+  position:relative;gap:3px;-webkit-user-select:none;user-select:none;touch-action:manipulation
+}
+.nav-icon-wrap{
+  width:36px;height:36px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;transition:all .32s cubic-bezier(.34,1.56,.64,1);
+  background:rgba(255,255,255,.04)
+}
+.nav-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.nav-item.active{color:var(--blue)}
+.nav-item.active .nav-icon-wrap{
+  transform:translateY(-6px) scale(1.1);
+  background:rgba(0,210,255,.14);color:var(--blue);
+  box-shadow:0 8px 22px rgba(0,210,255,.22),0 3px 0 rgba(0,210,255,.45)
+}
+.nav-item.center-btn{flex:0 0 64px;margin-top:-18px}
+.nav-item.center-btn .nav-icon-wrap{
+  width:52px;height:52px;border-radius:16px;font-size:21px;
+  background:linear-gradient(145deg,#ff5e5e,#ff2d55);color:#fff;
+  border:3px solid rgba(8,8,22,1);
+  box-shadow:0 8px 18px rgba(255,45,85,.38),0 3px 0 #a80028
+}
+.nav-item.center-btn.active .nav-icon-wrap{transform:translateY(1px) scale(.97)}
+.notif-dot{
+  position:absolute;top:8px;right:50%;margin-right:-18px;
+  width:6px;height:6px;border-radius:50%;background:#ef4444;
+  border:1.5px solid var(--bg);animation:dotB 2s ease-in-out infinite
+}
+@keyframes dotB{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── AUTH GUARD ── */
+#authGuard{
+  position:fixed;inset:0;z-index:99999;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:16px;transition:opacity .45s ease
+}
+.guard-logo{
+  font-family:'Orbitron',monospace;font-size:1.9rem;font-weight:900;
+  background:linear-gradient(90deg,#fff,var(--blue));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  display:flex;align-items:center;gap:10px
+}
+.guard-dot{width:13px;height:13px;border-radius:50%;background:var(--gold);box-shadow:0 0 18px var(--gold);animation:gdot 1.5s ease-in-out infinite}
+@keyframes gdot{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+.guard-rings{position:relative;width:38px;height:38px}
+.guard-rings div{position:absolute;inset:0;border:2.5px solid transparent;border-radius:50%;animation:skR .9s cubic-bezier(.5,0,.5,1) infinite}
+.guard-rings div:nth-child(1){border-top-color:var(--blue);animation-delay:-.4s}
+.guard-rings div:nth-child(2){border-top-color:var(--gold);animation-delay:-.27s}
+.guard-rings div:nth-child(3){border-top-color:var(--green);animation-delay:-.13s}
+.guard-text{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.28);letter-spacing:1px;text-transform:uppercase}
+
+/* ── PLEASE WAIT TOAST ── */
+.wait-bar{
+  position:fixed;bottom:calc(var(--nav-h) + 12px);left:50%;transform:translateX(-50%);
+  z-index:9998;background:rgba(8,8,22,.95);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.1);border-radius:999px;
+  padding:8px 16px;display:flex;align-items:center;gap:8px;
+  font-size:.75rem;font-weight:700;color:rgba(255,255,255,.7);
+  opacity:0;pointer-events:none;transition:opacity .3s ease;white-space:nowrap
+}
+.wait-bar.show{opacity:1}
+.wait-spin{width:12px;height:12px;border:2px solid rgba(255,255,255,.15);border-top-color:var(--blue);border-radius:50%;animation:spin .65s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:380px){.nav-label{display:none}.nav-item.center-btn .nav-icon-wrap{width:48px;height:48px;font-size:19px}}
+</style>
+</head>
+<body>
+
+<!-- AUTH GUARD -->
+<div id="authGuard">
+  <div class="guard-logo"><div class="guard-dot"></div>LENOVOX</div>
+  <div class="guard-rings"><div></div><div></div><div></div></div>
+  <div class="guard-text" id="guardText">Loading Your Universe...</div>
+</div>
+
+<!-- NO INTERNET OVERLAY -->
+<div class="no-net" id="noNet">
+  <div class="no-net-icon"><i class="fas fa-wifi-slash"></i></div>
+  <div class="no-net-title">No Internet</div>
+  <div class="no-net-sub">Check your connection and try again. Lenovox needs internet to work.</div>
+  <button class="no-net-retry" id="retryBtn"><i class="fas fa-rotate-right"></i> Retry</button>
+</div>
+
+<!-- NETWORK SPEED BADGE -->
+<div class="net-badge" id="netBadge">
+  <i class="fas fa-signal" id="netIcon"></i>
+  <span id="netLabel">Checking...</span>
+</div>
+
+<!-- PLEASE WAIT BAR -->
+<div class="wait-bar" id="waitBar">
+  <div class="wait-spin"></div>
+  <span id="waitMsg">Please wait...</span>
+</div>
+
+<!-- APP SHELL -->
+<div class="shell" id="appShell" style="visibility:hidden">
+  <div class="content-window">
+
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard" class="section active">
+      <div class="sk" id="sk-dashboard">
+        <div class="sk-logo">LENOVOX</div>
+        <div class="sk-rings"><div></div><div></div><div></div></div>
+        <div class="sk-status">Loading Dashboard...</div>
+      </div>
+      <iframe src="userdashboard.html" onload="hideLoader('sk-dashboard')" allow="camera;microphone"></iframe>
+    </div>
+
+    <!-- AI -->
+    <div id="sec-ai" class="section">
+      <div class="sk" id="sk-ai">
+        <div class="sk-logo">LENOVOX</div>
+        <div class="sk-rings"><div></div><div></div><div></div></div>
+        <div class="sk-status">Loading AI Assistant...</div>
+      </div>
+      <iframe src="ai-chat-bot-assitant.html" loading="lazy" onload="hideLoader('sk-ai')" allow="camera;microphone"></iframe>
+    </div>
+
+    <!-- GAMING -->
+    <div id="sec-gaming" class="section">
+      <div class="sk" id="sk-gaming">
+        <div class="sk-logo">LENOVOX</div>
+        <div class="sk-rings"><div></div><div></div><div></div></div>
+        <div class="sk-status">Loading Games...</div>
+      </div>
+      <iframe src="gaming-section.html" loading="lazy" onload="hideLoader('sk-gaming')"></iframe>
+    </div>
+
+    <!-- MEETUP — fullscreen redirect, no iframe tabs on top -->
+    <div id="sec-meetup" class="section">
+      <div class="sk" id="sk-meetup">
+        <div class="sk-logo">LENOVOX</div>
+        <div class="sk-rings"><div></div><div></div><div></div></div>
+        <div class="sk-status">Loading MeetUp...</div>
+      </div>
+      <iframe src="meetup.html" loading="lazy" onload="hideLoader('sk-meetup')" allow="camera;microphone"></iframe>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="sec-settings" class="section">
+      <div class="sk" id="sk-settings">
+        <div class="sk-logo">LENOVOX</div>
+        <div class="sk-rings"><div></div><div></div><div></div></div>
+        <div class="sk-status">Loading Settings...</div>
+      </div>
+      <iframe src="lenovox-settings.html" loading="lazy" onload="hideLoader('sk-settings')"></iframe>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV — hidden when MeetUp is active -->
+  <nav class="nav" id="bottomNav">
+    <div class="nav-item active" data-sec="dashboard">
+      <div class="nav-icon-wrap"><i class="fas fa-house"></i></div>
+      <span class="nav-label">Home</span>
+    </div>
+    <div class="nav-item" data-sec="ai">
+      <div class="nav-icon-wrap"><i class="fas fa-robot"></i></div>
+      <span class="nav-label">AI</span>
+    </div>
+    <div class="nav-item center-btn" data-sec="gaming">
+      <div class="nav-icon-wrap"><i class="fas fa-gamepad"></i></div>
+    </div>
+    <div class="nav-item" data-sec="meetup">
+      <div class="nav-icon-wrap"><i class="fas fa-earth-africa"></i></div>
+      <span class="nav-label">MeetUp</span>
+    </div>
+    <div class="nav-item" data-sec="settings">
+      <div class="nav-icon-wrap"><i class="fas fa-sliders"></i></div>
+      <span class="nav-label">More</span>
+    </div>
+  </nav>
+</div>
+
+<script type="module">
+import { watchAuth } from './auth.js';
+
+// ── STATE ──────────────────────────────────────────────────────
+const guard = document.getElementById('authGuard');
+const shell = document.getElementById('appShell');
+const noNet = document.getElementById('noNet');
+const netBadge = document.getElementById('netBadge');
+const waitBar = document.getElementById('waitBar');
+const bottomNav = document.getElementById('bottomNav');
+
+// Navigation history stack — for back button
+let _navHistory = ['dashboard'];
+let _currentSection = 'dashboard';
+// Sections that hide the bottom nav when active
+const FULLSCREEN_SECTIONS = ['meetup'];
+// Track which iframes have been loaded already
+const _loaded = new Set();
+
+// ── AUTH ──────────────────────────────────────────────────────
+watchAuth(user => {
+  if (!user) { window.location.replace('login'); return; }
+  document.getElementById('guardText').textContent = 'Welcome back!';
+  setTimeout(() => {
+    guard.style.opacity = '0';
+    setTimeout(() => {
+      guard.style.display = 'none';
+      shell.style.visibility = 'visible';
+    }, 450);
+  }, 400);
+});
+
+// ── HIDE SKELETON ──────────────────────────────────────────────
+window.hideLoader = id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('done');
+  // After transition remove from DOM flow
+  setTimeout(() => { el.style.display = 'none'; }, 400);
+};
+
+// ── NETWORK MONITORING ────────────────────────────────────────
+function getConnectionInfo() {
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  return conn || null;
+}
+
+function updateNetBadge(type, label, icon) {
+  netBadge.className = 'net-badge show ' + type;
+  document.getElementById('netIcon').className = 'fas ' + icon;
+  document.getElementById('netLabel').textContent = label;
+  // Auto hide after 4 seconds unless offline
+  if (type !== 'offline') {
+    clearTimeout(window._netHideTimer);
+    window._netHideTimer = setTimeout(() => netBadge.classList.remove('show'), 4000);
+  }
+}
+
+function checkNetwork() {
+  if (!navigator.onLine) {
+    updateNetBadge('offline', 'No Internet', 'fa-wifi-slash');
+    noNet.classList.add('show');
+    return;
+  }
+  noNet.classList.remove('show');
+  const conn = getConnectionInfo();
+  if (conn) {
+    const type = conn.effectiveType; // 4g, 3g, 2g, slow-2g
+    if (type === '4g') updateNetBadge('fast', '4G — Fast', 'fa-signal');
+    else if (type === '3g') updateNetBadge('medium', '3G — Medium', 'fa-signal');
+    else if (type === '2g' || type === 'slow-2g') updateNetBadge('slow', 'Slow Network', 'fa-signal-weak');
+    else updateNetBadge('fast', 'Connected', 'fa-signal');
+  }
+}
+
+window.addEventListener('online', () => { checkNetwork(); noNet.classList.remove('show'); });
+window.addEventListener('offline', () => { updateNetBadge('offline', 'No Internet', 'fa-wifi-slash'); noNet.classList.add('show'); });
+const conn = getConnectionInfo();
+if (conn) conn.addEventListener('change', checkNetwork);
+// Initial check after short delay
+setTimeout(checkNetwork, 1200);
+
+// RETRY button
+document.getElementById('retryBtn').addEventListener('click', () => {
+  if (navigator.onLine) { noNet.classList.remove('show'); checkNetwork(); }
+  else { document.getElementById('retryBtn').innerHTML = '<i class="fas fa-rotate-right"></i> Still offline...'; setTimeout(() => { document.getElementById('retryBtn').innerHTML = '<i class="fas fa-rotate-right"></i> Retry'; }, 2000); }
+});
+
+// ── PLEASE WAIT BAR ────────────────────────────────────────────
+function showWait(msg) {
+  document.getElementById('waitMsg').textContent = msg || 'Please wait...';
+  waitBar.classList.add('show');
+}
+function hideWait() {
+  waitBar.classList.remove('show');
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────
+window.navigateTo = (name, opts = {}) => {
+  if (!navigator.onLine) { showWait('No internet. Please check your connection.'); setTimeout(hideWait, 2500); return; }
+  if (name === _currentSection && !opts.force) return;
+
+  // Show please wait for sections not yet loaded
+  const sectionEl = document.getElementById('sec-' + name);
+  if (!sectionEl) return;
+  const wasLoaded = _loaded.has(name);
+  if (!wasLoaded) { showWait('Loading ' + name.charAt(0).toUpperCase() + name.slice(1) + '...'); }
+
+  // Push to history (unless going back)
+  if (!opts.isBack) {
+    if (_navHistory[_navHistory.length - 1] !== name) {
+      _navHistory.push(name);
+    }
+  }
+  _currentSection = name;
+  _loaded.add(name);
+
+  // Update nav item active states
+  document.querySelectorAll('.nav-item').forEach(n =>
+    n.classList.toggle('active', n.dataset.sec === name)
+  );
+
+  // Handle fullscreen sections — hide bottom nav
+  if (FULLSCREEN_SECTIONS.includes(name)) {
+    bottomNav.style.transform = 'translateY(100%)';
+    bottomNav.style.pointerEvents = 'none';
+    // Give the iframe full height
+    sectionEl.style.height = '100%';
+  } else {
+    bottomNav.style.transform = '';
+    bottomNav.style.pointerEvents = '';
+  }
+
+  // Switch sections
+  document.querySelectorAll('.section').forEach(s => {
+    const hit = s.id === 'sec-' + name;
+    if (hit) {
+      s.style.display = 'block';
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        s.classList.add('active');
+        if (!wasLoaded) setTimeout(hideWait, 800);
+      }));
+    } else {
+      s.classList.remove('active');
+      setTimeout(() => { if (!s.classList.contains('active')) s.style.display = 'none'; }, 220);
+    }
+  });
+
+  pushTheme();
+  if (navigator.vibrate) navigator.vibrate(8);
+};
+
+// ── BACK BUTTON LOGIC ──────────────────────────────────────────
+// Called by iframes that have their own back button — they call window.parent.goBack()
+window.goBack = () => {
+  // Remove current from history
+  if (_navHistory.length > 1) {
+    _navHistory.pop();
+    const prev = _navHistory[_navHistory.length - 1];
+    navigateTo(prev, { isBack: true });
+  } else {
+    // Nothing to go back to — already at root
+    navigateTo('dashboard', { isBack: true });
+  }
+};
+
+// Handle Android hardware back button (via popstate)
+// We push a state on every navigate so the back button fires popstate
+history.pushState({ section: 'dashboard' }, '', '');
+window.addEventListener('popstate', (e) => {
+  if (_navHistory.length > 1) {
+    _navHistory.pop();
+    const prev = _navHistory[_navHistory.length - 1];
+    // Push new state so back can fire again
+    history.pushState({ section: prev }, '', '');
+    // Switch to prev section WITHOUT pushing to history
+    _currentSection = prev;
+    document.querySelectorAll('.nav-item').forEach(n =>
+      n.classList.toggle('active', n.dataset.sec === prev)
+    );
+    if (FULLSCREEN_SECTIONS.includes(prev)) {
+      bottomNav.style.transform = 'translateY(100%)';
+      bottomNav.style.pointerEvents = 'none';
+    } else {
+      bottomNav.style.transform = '';
+      bottomNav.style.pointerEvents = '';
+    }
+    document.querySelectorAll('.section').forEach(s => {
+      const hit = s.id === 'sec-' + prev;
+      if (hit) { s.style.display = 'block'; requestAnimationFrame(() => requestAnimationFrame(() => s.classList.add('active'))); }
+      else { s.classList.remove('active'); setTimeout(() => { if (!s.classList.contains('active')) s.style.display = 'none'; }, 220); }
+    });
+    pushTheme();
+  } else {
+    // At root — let native back handle (exits app or goes to previous page)
+  }
+});
+
+// ── NAV ITEM CLICK ─────────────────────────────────────────────
+document.querySelectorAll('.nav-item[data-sec]').forEach(item => {
+  item.addEventListener('click', () => navigateTo(item.dataset.sec));
+});
+
+// ── THEME ──────────────────────────────────────────────────────
+function pushTheme() {
+  const t = localStorage.getItem('lenovox_theme') || 'dark';
+  const attr = t === 'light' ? 'light' : t === 'dim' ? 'dim' : '';
+  document.querySelectorAll('iframe').forEach(f => {
+    try { f.contentDocument?.documentElement?.setAttribute('data-theme', attr); } catch {}
+  });
+}
+window.addEventListener('storage', e => { if (e.key === 'lenovox_theme') pushTheme(); });
+
+// ── FIX HEIGHT ─────────────────────────────────────────────────
+const fixH = () => {
+  const h = window.innerHeight;
+  shell.style.height = h + 'px';
+  document.documentElement.style.setProperty('--vh', (h * 0.01) + 'px');
+};
+window.addEventListener('resize', fixH);
+window.addEventListener('orientationchange', () => setTimeout(fixH, 300));
+fixH();
+
+// ── INIT ───────────────────────────────────────────────────────
+_loaded.add('dashboard');
+const dashEl = document.getElementById('sec-dashboard');
+dashEl.style.display = 'block';
+</script>
+</body>
+</html>
