@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229569177818177" crossorigin="anonymous"></script>
+
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
@@ -241,7 +241,7 @@ window.doPayment=()=>{
   const total=lnx+bonus;
   const amountKobo=naira*100;
 
-  const PAYSTACK_PUBLIC_KEY='pk_test_REPLACE_WITH_YOUR_PAYSTACK_PUBLIC_KEY';
+  const PAYSTACK_PUBLIC_KEY='pk_live_a3d8865c5d9d8c6416bedee8fc0bbdd3b239e55f';
 
   const handler=PaystackPop.setup({
     key:PAYSTACK_PUBLIC_KEY,
@@ -249,6 +249,7 @@ window.doPayment=()=>{
     amount:amountKobo,
     currency:'NGN',
     ref:`lnx_topup_${_uid}_${Date.now()}`,
+    callback_url:'https://mc-store.vercel.app/payment-success',
     metadata:{uid:_uid,type:'lnx_topup',lnxAmount:total,nairaAmount:naira,custom_fields:[{display_name:'LNX Amount',variable_name:'lnx_amount',value:total},{display_name:'User ID',variable_name:'uid',value:_uid}]},
     onSuccess:async(transaction)=>{
       // Credit LNX immediately on success

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229569177818177" crossorigin="anonymous"></script>
+
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
@@ -277,7 +277,7 @@ window.pay=async(plan,amountKobo)=>{
   if(!_uid||!_email){toast('Please sign in first.','error');return;}
   if(_currentPlan===plan){toast(`You're already on the ${planNames[plan]}!`,'info');return;}
 
-  const PAYSTACK_PUBLIC_KEY='pk_test_REPLACE_WITH_YOUR_PAYSTACK_PUBLIC_KEY';
+  const PAYSTACK_PUBLIC_KEY='pk_live_a3d8865c5d9d8c6416bedee8fc0bbdd3b239e55f';
 
   const handler=PaystackPop.setup({
     key: PAYSTACK_PUBLIC_KEY,
@@ -285,6 +285,7 @@ window.pay=async(plan,amountKobo)=>{
     amount: amountKobo,
     currency: 'NGN',
     ref: `lnx_${plan}_${_uid}_${Date.now()}`,
+    callback_url: 'https://mc-store.vercel.app/payment-success',
     metadata:{ uid:_uid, plan, custom_fields:[{display_name:'User ID',variable_name:'uid',value:_uid},{display_name:'Plan',variable_name:'plan',value:plan}]},
     onSuccess(transaction){
       toast(`Payment successful! Activating ${planNames[plan]}...`,'success');
