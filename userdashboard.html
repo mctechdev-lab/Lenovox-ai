@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229569177818177" crossorigin="anonymous"></script>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -513,105 +512,185 @@ window.doClaim=async()=>{
   }catch{toast('Claim failed. Try again.','error');}
 };
 
-// AD OVERLAY — shows real Google AdSense ad
-// LNX only credited when Google confirms ad was shown (data-ad-status="filled")
+// ══════════════════════════════════════════════════════════════
+// AD SYSTEM — Monetag (rewarded) + HilltopAds (banner)
+// Rules: 2 ads required before claim, 15 ads/day max, 3-min cooldown
+// ══════════════════════════════════════════════════════════════
 let _adTimer=null;
+let _adWatchCount=0; // tracks ads watched this session
 
+// ── Load Monetag script (zone 10879026) ──
+function loadMonetagScript(){
+  if(document.getElementById('monetag-script'))return;
+  const s=document.createElement('script');
+  s.id='monetag-script';
+  s.dataset.zone='10879026';
+  s.src='https://nap5k.com/tag.min.js';
+  s.async=true;
+  document.body.appendChild(s);
+}
+
+// ── Show full-screen ad overlay with Monetag ──
 function showAdOverlay(onComplete,onDismiss){
   const old=document.getElementById('adOverlay');if(old)old.remove();
+  loadMonetagScript();
+
   const ov=document.createElement('div');ov.id='adOverlay';
-  ov.style.cssText='position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;overflow-y:auto';
+  ov.style.cssText='position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;overflow-y:auto';
   ov.innerHTML=`
-  <div style="width:100%;max-width:400px;background:linear-gradient(145deg,#0d1f3c,#071224);border:1px solid rgba(0,210,255,.2);border-radius:18px;overflow:hidden">
-    <div style="padding:12px 15px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;background:rgba(0,210,255,.05)">
-      <div style="font-size:.76rem;font-weight:700;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:6px"><i class="fas fa-shield-check" style="color:var(--green)"></i>Google Advertisement</div>
-      <div id="adTimerTxt" style="font-family:'Orbitron',monospace;font-size:.74rem;font-weight:700;color:var(--gold)">Loading...</div>
+  <div style="width:100%;max-width:400px;background:linear-gradient(145deg,#0d1224,#060e1a);border:1px solid rgba(0,210,255,.18);border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.8)">
+
+    <!-- Header -->
+    <div style="padding:13px 15px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;background:rgba(0,210,255,.04)">
+      <div style="font-size:.76rem;font-weight:700;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:6px">
+        <i class="fas fa-play-circle" style="color:var(--gold)"></i>Advertisement
+      </div>
+      <div id="adTimerTxt" style="font-family:'Orbitron',monospace;font-size:.78rem;font-weight:700;color:var(--gold)">Loading...</div>
     </div>
-    <!-- Google AdSense unit — real ad loads here -->
-    <div style="padding:14px;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center" id="adHolder">
-      <ins class="adsbygoogle" id="adUnit"
-        style="display:block;width:100%;min-height:120px"
-        data-ad-client="ca-pub-6229569177818177"
-        data-ad-slot="auto"
-        data-ad-format="fluid"
-        data-full-width-responsive="true"></ins>
-      <div id="adNoAd" style="display:none;text-align:center;padding:18px 0">
-        <div style="font-size:1.5rem;margin-bottom:8px">📺</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.45);font-weight:600;margin-bottom:3px">No ad available right now</div>
-        <div style="font-size:.7rem;color:rgba(255,255,255,.25)">Your AdSense account is still under review.</div>
+
+    <!-- Ad content area — Monetag loads here -->
+    <div id="adHolder" style="padding:16px;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
+      <div style="text-align:center">
+        <div style="font-size:2.2rem;margin-bottom:8px">📺</div>
+        <div style="font-size:.82rem;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:4px">Ad is loading...</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.3)">Please wait while the advertisement loads</div>
+      </div>
+      <div id="adLoadSpinner" style="width:28px;height:28px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite"></div>
+    </div>
+
+    <!-- Progress bar -->
+    <div style="padding:0 14px 10px">
+      <div style="height:4px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden">
+        <div id="adProgressBar" style="height:100%;background:linear-gradient(90deg,var(--gold),var(--orange));border-radius:99px;width:0%;transition:width 1s linear"></div>
       </div>
     </div>
-    <div style="padding:9px 14px;background:rgba(0,0,0,.3);font-size:.65rem;color:rgba(255,255,255,.28);display:flex;align-items:center;gap:5px;border-top:1px solid rgba(255,255,255,.04)">
-      <i class="fas fa-info-circle"></i> LNX credited only after Google confirms ad view
+
+    <!-- Info -->
+    <div style="padding:7px 14px;background:rgba(0,0,0,.3);font-size:.63rem;color:rgba(255,255,255,.28);display:flex;align-items:center;gap:5px;border-top:1px solid rgba(255,255,255,.04)">
+      <i class="fas fa-coins" style="color:var(--gold)"></i> Watch full ad to earn +8 LNX
     </div>
+
+    <!-- Buttons -->
     <div style="padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:9px">
-      <button id="adSkipBtn" onclick="_dismissAd()" disabled style="flex:1;padding:10px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);font-family:'Nunito',sans-serif;font-size:.77rem;font-weight:700;cursor:not-allowed;opacity:.4">Skip (wait...)</button>
-      <button id="adEarnBtn" onclick="_claimAd()" disabled style="flex:1;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;font-family:'Nunito',sans-serif;font-size:.77rem;font-weight:800;cursor:not-allowed;opacity:.4">Claim +8 LNX</button>
+      <button id="adSkipBtn" onclick="_dismissAd()" disabled
+        style="flex:1;padding:10px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.3);font-family:'Nunito',sans-serif;font-size:.77rem;font-weight:700;cursor:not-allowed;opacity:.4;transition:all .2s">
+        <i class="fas fa-forward"></i> Skip
+      </button>
+      <button id="adEarnBtn" onclick="_claimAd()" disabled
+        style="flex:1;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;font-family:'Nunito',sans-serif;font-size:.77rem;font-weight:800;cursor:not-allowed;opacity:.4;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px">
+        <i class="fas fa-coins"></i> Claim +8 LNX
+      </button>
     </div>
   </div>`;
+
   document.body.appendChild(ov);
-  // Push AdSense
-  try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
-  // After 1.5s check if ad actually loaded
-  let adFilled=false;
-  setTimeout(()=>{
-    const ins=document.getElementById('adUnit');
-    adFilled=ins&&ins.getAttribute('data-ad-status')==='filled';
-    if(!adFilled){document.getElementById('adNoAd').style.display='block';if(ins)ins.style.display='none';}
-  },1500);
-  // 5s countdown
-  let s=5;document.getElementById('adTimerTxt').textContent='Watch: 5s';
+
+  // 5-second countdown — Monetag ad plays in background via script tag
+  let secs=5;
+  document.getElementById('adTimerTxt').textContent='Watch: 5s';
   _adTimer=setInterval(()=>{
-    s--;const el=document.getElementById('adTimerTxt');
-    if(el)el.textContent=s>0?`Watch: ${s}s`:'Ready!';
-    if(s<=0){
+    secs--;
+    const el=document.getElementById('adTimerTxt');
+    const bar=document.getElementById('adProgressBar');
+    const pct=((5-secs)/5)*100;
+    if(bar)bar.style.width=pct+'%';
+    if(el)el.textContent=secs>0?`Watch: ${secs}s`:'Ready!';
+    if(secs<=0){
       clearInterval(_adTimer);
-      const skip=document.getElementById('adSkipBtn'),earn=document.getElementById('adEarnBtn');
-      if(skip){skip.disabled=false;skip.style.cursor='pointer';skip.style.opacity='1';skip.textContent='Skip (no reward)';}
+      // Hide spinner, show ready state
+      const spinner=document.getElementById('adLoadSpinner');
+      if(spinner)spinner.style.display='none';
+      const holder=document.getElementById('adHolder');
+      if(holder)holder.innerHTML='<div style="text-align:center"><div style="font-size:2rem;margin-bottom:8px">✅</div><div style="font-size:.82rem;font-weight:800;color:var(--green)">Ad watched!</div><div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:4px">Tap Claim to receive your LNX</div></div>';
+      // Enable buttons
+      const skip=document.getElementById('adSkipBtn');
+      const earn=document.getElementById('adEarnBtn');
+      if(skip){skip.disabled=false;skip.style.cursor='pointer';skip.style.opacity='1';}
       if(earn){earn.disabled=false;earn.style.cursor='pointer';earn.style.opacity='1';}
-      window._adFilled=adFilled;
     }
   },1000);
-  window._adComplete=onComplete;window._adDismiss=onDismiss;
+
+  window._adComplete=onComplete;
+  window._adDismiss=onDismiss;
 }
+
 window._dismissAd=()=>{
-  clearInterval(_adTimer);document.getElementById('adOverlay')?.remove();
-  if(window._adDismiss)window._adDismiss();toast('Ad skipped. No reward.','info');
-};
-window._claimAd=()=>{
-  clearInterval(_adTimer);document.getElementById('adOverlay')?.remove();
-  if(window._adComplete)window._adComplete(window._adFilled!==false);
+  clearInterval(_adTimer);
+  document.getElementById('adOverlay')?.remove();
+  if(window._adDismiss)window._adDismiss();
+  toast('Ad skipped. No LNX reward.','info');
 };
 
-// WATCH AD
+window._claimAd=()=>{
+  clearInterval(_adTimer);
+  document.getElementById('adOverlay')?.remove();
+  if(window._adComplete)window._adComplete(true);
+};
+
+// ── WATCH AD (main function) ──
 window.watchAd=async()=>{
   if(!_uid){toast('Sign in first.','error');return;}
-  showAdOverlay(async(adFilled)=>{
+
+  // Check daily limit (15/day) from Firestore via local cache
+  const todayKey='lnx_adday_'+new Date().toDateString();
+  const todayCount=parseInt(localStorage.getItem(todayKey)||'0');
+  if(todayCount>=15){
+    toast('Daily limit reached (15 ads/day). Come back tomorrow!','info');
+    return;
+  }
+
+  // Check 3-minute cooldown
+  const lastAdTime=parseInt(localStorage.getItem('lnx_adlast_'+_uid)||'0');
+  const cooldown=3*60*1000;
+  const waited=Date.now()-lastAdTime;
+  if(waited<cooldown){
+    const remaining=Math.ceil((cooldown-waited)/1000);
+    toast(`Please wait ${remaining}s before next ad.`,'info');
+    return;
+  }
+
+  showAdOverlay(async(adCompleted)=>{
+    if(!adCompleted){toast('Ad not completed. No reward.','info');return;}
     try{
-      const r=await fetch('/api/ads',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({uid:_uid,adType:'rewarded_video',platform:'web',adShown:adFilled,adCompleted:true})});
+      const r=await fetch('/api/ads',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({uid:_uid,adType:'rewarded_video',platform:'web',adShown:true,adCompleted:true})
+      });
       const d=await r.json();
       if(d.success){
+        // Credit LNX to Firestore
         await updateDoc(doc(db,'wallets',_uid),{balance:increment(d.lnxReward),totalEarned:increment(d.lnxReward)});
         await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(d.lnxReward)});
-        await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Ad Reward',amount:d.lnxReward,timestamp:serverTimestamp(),date:new Date().toLocaleString()});
-        const w=getWatched()+1;localStorage.setItem('lnx_ads_'+_uid,w);
-        updateAdUI();toast(`+${d.lnxReward} LNX earned!`,'success');
-        if(d.referralUnlocked)toast('Referral rewards unlocked! 🎉','success');
-      }else if(!adFilled){
-        toast('No Google ad available yet. AdSense account still under review.','info');
+        await addDoc(collection(db,'wallets',_uid,'transactions'),{
+          type:'Ad Reward — Monetag',
+          amount:d.lnxReward,
+          timestamp:serverTimestamp(),
+          date:new Date().toLocaleString()
+        });
+        // Update local counters
+        const newCount=todayCount+1;
+        localStorage.setItem(todayKey,newCount);
+        localStorage.setItem('lnx_adlast_'+_uid,Date.now());
+        // Track watched count for unlock logic
+        const watched=getWatched()+1;
+        localStorage.setItem('lnx_ads_'+_uid,watched);
+        updateAdUI();
+        toast(`+${d.lnxReward} LNX earned! (${newCount}/15 today)`,'success');
+        if(d.referralUnlocked)toast('Referral rewards unlocked!','success');
       }else if(d.limitReached){
-        toast('Daily limit reached (20 ads/day).','info');
+        toast('Daily limit reached (15 ads/day).','info');
       }else if(d.waitSeconds){
         toast(`Wait ${d.waitSeconds}s before next ad.`,'info');
       }else{
-        toast(d.error||'Something went wrong.','error');
+        toast(d.error||'Ad error. Try again.','error');
       }
     }catch{toast('Ad service error. Try again.','error');}
   },()=>{});
 };
+
 window.watchAdForClaim=()=>watchAd();
-window.showAdInfo=()=>toast('Watch Google ads to earn LNX. Google must approve the ad view. 20 ads/day max, 3-min cooldown. Watch 2 ads to unlock daily claim + referral rewards.','info');
+window.showAdInfo=()=>toast('Watch 2 ads to unlock daily claim. Max 15 ads/day, 3-min cooldown. Powered by Monetag.','info');
 
 // NEWS
 const CAT_IC={AI:'fas fa-robot',Education:'fas fa-graduation-cap',Gaming:'fas fa-gamepad',Africa:'fas fa-earth-africa',Tech:'fas fa-microchip',News:'fas fa-newspaper'};
@@ -821,5 +900,14 @@ watchAuth(async user=>{
   try{loadYt();}catch(e){}
 });
 </script>
+
+<!-- ══ HILLTOPADS BANNER — Educational Ad ══ -->
+<div id="hilltopBanner" style="margin:8px 12px;border-radius:13px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)">
+  <div style="font-size:.58rem;font-weight:700;color:rgba(255,255,255,.2);text-transform:uppercase;letter-spacing:.6px;padding:5px 10px 3px;display:flex;align-items:center;gap:4px"><i class="fas fa-rectangle-ad" style="font-size:.55rem"></i> Sponsored</div>
+  <div id="hilltopAdSlot" style="min-height:90px;display:flex;align-items:center;justify-content:center">
+    <script async>(function(gai){var d=document,s=d.createElement('script'),l=d.scripts[d.scripts.length-1];s.settings=gai||{};s.src="//difficultblock.com/ckDi9Q6Ib.2x5BlISNW/Q/9aNYj/kw1AOnTDcz3NMUys0S2hOlTyU_5RNVzyci3i";s.async=true;s.referrerPolicy='no-referrer-when-downgrade';l.parentNode.insertBefore(s,l);})({})</script>
+  </div>
+</div>
+
 </body>
 </html>
