@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Lenovox Classroom</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#03030b;--card:rgba(11,11,30,.95);--card2:rgba(16,16,42,.98);
+  --blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--orange:#ff9500;
+  --purple:#8b5cf6;--pink:#ff3d70;--red:#ef4444;--indigo:#6366f1;
+  --border:rgba(255,255,255,.07);--text:#e8eaf6;--muted:#8892a4;
+}
+[data-theme="light"]{--bg:#f0f4f8;--card:rgba(255,255,255,.97);--card2:#fff;--border:rgba(0,0,0,.09);--text:#1e293b;--muted:#64748b}
+[data-theme="dim"]{--bg:#0f1117;--card:rgba(20,22,36,.97);--card2:rgba(26,28,44,.99);--border:rgba(255,255,255,.08);--text:#d4d8e8;--muted:#7a8499}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+button,a,[onclick]{touch-action:manipulation;cursor:pointer}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+.shell{display:flex;flex-direction:column;height:100vh;max-width:640px;margin:0 auto}
+.hdr{display:flex;align-items:center;gap:9px;padding:11px 13px 10px;border-bottom:1px solid var(--border);background:var(--card);backdrop-filter:blur(20px);flex-shrink:0}
+.back-btn{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:.18s}
+.back-btn i{color:var(--muted);font-size:.8rem}
+.back-btn:hover i{color:var(--blue)}
+.hdr-title{font-family:'Orbitron',monospace;font-size:.88rem;font-weight:900;color:var(--text);flex:1}
+.bal-pill{display:flex;align-items:center;gap:4px;background:rgba(255,204,51,.08);border:1px solid rgba(255,204,51,.18);border-radius:999px;padding:4px 10px;cursor:pointer}
+.bal-pill i{color:var(--gold);font-size:.65rem}
+.bal-pill span{font-size:.72rem;font-weight:800;color:var(--gold);font-family:'Orbitron',monospace}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+
+/* ── SCREENS ── */
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden}
+.screen.active{display:flex}
+
+/* ── HOME SCREEN ── */
+.home-hero{padding:18px 14px 12px;background:var(--card);border-bottom:1px solid var(--border)}
+.hero-title{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:4px}
+.hero-sub{font-size:.78rem;color:var(--muted);line-height:1.6;max-width:320px}
+.exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px}
+.exam-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.exam-card:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,210,255,.1)}
+.exam-card:active{transform:scale(.97)}
+.ec-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:9px}
+.ec-name{font-family:'Orbitron',monospace;font-size:.72rem;font-weight:900;color:var(--text);margin-bottom:2px}
+.ec-desc{font-size:.64rem;color:var(--muted);line-height:1.4}
+.ec-badge{position:absolute;top:9px;right:9px;padding:2px 7px;border-radius:5px;font-size:.58rem;font-weight:800}
+
+/* ── SUBJECT LIST ── */
+.subj-hdr{padding:14px;border-bottom:1px solid var(--border);background:var(--card)}
+.subj-exam-name{font-family:'Orbitron',monospace;font-size:.82rem;font-weight:900;color:var(--text);margin-bottom:2px}
+.subj-exam-desc{font-size:.71rem;color:var(--muted)}
+.subj-list{display:flex;flex-direction:column;gap:0}
+.subj-item{display:flex;align-items:center;gap:11px;padding:13px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:.16s}
+.subj-item:hover{background:rgba(255,255,255,.03)}
+.subj-item:active{background:rgba(255,255,255,.06)}
+.si-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:.92rem;flex-shrink:0}
+.si-name{font-size:.84rem;font-weight:800;color:var(--text);flex:1}
+.si-topics{font-size:.63rem;color:var(--muted);margin-top:1px}
+.si-arrow{color:var(--muted);font-size:.72rem}
+
+/* ── TOPIC LIST ── */
+.topic-subj-hdr{padding:12px 14px;border-bottom:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:space-between}
+.tsh-name{font-weight:800;font-size:.88rem;color:var(--text)}
+.tsh-exam{font-size:.65rem;color:var(--muted);display:flex;align-items:center;gap:4px;margin-top:1px}
+.topic-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s}
+.topic-item:hover{background:rgba(255,255,255,.03)}
+.topic-item:active{background:rgba(255,255,255,.06)}
+.ti-num{width:30px;height:30px;border-radius:8px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:var(--muted);flex-shrink:0;font-family:'Orbitron',monospace}
+.ti-info{flex:1}
+.ti-name{font-size:.82rem;font-weight:700;color:var(--text)}
+.ti-sub{font-size:.63rem;color:var(--muted);margin-top:1px}
+.ti-status{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ti-status.done{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3)}
+.ti-status.done i{color:var(--green);font-size:.6rem}
+.ti-status.lock{background:rgba(255,255,255,.04);border:1px solid var(--border)}
+.ti-status.lock i{color:var(--muted);font-size:.6rem}
+.load-more-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:14px;cursor:pointer;font-size:.78rem;font-weight:700;color:var(--blue);border-top:1px solid var(--border);background:rgba(0,210,255,.03);transition:.16s}
+.load-more-btn:hover{background:rgba(0,210,255,.07)}
+.lmb-spin{width:12px;height:12px;border:2px solid rgba(0,210,255,.2);border-top-color:var(--blue);border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── LESSON SCREEN ── */
+.lesson-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0}
+.ltab{flex:1;padding:10px 8px;border:none;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;transition:.16s;position:relative}
+.ltab.active{color:var(--text)}
+.ltab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2.5px;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:2px 2px 0 0}
+.lesson-nav{display:flex;gap:8px;padding:10px 13px;border-top:1px solid var(--border);background:var(--card);flex-shrink:0}
+.ln-btn{flex:1;padding:10px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,.04);color:var(--text);font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:.18s;display:flex;align-items:center;justify-content:center;gap:6px}
+.ln-btn:hover{background:rgba(255,255,255,.08)}
+.ln-btn.primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border-color:transparent;box-shadow:0 3px 12px rgba(0,210,255,.2)}
+.ln-btn.primary:hover{transform:translateY(-1px)}
+.ln-btn:disabled{opacity:.3;cursor:not-allowed}
+
+/* Notes content */
+.notes-content{padding:14px;line-height:1.8;font-size:.86rem;color:var(--text)}
+.notes-content h1,.notes-content h2,.notes-content h3{font-weight:800;color:var(--text);margin:14px 0 6px;line-height:1.3}
+.notes-content h1{font-size:1rem}.notes-content h2{font-size:.92rem}.notes-content h3{font-size:.86rem}
+.notes-content p{margin-bottom:10px}
+.notes-content ul,.notes-content ol{padding-left:18px;margin-bottom:10px}
+.notes-content li{margin-bottom:5px}
+.notes-content strong{font-weight:800;color:var(--blue)}
+.notes-content em{color:var(--gold)}
+.notes-content .note-img{width:100%;border-radius:10px;margin:10px 0;border:1px solid var(--border)}
+.definition-box{background:rgba(0,210,255,.06);border:1px solid rgba(0,210,255,.18);border-radius:11px;padding:12px 14px;margin:10px 0}
+.def-label{font-size:.65rem;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.def-label i{font-size:.62rem}
+.example-box{background:rgba(255,204,51,.05);border:1px solid rgba(255,204,51,.15);border-radius:11px;padding:12px 14px;margin:10px 0}
+.ex-label{font-size:.65rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.formula-box{background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.2);border-radius:11px;padding:12px 14px;margin:10px 0;text-align:center}
+.formula-label{font-size:.65rem;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;text-align:left}
+.take-test-card{margin:14px;background:linear-gradient(135deg,rgba(0,210,255,.08),rgba(139,92,246,.06));border:1px solid rgba(0,210,255,.2);border-radius:13px;padding:13px 14px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:.2s}
+.take-test-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,210,255,.1)}
+.ttc-icon{width:42px;height:42px;border-radius:12px;background:rgba(0,210,255,.12);border:1px solid rgba(0,210,255,.22);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.ttc-icon i{color:var(--blue)}
+.ttc-title{font-size:.84rem;font-weight:800;color:var(--text);margin-bottom:2px}
+.ttc-sub{font-size:.68rem;color:var(--muted)}
+.ttc-arrow{margin-left:auto;color:var(--blue);font-size:.8rem}
+
+/* Video tab */
+.video-list{display:flex;flex-direction:column;gap:10px;padding:14px}
+.vid-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:.18s}
+.vid-card:hover{border-color:rgba(0,210,255,.3);transform:translateY(-2px)}
+.vid-thumb{width:100%;aspect-ratio:16/9;background:#000;position:relative;overflow:hidden}
+.vid-thumb img{width:100%;height:100%;object-fit:cover}
+.vid-play-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.4)}
+.vid-play-ic{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center}
+.vid-play-ic i{color:#000;font-size:1.1rem;margin-left:3px}
+.vid-info{padding:10px 12px}
+.vid-title{font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:3px;line-height:1.4}
+.vid-channel{font-size:.66rem;color:var(--muted);display:flex;align-items:center;gap:4px}
+.vid-loading{text-align:center;padding:28px;color:var(--muted);font-size:.78rem;display:flex;flex-direction:column;align-items:center;gap:10px}
+
+/* ── QUIZ SETUP SCREEN ── */
+.quiz-setup{display:flex;flex-direction:column;gap:12px;padding:16px}
+.qs-card{background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden}
+.qs-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border)}
+.qs-row:last-child{border-bottom:none}
+.qs-label{font-size:.8rem;font-weight:700;color:var(--muted)}
+.qs-val{font-size:.8rem;font-weight:800;color:var(--text)}
+.mode-btns{display:flex;gap:8px}
+.mode-btn{flex:1;padding:10px 8px;border:1.5px solid var(--border);border-radius:10px;background:rgba(255,255,255,.03);color:var(--text);font-family:'Nunito',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;transition:.18s;text-align:center}
+.mode-btn.sel{border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.1);color:var(--green)}
+.dur-sel{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;outline:none;-webkit-appearance:none;cursor:pointer;width:100%;margin-top:6px}
+.start-btn{width:100%;padding:14px;border:none;border-radius:13px;background:linear-gradient(135deg,var(--green),#059669);color:#fff;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s;box-shadow:0 5px 18px rgba(16,185,129,.3)}
+.start-btn:hover{transform:translateY(-2px)}
+.lnx-cost-note{display:flex;align-items:center;gap:7px;padding:10px 13px;background:rgba(255,204,51,.06);border:1px solid rgba(255,204,51,.14);border-radius:10px;font-size:.72rem;color:var(--muted)}
+.lnx-cost-note i{color:var(--gold);flex-shrink:0}
+.lnx-cost-note b{color:var(--gold)}
+
+/* ── QUIZ ACTIVE SCREEN ── */
+.quiz-hdr{display:flex;align-items:center;gap:8px;padding:10px 13px;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0}
+.q-counter-btn{display:flex;align-items:center;gap:5px;padding:5px 11px;border:1px solid var(--border);border-radius:8px;background:var(--card2);font-family:'Nunito',sans-serif;font-size:.76rem;font-weight:800;color:var(--text);cursor:pointer}
+.q-counter-btn i{font-size:.6rem;color:var(--muted)}
+.q-diff{font-size:.7rem;font-weight:700;color:var(--muted)}
+.q-timer{display:flex;align-items:center;gap:5px;font-family:'Orbitron',monospace;font-size:.78rem;font-weight:700;color:var(--text);margin-left:auto}
+.q-timer.warn{color:var(--red);animation:timerWarn .5s ease-in-out infinite}
+@keyframes timerWarn{0%,100%{opacity:1}50%{opacity:.4}}
+.q-timer i{font-size:.65rem}
+.q-calc-btn{width:30px;height:30px;border-radius:8px;background:none;border:1px solid var(--border);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:.8rem;cursor:pointer}
+.quiz-body{flex:1;overflow-y:auto;padding:14px;scrollbar-width:none}
+.quiz-body::-webkit-scrollbar{display:none}
+.q-topic{font-size:.65rem;color:var(--muted);margin-bottom:2px;display:flex;justify-content:space-between}
+.q-year{font-size:.64rem;color:var(--muted)}
+.q-text{font-size:.88rem;line-height:1.75;color:var(--text);margin:8px 0 14px;font-weight:600}
+.q-img{width:100%;border-radius:10px;margin-bottom:12px;border:1px solid var(--border);background:var(--card2)}
+.options{display:flex;flex-direction:column;gap:9px}
+.opt{display:flex;align-items:center;gap:10px;padding:12px 13px;border:1.5px solid var(--border);border-radius:12px;background:rgba(255,255,255,.03);cursor:pointer;transition:all .18s;-webkit-user-select:none;user-select:none}
+.opt:hover{border-color:rgba(0,210,255,.3);background:rgba(0,210,255,.04)}
+.opt.selected{border-color:rgba(0,210,255,.5);background:rgba(0,210,255,.08)}
+.opt.correct{border-color:rgba(16,185,129,.6);background:rgba(16,185,129,.1)}
+.opt.wrong{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.08)}
+.opt-letter{width:28px;height:28px;border-radius:8px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.74rem;font-weight:800;color:var(--muted);flex-shrink:0;font-family:'Orbitron',monospace;transition:.18s}
+.opt.selected .opt-letter{background:rgba(0,210,255,.15);border-color:var(--blue);color:var(--blue)}
+.opt.correct .opt-letter{background:rgba(16,185,129,.2);border-color:var(--green);color:var(--green)}
+.opt.wrong .opt-letter{background:rgba(239,68,68,.15);border-color:var(--red);color:var(--red)}
+.opt-text{flex:1;font-size:.84rem;font-weight:600;color:var(--text);line-height:1.5}
+.opt-ic{font-size:.8rem;flex-shrink:0}
+.opt-result-label{font-size:.7rem;font-weight:800;padding:2px 0;margin-top:4px;width:100%;text-align:center}
+.opt.correct .opt-result-label{color:var(--green)}
+.opt.wrong .opt-result-label{color:var(--red)}
+.explanation-box{background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.18);border-radius:12px;padding:12px 13px;margin-top:12px}
+.exp-label{font-size:.65rem;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.exp-text{font-size:.8rem;color:var(--text);line-height:1.7}
+.ai-explain-btn{width:100%;padding:11px;border:none;border-radius:11px;background:linear-gradient(135deg,#6d28d9,#8b5cf6);color:#fff;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:10px;transition:.2s;box-shadow:0 4px 14px rgba(139,92,246,.3)}
+.ai-explain-btn:hover{transform:translateY(-1px)}
+.quiz-footer{display:flex;gap:8px;padding:10px 13px;border-top:1px solid var(--border);background:var(--card);flex-shrink:0}
+.qf-btn{flex:1;padding:11px;border-radius:11px;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:.18s;display:flex;align-items:center;justify-content:center;gap:6px;border:none}
+.qf-prev{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text)}
+.qf-prev:hover{background:rgba(255,255,255,.1)}
+.qf-prev:disabled{opacity:.3;cursor:not-allowed}
+.qf-submit{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text)}
+.qf-next{background:linear-gradient(135deg,var(--green),#059669);color:#fff;box-shadow:0 3px 12px rgba(16,185,129,.25)}
+.qf-next:hover{transform:translateY(-1px)}
+.qf-next:disabled{opacity:.3;cursor:not-allowed;transform:none}
+
+/* ── RESULTS SCREEN ── */
+.results-wrap{display:flex;flex-direction:column;align-items:center;padding:24px 18px;gap:16px}
+.result-score-ring{width:120px;height:120px;position:relative;margin:0 auto}
+.rsr-svg{width:100%;height:100%;transform:rotate(-90deg)}
+.rsr-bg{fill:none;stroke:rgba(255,255,255,.07);stroke-width:8}
+.rsr-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+.rsr-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rsr-pct{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;color:var(--text)}
+.rsr-label{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.result-grade{font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;text-align:center}
+.result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%}
+.rs-item{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:11px 8px;text-align:center}
+.rs-val{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:900;color:var(--text);display:block;margin-bottom:2px}
+.rs-lbl{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.result-btns{display:flex;flex-direction:column;gap:8px;width:100%}
+.rb{padding:13px;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;border:none;transition:.2s;width:100%}
+.rb-retry{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;box-shadow:0 4px 14px rgba(0,210,255,.2)}
+.rb-review{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text)}
+.rb-home{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted)}
+
+/* ── AI EXPLANATION OVERLAY ── */
+.ai-ov{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);display:none;flex-direction:column;align-items:center;justify-content:flex-end}
+.ai-ov.show{display:flex}
+.ai-panel{width:100%;max-width:640px;background:var(--card);border-radius:22px 22px 0 0;max-height:85vh;display:flex;flex-direction:column;animation:slideUp .28s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ai-panel-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;flex-shrink:0}
+.ai-panel-ic{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#6d28d9,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-panel-ic i{color:#fff;font-size:.82rem}
+.ai-panel-title{font-weight:800;font-size:.86rem;color:var(--text);flex:1}
+.ai-panel-sub{font-size:.63rem;color:var(--muted);margin-top:1px}
+.ai-panel-close{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.07);border:none;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.78rem}
+.ai-panel-body{flex:1;overflow-y:auto;padding:16px}
+.ai-panel-body::-webkit-scrollbar{display:none}
+.ai-typing{font-size:.84rem;line-height:1.8;color:var(--text)}
+.ai-typing .typing-cursor{display:inline-block;width:2px;height:1em;background:var(--purple);margin-left:2px;vertical-align:middle;animation:blink .7s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.ai-disclaimer{font-size:.65rem;color:var(--muted);font-style:italic;margin-top:12px;line-height:1.5;border-top:1px solid var(--border);padding-top:10px}
+
+/* ── INSUFFICIENT BALANCE OVERLAY ── */
+.insuf-ov{position:fixed;inset:0;z-index:950;background:rgba(0,0,0,.88);backdrop-filter:blur(12px);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.insuf-ov.show{display:flex}
+.insuf-card{background:var(--card);border:1px solid rgba(239,68,68,.2);border-radius:18px;padding:22px 20px;width:100%;max-width:340px;text-align:center;animation:popIn .28s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.insuf-icon{width:62px;height:62px;border-radius:18px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 14px}
+.insuf-title{font-family:'Orbitron',monospace;font-size:.92rem;font-weight:900;color:var(--red);margin-bottom:6px}
+.insuf-sub{font-size:.78rem;color:var(--muted);line-height:1.65;margin-bottom:16px}
+.insuf-sub b{color:var(--text)}
+.insuf-btns{display:flex;flex-direction:column;gap:8px}
+.ib{padding:12px;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.86rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;border:none;transition:.2s;width:100%}
+.ib-ad{background:linear-gradient(135deg,var(--orange),var(--gold));color:#000}
+.ib-topup{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff}
+.ib-cancel{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted)}
+
+/* ── TOAST ── */
+#toasts{position:fixed;top:11px;right:11px;z-index:9999;display:flex;flex-direction:column;gap:5px;max-width:262px}
+.toast{padding:9px 11px;border-radius:9px;font-size:.74rem;font-weight:700;display:flex;align-items:center;gap:6px;border:1px solid;animation:tIn .26s ease}
+.toast i{flex-shrink:0}.toast span{flex:1}
+.toast.success{background:rgba(16,185,129,.13);border-color:rgba(16,185,129,.24);color:#6ee7b7}
+.toast.error{background:rgba(239,68,68,.13);border-color:rgba(239,68,68,.24);color:#fca5a5}
+.toast.info{background:rgba(139,92,246,.11);border-color:rgba(139,92,246,.22);color:#c4b5fd}
+.toast.removing{animation:tOut .2s ease forwards}
+@keyframes tIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tOut{to{opacity:0;transform:translateX(18px)}}
+.tc{margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;opacity:.4;padding:0 0 0 3px}
+.spinner-sm{width:13px;height:13px;border:2px solid rgba(255,255,255,.2);border-top-color:currentColor;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+</style>
+</head>
+<body>
+<div id="toasts"></div>
+
+<!-- AI EXPLANATION OVERLAY -->
+<div class="ai-ov" id="aiOv">
+  <div class="ai-panel">
+    <div class="ai-panel-hdr">
+      <div class="ai-panel-ic"><i class="fas fa-wand-magic-sparkles"></i></div>
+      <div>
+        <div class="ai-panel-title">Lenovox AI Explanation</div>
+        <div class="ai-panel-sub" id="aiPanelSub">Loading...</div>
+      </div>
+      <button class="ai-panel-close" id="aiOvClose"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="ai-panel-body">
+      <div class="ai-typing" id="aiTypingArea"></div>
+      <div class="ai-disclaimer">This explanation is AI-generated for study assistance. Always cross-reference with your official course materials and textbooks.</div>
+    </div>
+  </div>
+</div>
+
+<!-- INSUFFICIENT BALANCE OVERLAY -->
+<div class="insuf-ov" id="insufOv">
+  <div class="insuf-card">
+    <div class="insuf-icon"><i class="fas fa-coins"></i></div>
+    <div class="insuf-title">Not Enough LNX</div>
+    <div class="insuf-sub" id="insufMsg">You need <b>20 LNX</b> to start this quiz but your balance is <b>0 LNX</b>.</div>
+    <div class="insuf-btns">
+      <button class="ib ib-ad" id="insufAdBtn"><i class="fas fa-play-circle"></i> Watch Ad (+8 LNX)</button>
+      <button class="ib ib-topup" id="insufTopupBtn"><i class="fas fa-arrow-up"></i> Top Up LNX</button>
+      <button class="ib ib-cancel" id="insufCancelBtn"><i class="fas fa-xmark"></i> Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+  <div class="hdr">
+    <button class="back-btn" id="backBtn"><i class="fas fa-arrow-left"></i></button>
+    <div class="hdr-title" id="hdrTitle">Classroom</div>
+    <div class="bal-pill" id="balPill"><i class="fas fa-coins"></i><span id="balTxt">—</span></div>
+  </div>
+
+  <!-- ══ SCREEN: HOME ══ -->
+  <div class="screen active" id="screen-home">
+    <div class="scroll">
+      <div class="home-hero">
+        <div class="hero-title">Classroom</div>
+        <div class="hero-sub">Study notes, past questions, AI explanations and video lessons for every Nigerian exam.</div>
+      </div>
+      <div class="exam-grid" id="examGrid"></div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: SUBJECTS ══ -->
+  <div class="screen" id="screen-subjects">
+    <div class="subj-hdr">
+      <div class="subj-exam-name" id="subjExamName">JAMB UTME</div>
+      <div class="subj-exam-desc" id="subjExamDesc">Select a subject to start studying</div>
+    </div>
+    <div class="scroll">
+      <div class="subj-list" id="subjList"></div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: TOPICS ══ -->
+  <div class="screen" id="screen-topics">
+    <div class="topic-subj-hdr">
+      <div>
+        <div class="tsh-name" id="topicSubjName">Mathematics</div>
+        <div class="tsh-exam" id="topicExamLabel"><i class="fas fa-graduation-cap"></i> JAMB UTME</div>
+      </div>
+      <div style="font-size:.7rem;font-weight:700;color:var(--muted)" id="topicCount">25 topics</div>
+    </div>
+    <div class="scroll">
+      <div id="topicList"></div>
+      <div class="load-more-btn" id="loadMoreBtn">
+        <div class="lmb-spin" id="lmbSpin"></div>
+        <i class="fas fa-chevron-down" id="lmbIcon"></i>
+        <span id="lmbText">Load more topics</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: LESSON ══ -->
+  <div class="screen" id="screen-lesson">
+    <div class="lesson-tabs">
+      <button class="ltab active" data-ltab="notes"><i class="fas fa-book-open"></i> Notes</button>
+      <button class="ltab" data-ltab="video"><i class="fas fa-play-circle"></i> Video Lesson</button>
+    </div>
+    <div class="scroll" id="lessonScroll">
+      <div id="ltab-notes" class="notes-content"></div>
+      <div id="ltab-video" style="display:none">
+        <div class="video-list" id="videoList"></div>
+      </div>
+      <div class="take-test-card" id="takeTestCard">
+        <div class="ttc-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div>
+          <div class="ttc-title">Take a Test</div>
+          <div class="ttc-sub">Practice past questions on this topic</div>
+        </div>
+        <i class="fas fa-chevron-right ttc-arrow"></i>
+      </div>
+    </div>
+    <div class="lesson-nav">
+      <button class="ln-btn" id="lessonPrev"><i class="fas fa-chevron-left"></i> Prev</button>
+      <button class="ln-btn primary" id="lessonNext">Next <i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: QUIZ SETUP ══ -->
+  <div class="screen" id="screen-quiz-setup">
+    <div class="scroll">
+      <div class="quiz-setup">
+        <div class="qs-card">
+          <div class="qs-row"><span class="qs-label">Topic</span><span class="qs-val" id="qs-topic">—</span></div>
+          <div class="qs-row"><span class="qs-label">Subject</span><span class="qs-val" id="qs-subject">—</span></div>
+          <div class="qs-row"><span class="qs-label">Exam</span><span class="qs-val" id="qs-exam">—</span></div>
+          <div class="qs-row"><span class="qs-label">Questions</span><span class="qs-val" id="qs-qcount">40</span></div>
+        </div>
+        <div class="qs-card" style="padding:12px 14px">
+          <div style="font-size:.76rem;font-weight:800;color:var(--text);margin-bottom:10px">Practice Mode</div>
+          <div class="mode-btns">
+            <button class="mode-btn sel" id="modeExam" onclick="setMode('exam')"><i class="fas fa-clock"></i> Exam Mode<br><span style="font-size:.62rem;font-weight:600">Timed, graded</span></button>
+            <button class="mode-btn" id="modeStudy" onclick="setMode('study')"><i class="fas fa-book-open"></i> Study Mode<br><span style="font-size:.62rem;font-weight:600">See answers as you go</span></button>
+          </div>
+        </div>
+        <div class="qs-card" style="padding:12px 14px">
+          <div style="font-size:.76rem;font-weight:800;color:var(--text);margin-bottom:8px">Test Duration</div>
+          <select class="dur-sel" id="durSel">
+            <option value="15">15 minutes</option>
+            <option value="30" selected>30 minutes</option>
+            <option value="45">45 minutes</option>
+            <option value="60">1 hour</option>
+            <option value="90">1.5 hours</option>
+          </select>
+        </div>
+        <div class="lnx-cost-note">
+          <i class="fas fa-coins"></i>
+          <span>Starting this quiz deducts <b id="quizCostLbl">20 LNX</b> from your balance. AI Explanations cost <b>3 LNX</b> each.</span>
+        </div>
+        <button class="start-btn" id="startQuizBtn"><i class="fas fa-play"></i> Start Quiz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: QUIZ ACTIVE ══ -->
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-hdr">
+      <button class="q-counter-btn" id="qCounterBtn">
+        <span id="qCounterTxt">1 of 40</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      <span class="q-diff" id="qDiff">Easy</span>
+      <div class="q-timer" id="qTimer"><i class="fas fa-clock"></i><span id="qTimerTxt">30:00</span></div>
+      <button class="q-calc-btn" id="qCalcBtn" title="Calculator"><i class="fas fa-calculator"></i></button>
+    </div>
+    <div class="quiz-body" id="quizBody"></div>
+    <div class="quiz-footer">
+      <button class="qf-btn qf-prev" id="qPrevBtn"><i class="fas fa-chevron-left"></i> PREV</button>
+      <button class="qf-btn qf-submit" id="qSubmitBtn"><i class="fas fa-check"></i> SUBMIT</button>
+      <button class="qf-btn qf-next" id="qNextBtn">NEXT <i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: RESULTS ══ -->
+  <div class="screen" id="screen-results">
+    <div class="scroll">
+      <div class="results-wrap">
+        <div style="text-align:center">
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px">Quiz Complete</div>
+        </div>
+        <div class="result-score-ring">
+          <svg class="rsr-svg" viewBox="0 0 100 100">
+            <circle class="rsr-bg" cx="50" cy="50" r="42"/>
+            <circle class="rsr-fill" id="rsrFill" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"/>
+          </svg>
+          <div class="rsr-text">
+            <div class="rsr-pct" id="rsrPct">0%</div>
+            <div class="rsr-label">Score</div>
+          </div>
+        </div>
+        <div class="result-grade" id="resultGrade">—</div>
+        <div class="result-stats">
+          <div class="rs-item"><span class="rs-val" id="rsCorrect">0</span><span class="rs-lbl">Correct</span></div>
+          <div class="rs-item"><span class="rs-val" id="rsWrong">0</span><span class="rs-lbl">Wrong</span></div>
+          <div class="rs-item"><span class="rs-val" id="rsSkipped">0</span><span class="rs-lbl">Skipped</span></div>
+        </div>
+        <div class="result-btns">
+          <button class="rb rb-retry" id="rbRetry"><i class="fas fa-rotate-right"></i> Try Again</button>
+          <button class="rb rb-review" id="rbReview"><i class="fas fa-list-check"></i> Review Answers</button>
+          <button class="rb rb-home" id="rbHome"><i class="fas fa-house"></i> Back to Classroom</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { watchAuth, db } from './auth.js';
+import { doc, getDoc, updateDoc, increment, addDoc, collection, serverTimestamp, onSnapshot }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── CONFIG ─────────────────────────────────────────────────────
+const YOUTUBE_KEY = ''; // loaded from /api/tutor or use directly if set
+const QUIZ_COST   = { exam: 20, study: 10 }; // LNX per quiz
+const AI_COST     = 3; // LNX per AI explanation
+
+// ── STATE ──────────────────────────────────────────────────────
+let _uid = null, _bal = 0;
+let _exam = null, _subject = null, _topic = null;
+let _mode = 'exam', _duration = 30;
+let _questions = [], _answers = {}, _qIdx = 0, _timerInterval = null, _timeLeft = 0;
+let _topicsLoaded = 0, _topicsTotal = 0, _allTopics = [];
+let _lessonTabActive = 'notes';
+
+function applyTheme(){const t=localStorage.getItem('lenovox_theme')||'';document.documentElement.setAttribute('data-theme',t==='light'?'light':t==='dim'?'dim':'');}
+applyTheme();window.addEventListener('storage',applyTheme);
+
+// ── TOAST ──────────────────────────────────────────────────────
+function toast(m,t='success'){
+  const el=document.createElement('div');el.className='toast '+t;
+  const ic={success:'fa-circle-check',error:'fa-circle-exclamation',info:'fa-circle-info'};
+  el.innerHTML='<i class="fas '+(ic[t]||ic.info)+'"></i><span>'+m+'</span><button class="tc" onclick="this.parentElement.classList.add(\'removing\');setTimeout(()=>this.parentElement.remove(),220)"><i class="fas fa-xmark"></i></button>';
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>{if(el.parentElement){el.classList.add('removing');setTimeout(()=>el.remove(),220);}},4500);
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── EXAM CATEGORIES ────────────────────────────────────────────
+const EXAMS = [
+  {id:'jamb',name:'JAMB UTME',desc:'University entrance exam',icon:'fas fa-university',color:'rgba(0,210,255,.1)',border:'rgba(0,210,255,.2)',ic:'var(--blue)',badge:'CBT',badgeColor:'rgba(0,210,255,.15)',badgeText:'var(--blue)'},
+  {id:'waec',name:'WAEC / SSCE',desc:'West African school certificate',icon:'fas fa-certificate',color:'rgba(16,185,129,.1)',border:'rgba(16,185,129,.2)',ic:'var(--green)',badge:'Paper',badgeColor:'rgba(16,185,129,.12)',badgeText:'var(--green)'},
+  {id:'neco',name:'NECO',desc:'National Examinations Council',icon:'fas fa-scroll',color:'rgba(245,158,11,.1)',border:'rgba(245,158,11,.2)',ic:'var(--gold)',badge:'Paper',badgeColor:'rgba(245,158,11,.12)',badgeText:'var(--gold)'},
+  {id:'nabteb',name:'NABTEB',desc:'National Business & Technical',icon:'fas fa-wrench',color:'rgba(249,115,22,.1)',border:'rgba(249,115,22,.2)',ic:'var(--orange)',badge:'Tech',badgeColor:'rgba(249,115,22,.12)',badgeText:'var(--orange)'},
+  {id:'common',name:'Common Entrance',desc:'Primary to secondary school',icon:'fas fa-child',color:'rgba(139,92,246,.1)',border:'rgba(139,92,246,.2)',ic:'var(--purple)',badge:'JSS',badgeColor:'rgba(139,92,246,.12)',badgeText:'var(--purple)'},
+  {id:'postutme',name:'Post UTME',desc:'University post-admission tests',icon:'fas fa-building-columns',color:'rgba(255,61,112,.1)',border:'rgba(255,61,112,.2)',ic:'var(--pink)',badge:'Uni',badgeColor:'rgba(255,61,112,.12)',badgeText:'var(--pink)'},
+  {id:'gce',name:'GCE / IGCSE',desc:'General Certificate of Education',icon:'fas fa-globe',color:'rgba(99,102,241,.1)',border:'rgba(99,102,241,.2)',ic:'var(--indigo)',badge:'Intl',badgeColor:'rgba(99,102,241,.12)',badgeText:'var(--indigo)'},
+  {id:'primary',name:'Primary School',desc:'Basic 1 – Primary 6',icon:'fas fa-pencil',color:'rgba(234,179,8,.1)',border:'rgba(234,179,8,.2)',ic:'#eab308',badge:'Pri',badgeColor:'rgba(234,179,8,.12)',badgeText:'#eab308'},
+];
+
+// ── ALL SUBJECTS ────────────────────────────────────────────────
+const ALL_SUBJECTS = [
+  {id:'math',name:'Mathematics',icon:'fas fa-square-root-variable',color:'rgba(245,158,11,.12)',ic:'var(--gold)',topics:25},
+  {id:'english',name:'English Language',icon:'fas fa-pen-nib',color:'rgba(0,210,255,.1)',ic:'var(--blue)',topics:20},
+  {id:'biology',name:'Biology',icon:'fas fa-dna',color:'rgba(16,185,129,.1)',ic:'var(--green)',topics:22},
+  {id:'chemistry',name:'Chemistry',icon:'fas fa-flask',color:'rgba(139,92,246,.1)',ic:'var(--purple)',topics:20},
+  {id:'physics',name:'Physics',icon:'fas fa-atom',color:'rgba(255,61,112,.1)',ic:'var(--pink)',topics:22},
+  {id:'economics',name:'Economics',icon:'fas fa-chart-line',color:'rgba(249,115,22,.1)',ic:'var(--orange)',topics:18},
+  {id:'government',name:'Government',icon:'fas fa-landmark',color:'rgba(99,102,241,.1)',ic:'var(--indigo)',topics:18},
+  {id:'literature',name:'Literature in English',icon:'fas fa-book',color:'rgba(234,179,8,.1)',ic:'#eab308',topics:15},
+  {id:'geography',name:'Geography',icon:'fas fa-earth-africa',color:'rgba(0,210,255,.08)',ic:'var(--blue)',topics:20},
+  {id:'history',name:'History',icon:'fas fa-hourglass-half',color:'rgba(245,158,11,.08)',ic:'var(--gold)',topics:18},
+  {id:'commerce',name:'Commerce',icon:'fas fa-handshake',color:'rgba(16,185,129,.08)',ic:'var(--green)',topics:16},
+  {id:'accounting',name:'Financial Accounting',icon:'fas fa-calculator',color:'rgba(139,92,246,.08)',ic:'var(--purple)',topics:16},
+  {id:'crk',name:'Christian Religious Studies',icon:'fas fa-cross',color:'rgba(99,102,241,.08)',ic:'var(--indigo)',topics:14},
+  {id:'irk',name:'Islamic Religious Studies',icon:'fas fa-star-and-crescent',color:'rgba(0,210,255,.08)',ic:'var(--blue)',topics:14},
+  {id:'agric',name:'Agricultural Science',icon:'fas fa-seedling',color:'rgba(16,185,129,.1)',ic:'var(--green)',topics:18},
+  {id:'civic',name:'Civic Education',icon:'fas fa-flag',color:'rgba(249,115,22,.08)',ic:'var(--orange)',topics:12},
+  {id:'tech-drawing',name:'Technical Drawing',icon:'fas fa-compass-drafting',color:'rgba(255,61,112,.08)',ic:'var(--pink)',topics:14},
+  {id:'computer',name:'Computer Science',icon:'fas fa-laptop-code',color:'rgba(0,210,255,.1)',ic:'var(--blue)',topics:20},
+  {id:'further-math',name:'Further Mathematics',icon:'fas fa-infinity',color:'rgba(245,158,11,.1)',ic:'var(--gold)',topics:20},
+  {id:'yoruba',name:'Yoruba Language',icon:'fas fa-language',color:'rgba(139,92,246,.08)',ic:'var(--purple)',topics:12},
+  {id:'igbo',name:'Igbo Language',icon:'fas fa-language',color:'rgba(139,92,246,.08)',ic:'var(--purple)',topics:12},
+  {id:'hausa',name:'Hausa Language',icon:'fas fa-language',color:'rgba(139,92,246,.08)',ic:'var(--purple)',topics:12},
+  {id:'french',name:'French Language',icon:'fas fa-language',color:'rgba(99,102,241,.08)',ic:'var(--indigo)',topics:14},
+  {id:'music',name:'Music',icon:'fas fa-music',color:'rgba(234,179,8,.08)',ic:'#eab308',topics:10},
+  {id:'basic-science',name:'Basic Science',icon:'fas fa-microscope',color:'rgba(16,185,129,.08)',ic:'var(--green)',topics:16},
+  {id:'basic-tech',name:'Basic Technology',icon:'fas fa-gear',color:'rgba(249,115,22,.08)',ic:'var(--orange)',topics:14},
+  {id:'social-studies',name:'Social Studies',icon:'fas fa-people-group',color:'rgba(0,210,255,.08)',ic:'var(--blue)',topics:14},
+  {id:'phe',name:'Physical & Health Education',icon:'fas fa-person-running',color:'rgba(255,61,112,.08)',ic:'var(--pink)',topics:12},
+  {id:'home-ec',name:'Home Economics',icon:'fas fa-house-chimney',color:'rgba(245,158,11,.08)',ic:'var(--gold)',topics:12},
+  {id:'marketing',name:'Marketing',icon:'fas fa-bullhorn',color:'rgba(139,92,246,.08)',ic:'var(--purple)',topics:12},
+];
+
+// ── SCREEN NAVIGATION ──────────────────────────────────────────
+const SCREENS = ['home','subjects','topics','lesson','quiz-setup','quiz','results'];
+let _screenHistory = ['home'];
+
+function showScreen(id){
+  SCREENS.forEach(s=>document.getElementById('screen-'+s).classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+}
+
+function navigateTo(screenId, opts={}){
+  if(!opts.isBack) _screenHistory.push(screenId);
+  showScreen(screenId);
+  updateHdrTitle(screenId);
+}
+
+function goBack(){
+  if(_screenHistory.length > 1){
+    _screenHistory.pop();
+    const prev = _screenHistory[_screenHistory.length-1];
+    showScreen(prev);
+    updateHdrTitle(prev);
+    if(prev==='home'){document.getElementById('hdrTitle').textContent='Classroom';}
+  } else {
+    if(window.parent?.goBack) window.parent.goBack();
+    else if(window.parent?.navigateTo) window.parent.navigateTo('dashboard');
+    else window.location.href='appskeleton';
+  }
+}
+
+function updateHdrTitle(screen){
+  const titles={home:'Classroom',subjects:_exam?.name||'Exam',topics:_subject?.name||'Subjects',lesson:_topic?.name||'Notes','quiz-setup':'Quiz Setup',quiz:'Practice Quiz',results:'Results'};
+  document.getElementById('hdrTitle').textContent=titles[screen]||'Classroom';
+}
+
+document.getElementById('backBtn').addEventListener('click',()=>{
+  if(document.getElementById('screen-quiz').classList.contains('active')){
+    if(confirm('Exit quiz? Your progress will be lost.')){stopTimer();goBack();}
+  } else goBack();
+});
+
+// ── RENDER HOME ────────────────────────────────────────────────
+function renderHome(){
+  const grid=document.getElementById('examGrid');
+  grid.innerHTML=EXAMS.map(e=>`
+    <div class="exam-card" onclick="selectExam('${e.id}')">
+      <div class="ec-icon" style="background:${e.color};border:1px solid ${e.border}"><i class="${e.icon}" style="color:${e.ic}"></i></div>
+      <div class="ec-name">${e.name}</div>
+      <div class="ec-desc">${e.desc}</div>
+      <div class="ec-badge" style="background:${e.badgeColor};color:${e.badgeText}">${e.badge}</div>
+    </div>`).join('');
+}
+
+window.selectExam=id=>{
+  _exam=EXAMS.find(e=>e.id===id);
+  document.getElementById('subjExamName').textContent=_exam.name;
+  document.getElementById('subjExamDesc').textContent='Choose a subject to study';
+  renderSubjects();
+  navigateTo('subjects');
+};
+
+// ── RENDER SUBJECTS ────────────────────────────────────────────
+function renderSubjects(){
+  // Filter subjects based on exam type
+  let subjects=ALL_SUBJECTS;
+  if(_exam?.id==='jamb') subjects=ALL_SUBJECTS.filter(s=>['math','english','biology','chemistry','physics','economics','government','literature','geography','agric','crk','irk','accounting','commerce','further-math','computer','yoruba','igbo','hausa','french'].includes(s.id));
+  else if(_exam?.id==='common'||_exam?.id==='primary') subjects=ALL_SUBJECTS.filter(s=>['math','english','basic-science','basic-tech','social-studies','phe','home-ec','crk','irk','yoruba','igbo','hausa'].includes(s.id));
+
+  document.getElementById('subjList').innerHTML=subjects.map(s=>`
+    <div class="subj-item" onclick="selectSubject('${s.id}')">
+      <div class="si-icon" style="background:${s.color};border:1px solid ${s.color.replace('.1','0.2')}"><i class="${s.icon}" style="color:${s.ic}"></i></div>
+      <div>
+        <div class="si-name">${s.name}</div>
+        <div class="si-topics">${s.topics} topics</div>
+      </div>
+      <i class="fas fa-chevron-right si-arrow"></i>
+    </div>`).join('');
+}
+
+window.selectSubject=id=>{
+  _subject=ALL_SUBJECTS.find(s=>s.id===id);
+  document.getElementById('topicSubjName').textContent=_subject.name;
+  document.getElementById('topicExamLabel').innerHTML=`<i class="fas fa-graduation-cap"></i> ${_exam.name}`;
+  document.getElementById('topicCount').textContent=_subject.topics+' topics';
+  _topicsLoaded=0;_allTopics=[];
+  loadTopics(true);
+  navigateTo('topics');
+};
+
+// ── LOAD TOPICS (lazy, AI-generated) ──────────────────────────
+async function loadTopics(reset=false){
+  if(reset){_topicsLoaded=0;_allTopics=[];document.getElementById('topicList').innerHTML='';}
+  const btn=document.getElementById('loadMoreBtn');
+  const spin=document.getElementById('lmbSpin');
+  const icon=document.getElementById('lmbIcon');
+  const txt=document.getElementById('lmbText');
+  spin.style.display='block';icon.style.display='none';txt.textContent='Loading...';
+
+  try{
+    // Generate topics via AI if not cached
+    const cacheKey=`cls_topics_${_exam?.id}_${_subject?.id}`;
+    let topics=null;
+    try{const cached=localStorage.getItem(cacheKey);if(cached)topics=JSON.parse(cached);}catch{}
+
+    if(!topics){
+      const r=await fetch('/api/getData',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          messages:[{role:'user',content:`List all curriculum topics for ${_subject.name} in Nigerian ${_exam.name} syllabus from SS1 to SS3. Return ONLY a JSON array of objects with fields: id (slug), name (topic name), level (SS1/SS2/SS3/JSS1/JSS2/JSS3/Primary), difficulty (Easy/Medium/Hard). Include every single topic in the official syllabus. Return valid JSON only, no explanation.`}],
+          model:'fast',
+          systemPrompt:'You are a Nigerian education curriculum expert. Return only valid JSON arrays. No markdown, no explanation, just the JSON array.',
+          uid:_uid
+        })
+      });
+      const d=await r.json();
+      try{
+        let content=d.content||'[]';
+        content=content.replace(/```json|```/g,'').trim();
+        topics=JSON.parse(content);
+        localStorage.setItem(cacheKey,JSON.stringify(topics));
+      }catch{
+        // Fallback topics
+        topics=generateFallbackTopics(_subject.name);
+        localStorage.setItem(cacheKey,JSON.stringify(topics));
+      }
+    }
+
+    _allTopics=topics;
+    _topicsTotal=topics.length;
+    document.getElementById('topicCount').textContent=_topicsTotal+' topics';
+    const BATCH=15;
+    const end=Math.min(_topicsLoaded+BATCH,_topicsTotal);
+    const batch=topics.slice(_topicsLoaded,end);
+    appendTopics(batch,_topicsLoaded);
+    _topicsLoaded=end;
+
+    if(_topicsLoaded>=_topicsTotal){btn.style.display='none';}
+    else{spin.style.display='none';icon.style.display='block';txt.textContent=`Load more (${_topicsTotal-_topicsLoaded} remaining)`;}
+  }catch{
+    spin.style.display='none';icon.style.display='block';txt.textContent='Tap to retry';
+    toast('Failed to load topics. Check connection.','error');
+  }
+}
+
+function generateFallbackTopics(subjectName){
+  const fallbacks={
+    'Mathematics':['Number & Numeration','Algebraic Processes','Mensuration','Plane Geometry','Trigonometry','Statistics','Probability','Vectors & Transformation','Calculus','Sets','Quadratic Equations','Linear Equations','Indices & Logarithms','Surds','Binary Numbers','Matrices','Sequences & Series','Coordinate Geometry','Polynomials','Inequalities'],
+    'Biology':['Cell Structure','Classification of Living Things','Nutrition','Respiration','Excretion','Reproduction','Genetics & Heredity','Evolution','Ecology','Transport in Plants','Transport in Animals','Nervous System','Hormonal System','Support & Movement','Diseases','Biotechnology','Behaviour','Population','Food Webs','Photosynthesis'],
+    'Physics':['Measurement','Motion','Forces','Work, Energy & Power','Waves','Light','Sound','Electricity','Magnetism','Nuclear Physics','Heat','Pressure','Properties of Matter','Electromagnetic Waves','Modern Physics','Projectile Motion','Simple Machines','Gravitational Field','Atmospheric Physics','Revision'],
+    'Chemistry':['Introduction to Chemistry','Atomic Structure','Bonding','States of Matter','Chemical Equations','Acids, Bases & Salts','Electrochemistry','Organic Chemistry','Kinetics & Equilibrium','Energy Changes','Metals','Non-metals','Polymers','Chemical Industry','Water','Nitrogen & Compounds','Carbon & Compounds','Practical Chemistry','Calculations','Revision'],
+  };
+  const topics=fallbacks[subjectName]||Array.from({length:20},(_,i)=>`Topic ${i+1}`);
+  return topics.map((t,i)=>({id:'t'+i,name:typeof t==='string'?t:t,level:i<7?'SS1':i<14?'SS2':'SS3',difficulty:i<6?'Easy':i<14?'Medium':'Hard'}));
+}
+
+function appendTopics(topics,offset){
+  const list=document.getElementById('topicList');
+  const completedKey=`cls_done_${_uid}_${_exam?.id}_${_subject?.id}`;
+  let done=[];try{done=JSON.parse(localStorage.getItem(completedKey)||'[]');}catch{}
+  topics.forEach((t,i)=>{
+    const isDone=done.includes(t.id||i.toString());
+    const el=document.createElement('div');el.className='topic-item';
+    el.innerHTML=`
+      <div class="ti-num">${String(offset+i+1).padStart(2,'0')}</div>
+      <div class="ti-info">
+        <div class="ti-name">${esc(t.name)}</div>
+        <div class="ti-sub">${t.level||'SS1'} · ${t.difficulty||'Medium'}</div>
+      </div>
+      <div class="ti-status ${isDone?'done':'lock'}"><i class="fas ${isDone?'fa-check':'fa-lock'}"></i></div>`;
+    el.onclick=()=>selectTopic(t,offset+i);
+    list.appendChild(el);
+  });
+}
+
+document.getElementById('loadMoreBtn').addEventListener('click',()=>{if(_topicsLoaded<_topicsTotal)loadTopics(false);});
+
+// ── SELECT TOPIC ───────────────────────────────────────────────
+function selectTopic(topic,idx){
+  _topic=topic;
+  _topic._idx=idx;
+  loadLesson();
+  navigateTo('lesson');
+}
+
+// ── LOAD LESSON ────────────────────────────────────────────────
+async function loadLesson(){
+  document.getElementById('hdrTitle').textContent=_topic.name;
+  const notesEl=document.getElementById('ltab-notes');
+  notesEl.innerHTML='<div style="padding:24px;text-align:center;color:var(--muted)"><div class="spinner-sm" style="margin:0 auto 10px;border-top-color:var(--blue)"></div><div style="font-size:.78rem">Generating notes...</div></div>';
+
+  // Setup test card
+  document.getElementById('qs-topic').textContent=_topic.name;
+  document.getElementById('qs-subject').textContent=_subject.name;
+  document.getElementById('qs-exam').textContent=_exam.name;
+
+  // Lesson tabs
+  document.querySelectorAll('.ltab').forEach(t=>{t.classList.remove('active');});
+  document.querySelector('.ltab[data-ltab="notes"]').classList.add('active');
+  document.getElementById('ltab-notes').style.display='block';
+  document.getElementById('ltab-video').style.display='none';
+
+  // Topic navigation
+  const totalTopics=_allTopics.length;
+  const prevBtn=document.getElementById('lessonPrev');
+  const nextBtn=document.getElementById('lessonNext');
+  prevBtn.disabled=_topic._idx<=0;
+  nextBtn.disabled=_topic._idx>=totalTopics-1;
+
+  // Check cache
+  const cacheKey=`cls_notes_${_exam?.id}_${_subject?.id}_${_topic.id||_topic._idx}`;
+  const cached=localStorage.getItem(cacheKey);
+  if(cached){renderNotes(notesEl,cached);return;}
+
+  try{
+    const r=await fetch('/api/getData',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        messages:[{role:'user',content:`Write comprehensive study notes for Nigerian students on the topic: "${_topic.name}" in ${_subject.name} for ${_exam.name}. Include:
+1. A clear DEFINITION section
+2. Key CONCEPTS and explanations
+3. FORMULAS (use LaTeX: $formula$ for inline, $$formula$$ for block)
+4. EXAMPLES with step-by-step solutions
+5. DIAGRAMS described in text where needed
+6. SUMMARY bullet points
+7. EXAM TIPS specific to ${_exam.name}
+
+Format in clean HTML using these classes: <div class="definition-box"><div class="def-label"><i class="fas fa-book"></i>Definition</div>..text..</div> for definitions, <div class="example-box"><div class="ex-label"><i class="fas fa-pen"></i>Example</div>..text..</div> for examples, <div class="formula-box"><div class="formula-label">Formula</div>..katex..</div> for formulas. Use <h2> for major sections, <h3> for subsections, <p> for paragraphs, <ul><li> for lists, <strong> for key terms. Keep it thorough and exam-focused.`}],
+        model:'fast',
+        systemPrompt:`You are a Nigerian exam preparation expert writing study notes for ${_exam.name} students. Write thorough, accurate notes using correct HTML markup. Use LaTeX for all mathematical expressions.`,
+        uid:_uid
+      })
+    });
+    const d=await r.json();
+    const content=d.content||'<p>Notes unavailable. Try again.</p>';
+    localStorage.setItem(cacheKey,content);
+    renderNotes(notesEl,content);
+  }catch{
+    notesEl.innerHTML='<div style="padding:18px;text-align:center;color:var(--muted);font-size:.78rem"><i class="fas fa-wifi-slash" style="font-size:1.5rem;margin-bottom:8px;display:block"></i>Failed to load notes. Check your connection.</div>';
+  }
+}
+
+function renderNotes(el,html){
+  el.innerHTML=html;
+  // Render KaTeX
+  try{renderMathInElement(el,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});}catch{}
+}
+
+// Lesson tabs
+document.querySelectorAll('.ltab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    _lessonTabActive=t.dataset.ltab;
+    document.querySelectorAll('.ltab').forEach(x=>x.classList.remove('active'));t.classList.add('active');
+    document.getElementById('ltab-notes').style.display=_lessonTabActive==='notes'?'block':'none';
+    document.getElementById('ltab-video').style.display=_lessonTabActive==='video'?'block':'none';
+    if(_lessonTabActive==='video')loadVideos();
+  });
+});
+
+// Lesson prev/next
+document.getElementById('lessonPrev').addEventListener('click',()=>{
+  if(_topic._idx>0){selectTopic(_allTopics[_topic._idx-1],_topic._idx-1);}
+});
+document.getElementById('lessonNext').addEventListener('click',()=>{
+  if(_topic._idx<_allTopics.length-1){selectTopic(_allTopics[_topic._idx+1],_topic._idx+1);}
+});
+
+// Take test card
+document.getElementById('takeTestCard').addEventListener('click',()=>{
+  document.getElementById('qs-qcount').textContent='40';
+  document.getElementById('quizCostLbl').textContent=QUIZ_COST[_mode]+' LNX';
+  navigateTo('quiz-setup');
+});
+
+// ── LOAD VIDEOS ────────────────────────────────────────────────
+async function loadVideos(){
+  const vl=document.getElementById('videoList');
+  if(vl.children.length>0)return;
+  vl.innerHTML='<div class="vid-loading"><div class="spinner-sm" style="border-top-color:var(--blue)"></div>Searching YouTube...</div>';
+  try{
+    const query=encodeURIComponent(`${_topic.name} ${_subject.name} ${_exam.name} Nigeria tutorial`);
+    const r=await fetch(`/api/tutor?q=${query}&maxResults=5`).catch(()=>null);
+    if(r&&r.ok){
+      const d=await r.json();
+      const videos=d.videos||d.items||[];
+      if(videos.length){
+        vl.innerHTML=videos.map(v=>`
+          <div class="vid-card" onclick="openVideo('${esc(v.videoId||v.id?.videoId)}')">
+            <div class="vid-thumb">
+              <img src="${esc(v.thumbnail||v.snippet?.thumbnails?.medium?.url||'')}" alt="" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 9%22><rect fill=%22%23111%22 width=%2216%22 height=%229%22/></svg>'">
+              <div class="vid-play-ov"><div class="vid-play-ic"><i class="fas fa-play"></i></div></div>
+            </div>
+            <div class="vid-info">
+              <div class="vid-title">${esc(v.title||v.snippet?.title||'Video')}</div>
+              <div class="vid-channel"><i class="fab fa-youtube" style="color:#ff0000"></i>${esc(v.channel||v.snippet?.channelTitle||'YouTube')}</div>
+            </div>
+          </div>`).join('');
+        return;
+      }
+    }
+    // Fallback — search YouTube directly
+    vl.innerHTML='<div class="vid-loading"><i class="fas fa-info-circle" style="font-size:1.4rem;color:var(--muted);margin-bottom:6px"></i><span>Videos not available. Check your YouTube API key in Vercel.</span></div>';
+  }catch{
+    vl.innerHTML='<div class="vid-loading"><i class="fas fa-wifi-slash" style="font-size:1.4rem;margin-bottom:6px"></i>Could not load videos.</div>';
+  }
+}
+
+window.openVideo=id=>{if(id)window.open('https://youtube.com/watch?v='+id,'_blank');};
+
+// ── QUIZ SETUP ─────────────────────────────────────────────────
+window.setMode=mode=>{
+  _mode=mode;
+  document.getElementById('modeExam').classList.toggle('sel',mode==='exam');
+  document.getElementById('modeStudy').classList.toggle('sel',mode==='study');
+  document.getElementById('quizCostLbl').textContent=QUIZ_COST[mode]+' LNX';
+};
+
+document.getElementById('startQuizBtn').addEventListener('click',async()=>{
+  const cost=QUIZ_COST[_mode];
+  if(_bal<cost){showInsuf(cost);return;}
+  _duration=parseInt(document.getElementById('durSel').value);
+  await startQuiz();
+});
+
+// ── START QUIZ ─────────────────────────────────────────────────
+async function startQuiz(){
+  const cost=QUIZ_COST[_mode];
+  // Deduct LNX
+  try{
+    await updateDoc(doc(db,'wallets',_uid),{balance:increment(-cost),totalSpent:increment(cost)});
+    await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(-cost)});
+    await addDoc(collection(db,'wallets',_uid,'transactions'),{type:`Classroom Quiz · ${_subject.name}`,amount:-cost,timestamp:serverTimestamp(),date:new Date().toLocaleString()});
+  }catch{toast('LNX deduction failed. Check connection.','error');return;}
+
+  // Generate questions
+  _questions=[];_answers={};_qIdx=0;
+  toast('Generating questions...','info');
+
+  const cacheKey=`cls_q_${_exam?.id}_${_subject?.id}_${_topic?.id||_topic?._idx}`;
+  let questions=null;
+  try{const c=localStorage.getItem(cacheKey);if(c)questions=JSON.parse(c);}catch{}
+
+  if(!questions){
+    try{
+      const r=await fetch('/api/getData',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          messages:[{role:'user',content:`Generate 40 multiple choice questions for Nigerian ${_exam.name} on the topic "${_topic.name}" in ${_subject.name}. Include questions from different years and difficulty levels (Easy, Medium, Hard). Return ONLY a JSON array where each object has: question (string), options (array of 4 strings A-D), answer (the correct option letter A/B/C/D), explanation (detailed step-by-step explanation), topic (sub-topic), difficulty (Easy/Medium/Hard), year (year as number, use random 2015-2025). Use LaTeX for math expressions. Return valid JSON only.`}],
+          model:'fast',
+          systemPrompt:'You are a Nigerian exam question setter. Generate accurate, well-structured multiple choice questions. Return only valid JSON arrays. Use LaTeX notation for math.',
+          uid:_uid
+        })
+      });
+      const d=await r.json();
+      let content=d.content||'[]';
+      content=content.replace(/```json|```/g,'').trim();
+      questions=JSON.parse(content);
+      localStorage.setItem(cacheKey,JSON.stringify(questions));
+    }catch{
+      questions=generateFallbackQuestions();
+    }
+  }
+
+  _questions=questions.slice(0,40);
+  navigateTo('quiz');
+  renderQuestion();
+  if(_mode==='exam')startTimer(_duration*60);
+}
+
+function generateFallbackQuestions(){
+  return Array.from({length:40},(_,i)=>({
+    question:`Sample question ${i+1} for ${_subject?.name} - ${_topic?.name}. The AI will generate real questions when connected.`,
+    options:['Option A','Option B','Option C','Option D'],
+    answer:'A',explanation:'This is a placeholder. Real AI-generated explanations will appear when connected to the OpenAI API.',
+    topic:_topic?.name||'General',difficulty:i<15?'Easy':i<30?'Medium':'Hard',year:2020+Math.floor(Math.random()*5)
+  }));
+}
+
+// ── RENDER QUESTION ────────────────────────────────────────────
+function renderQuestion(){
+  const q=_questions[_qIdx];if(!q)return;
+  const total=_questions.length;
+  document.getElementById('qCounterTxt').textContent=`${_qIdx+1} of ${total}`;
+  document.getElementById('qDiff').textContent=q.difficulty||'Medium';
+  document.getElementById('qPrevBtn').disabled=_qIdx===0;
+  document.getElementById('qNextBtn').disabled=_qIdx===total-1;
+
+  const userAns=_answers[_qIdx];
+  const isAnswered=userAns!==undefined;
+  const isStudyMode=_mode==='study';
+
+  const body=document.getElementById('quizBody');
+  const letters=['A','B','C','D'];
+  body.innerHTML=`
+    <div class="q-topic"><span>${esc(q.topic||_topic?.name||'')}</span><span class="q-year">${q.year||''}</span></div>
+    <div class="q-text">${renderMathText(q.question)}</div>
+    ${q.image?`<img class="q-img" src="${esc(q.image)}" alt="">`:''}
+    <div class="options" id="optionsEl">
+      ${(q.options||[]).map((opt,i)=>{
+        const letter=letters[i];
+        let cls='opt';
+        if(isAnswered||isStudyMode&&isAnswered){
+          if(letter===q.answer)cls+=' correct';
+          else if(letter===userAns&&userAns!==q.answer)cls+=' wrong';
+          else if(letter===userAns)cls+=' selected';
+        }else if(letter===userAns)cls+=' selected';
+        return `<div class="${cls}" onclick="selectAnswer('${letter}')">
+          <div class="opt-letter">${letter}</div>
+          <div class="opt-text">${renderMathText(opt)}</div>
+          ${(isAnswered||isStudyMode&&isAnswered)&&letter===q.answer?'<i class="fas fa-check opt-ic" style="color:var(--green)"></i>':''}
+          ${(isAnswered||isStudyMode&&isAnswered)&&letter===userAns&&userAns!==q.answer?'<i class="fas fa-xmark opt-ic" style="color:var(--red)"></i>':''}
+        </div>`;
+      }).join('')}
+    </div>
+    ${(isStudyMode&&isAnswered)&&q.explanation?`
+      <div class="explanation-box">
+        <div class="exp-label"><i class="fas fa-lightbulb"></i> Explanation for option (${q.answer})</div>
+        <div class="exp-text">${renderMathText(q.explanation)}</div>
+      </div>
+      <button class="ai-explain-btn" onclick="getAIExplanation()">
+        <i class="fas fa-wand-magic-sparkles"></i> GET AI EXPLANATION
+      </button>
+    `:''}
+    ${(isAnswered&&_mode==='exam')?`
+      <button class="ai-explain-btn" onclick="getAIExplanation()" style="margin-top:12px">
+        <i class="fas fa-wand-magic-sparkles"></i> GET AI EXPLANATION
+      </button>
+    `:''}
+  `;
+  // Re-render KaTeX in question
+  try{renderMathInElement(body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});}catch{}
+}
+
+function renderMathText(text){
+  if(!text)return '';
+  // Escape HTML but preserve LaTeX
+  return String(text).replace(/&/g,'&amp;').replace(/<(?!\/?(br|b|i|strong|em))/g,'&lt;');
+}
+
+window.selectAnswer=letter=>{
+  const q=_questions[_qIdx];if(!q)return;
+  // In exam mode, allow changing answer; in study mode, lock after first answer
+  if(_mode==='study'&&_answers[_qIdx]!==undefined)return;
+  _answers[_qIdx]=letter;
+  renderQuestion();
+  // Auto advance in exam mode
+  if(_mode==='exam'&&_qIdx<_questions.length-1){setTimeout(()=>{_qIdx++;renderQuestion();},600);}
+};
+
+// Quiz navigation
+document.getElementById('qPrevBtn').addEventListener('click',()=>{if(_qIdx>0){_qIdx--;renderQuestion();}});
+document.getElementById('qNextBtn').addEventListener('click',()=>{if(_qIdx<_questions.length-1){_qIdx++;renderQuestion();}});
+document.getElementById('qSubmitBtn').addEventListener('click',()=>{
+  const unanswered=_questions.length-Object.keys(_answers).length;
+  if(unanswered>0&&!confirm(`You have ${unanswered} unanswered question${unanswered>1?'s':''}. Submit anyway?`))return;
+  stopTimer();showResults();
+});
+
+// ── TIMER ──────────────────────────────────────────────────────
+function startTimer(seconds){
+  _timeLeft=seconds;updateTimerDisplay();
+  _timerInterval=setInterval(()=>{
+    _timeLeft--;updateTimerDisplay();
+    if(_timeLeft<=0){clearInterval(_timerInterval);toast('Time is up!','error');showResults();}
+  },1000);
+}
+function stopTimer(){clearInterval(_timerInterval);}
+function updateTimerDisplay(){
+  const m=Math.floor(_timeLeft/60);const s=_timeLeft%60;
+  const el=document.getElementById('qTimerTxt');
+  if(el)el.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const timerEl=document.getElementById('qTimer');
+  if(timerEl)timerEl.classList.toggle('warn',_timeLeft<=60);
+}
+
+// ── SHOW RESULTS ───────────────────────────────────────────────
+function showResults(){
+  let correct=0,wrong=0;
+  _questions.forEach((q,i)=>{
+    const a=_answers[i];
+    if(a===undefined)return;
+    if(a===q.answer)correct++;
+    else wrong++;
+  });
+  const skipped=_questions.length-correct-wrong;
+  const pct=Math.round((correct/_questions.length)*100);
+
+  document.getElementById('rsCorrect').textContent=correct;
+  document.getElementById('rsWrong').textContent=wrong;
+  document.getElementById('rsSkipped').textContent=skipped;
+  document.getElementById('rsrPct').textContent=pct+'%';
+
+  // Animate ring
+  const circumference=264;
+  const fill=document.getElementById('rsrFill');
+  const color=pct>=70?'var(--green)':pct>=50?'var(--gold)':'var(--red)';
+  fill.style.stroke=color;
+  setTimeout(()=>{fill.style.strokeDashoffset=circumference-(circumference*pct/100);},100);
+
+  const grade=pct>=75?'Distinction':pct>=60?'Credit':pct>=50?'Pass':pct>=45?'Near Pass':'Fail';
+  const gradeEl=document.getElementById('resultGrade');
+  gradeEl.textContent=grade;
+  gradeEl.style.color=pct>=60?'var(--green)':pct>=50?'var(--gold)':'var(--red)';
+
+  navigateTo('results');
+
+  // Save result to Firestore
+  if(_uid){
+    addDoc(collection(db,'quizResults'),{
+      uid:_uid,exam:_exam?.id,subject:_subject?.id,topic:_topic?.name,
+      score:correct,total:_questions.length,pct,grade,mode:_mode,
+      timestamp:serverTimestamp()
+    }).catch(()=>{});
+  }
+}
+
+document.getElementById('rbRetry').addEventListener('click',()=>{
+  _answers={};_qIdx=0;navigateTo('quiz');renderQuestion();
+  if(_mode==='exam')startTimer(_duration*60);
+});
+document.getElementById('rbReview').addEventListener('click',()=>{
+  _qIdx=0;_mode='study';// force study mode for review
+  navigateTo('quiz');renderQuestion();
+});
+document.getElementById('rbHome').addEventListener('click',()=>{_screenHistory=['home'];showScreen('home');updateHdrTitle('home');});
+
+// ── AI EXPLANATION ─────────────────────────────────────────────
+window.getAIExplanation=async()=>{
+  if(_bal<AI_COST){showInsuf(AI_COST);return;}
+  const q=_questions[_qIdx];if(!q)return;
+  document.getElementById('aiPanelSub').textContent=`${_exam?.name} | ${_subject?.name} | Q${_qIdx+1}`;
+  document.getElementById('aiTypingArea').innerHTML='<div class="spinner-sm" style="margin:0 auto;border-top-color:var(--purple)"></div>';
+  document.getElementById('aiOv').classList.add('show');
+
+  // Deduct LNX
+  try{
+    await updateDoc(doc(db,'wallets',_uid),{balance:increment(-AI_COST),totalSpent:increment(AI_COST)});
+    await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(-AI_COST)});
+    await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'AI Explanation',amount:-AI_COST,timestamp:serverTimestamp(),date:new Date().toLocaleString()});
+  }catch{}
+
+  try{
+    const r=await fetch('/api/getData',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        messages:[{role:'user',content:`Explain this ${_exam?.name} ${_subject?.name} question step by step:
+
+Question: ${q.question}
+Options: ${(q.options||[]).map((o,i)=>['A','B','C','D'][i]+'. '+o).join(', ')}
+Correct Answer: ${q.answer}
+
+Give a thorough explanation: Why is ${q.answer} correct? Why are the others wrong? Use LaTeX for all math ($...$ for inline, $$...$$ for block). Be very clear and educational for a Nigerian student.`}],
+        model:'smart',
+        systemPrompt:'You are a Nigerian exam tutor. Explain solutions clearly and thoroughly. Use LaTeX for all mathematical expressions.',
+        uid:_uid
+      })
+    });
+    const d=await r.json();
+    const content=d.content||'Explanation not available.';
+    // Type the explanation
+    const area=document.getElementById('aiTypingArea');
+    area.innerHTML='';
+    const cursor=document.createElement('span');cursor.className='typing-cursor';area.appendChild(cursor);
+    const words=content.split(' ');let idx=0;
+    const iv=setInterval(()=>{
+      if(idx>=words.length){
+        clearInterval(iv);
+        area.innerHTML=content;
+        try{renderMathInElement(area,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});}catch{}
+        return;
+      }
+      area.textContent=words.slice(0,idx+3).join(' ')+' ';
+      area.appendChild(cursor);
+      idx+=3;
+    },30);
+  }catch{
+    document.getElementById('aiTypingArea').innerHTML='<p style="color:var(--muted)">Could not load AI explanation. Try again.</p>';
+  }
+};
+
+document.getElementById('aiOvClose').addEventListener('click',()=>document.getElementById('aiOv').classList.remove('show'));
+document.getElementById('aiOv').addEventListener('click',e=>{if(e.target===document.getElementById('aiOv'))document.getElementById('aiOv').classList.remove('show');});
+
+// ── INSUFFICIENT BALANCE ───────────────────────────────────────
+function showInsuf(needed){
+  document.getElementById('insufMsg').innerHTML=`You need <b>${needed} LNX</b> to continue but you only have <b>${_bal} LNX</b>.`;
+  document.getElementById('insufOv').classList.add('show');
+}
+document.getElementById('insufAdBtn').addEventListener('click',()=>{document.getElementById('insufOv').classList.remove('show');if(window.parent?.watchAd)window.parent.watchAd();else window.location.href='appskeleton';});
+document.getElementById('insufTopupBtn').addEventListener('click',()=>{document.getElementById('insufOv').classList.remove('show');window.location.href='topup';});
+document.getElementById('insufCancelBtn').addEventListener('click',()=>document.getElementById('insufOv').classList.remove('show'));
+
+// ── AUTH ───────────────────────────────────────────────────────
+watchAuth(async user=>{
+  if(!user){window.location.replace('login');return;}
+  _uid=user.uid;
+  onSnapshot(doc(db,'wallets',_uid),s=>{if(s.exists()){_bal=s.data().balance||0;document.getElementById('balTxt').textContent=_bal.toLocaleString();}});
+  renderHome();
+});
+</script>
+</body>
+</html>
