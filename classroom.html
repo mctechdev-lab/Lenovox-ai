@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
 :root{
   --bg:#03030b;--card:rgba(11,11,30,.95);--card2:rgba(16,16,42,.98);
@@ -252,6 +253,40 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
 .ib-topup{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff}
 .ib-cancel{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted)}
 
+/* ── CUSTOM CONFIRM DIALOG ── */
+.confirm-ov{position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:24px}
+.confirm-ov.show{display:flex}
+.confirm-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px 20px;width:100%;max-width:320px;text-align:center;animation:popIn .26s cubic-bezier(.34,1.56,.64,1)}
+.confirm-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto 14px}
+.confirm-title{font-family:'Orbitron',monospace;font-size:.88rem;font-weight:900;color:var(--text);margin-bottom:6px}
+.confirm-msg{font-size:.78rem;color:var(--muted);line-height:1.65;margin-bottom:18px}
+.confirm-btns{display:flex;gap:9px}
+.cbtn{flex:1;padding:11px;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;border:none;transition:.18s}
+.cbtn-cancel{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text)}
+.cbtn-cancel:hover{background:rgba(255,255,255,.1)}
+.cbtn-confirm{background:linear-gradient(135deg,var(--red),#c0392b);color:#fff;box-shadow:0 3px 12px rgba(239,68,68,.3)}
+.cbtn-confirm:hover{transform:translateY(-1px)}
+
+/* ── OPTION CHOOSER ── */
+.opt-chooser-ov{position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:none;align-items:flex-end;justify-content:center}
+.opt-chooser-ov.show{display:flex}
+.opt-chooser{background:var(--card);border-radius:22px 22px 0 0;padding:16px 16px 32px;width:100%;max-width:640px;animation:slideUp .26s ease}
+.oc-handle{width:36px;height:4px;border-radius:99px;background:var(--border);margin:0 auto 14px}
+.oc-title{font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:12px;text-align:center}
+.oc-options{display:flex;flex-direction:column;gap:8px}
+.oc-opt{display:flex;align-items:center;gap:11px;padding:13px 14px;border:1.5px solid var(--border);border-radius:13px;background:rgba(255,255,255,.03);cursor:pointer;transition:.18s}
+.oc-opt:hover{border-color:rgba(0,210,255,.3);background:rgba(0,210,255,.04)}
+.oc-opt:active{transform:scale(.98)}
+.oc-opt.selected{border-color:rgba(0,210,255,.5);background:rgba(0,210,255,.08)}
+.oc-opt-ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:.88rem;flex-shrink:0}
+.oc-opt-name{font-size:.84rem;font-weight:800;color:var(--text)}
+.oc-opt-sub{font-size:.66rem;color:var(--muted);margin-top:1px}
+.oc-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);margin-left:auto;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.18s}
+.oc-opt.selected .oc-radio{background:var(--blue);border-color:var(--blue)}
+.oc-opt.selected .oc-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff;display:block}
+.oc-confirm-btn{width:100%;padding:13px;border:none;border-radius:13px;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:7px;transition:.2s}
+.oc-confirm-btn:hover{transform:translateY(-1px)}
+
 /* ── TOAST ── */
 #toasts{position:fixed;top:11px;right:11px;z-index:9999;display:flex;flex-direction:column;gap:5px;max-width:262px}
 .toast{padding:9px 11px;border-radius:9px;font-size:.74rem;font-weight:700;display:flex;align-items:center;gap:6px;border:1px solid;animation:tIn .26s ease}
@@ -268,6 +303,31 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
 </head>
 <body>
 <div id="toasts"></div>
+
+<!-- CUSTOM CONFIRM DIALOG -->
+<div class="confirm-ov" id="confirmOv">
+  <div class="confirm-card">
+    <div class="confirm-icon" id="confirmIcon" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2)">
+      <i class="fas fa-circle-exclamation" style="color:var(--red)"></i>
+    </div>
+    <div class="confirm-title" id="confirmTitle">Are you sure?</div>
+    <div class="confirm-msg" id="confirmMsg">This action cannot be undone.</div>
+    <div class="confirm-btns">
+      <button class="cbtn cbtn-cancel" id="confirmCancel">Cancel</button>
+      <button class="cbtn cbtn-confirm" id="confirmOk">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- OPTION CHOOSER SHEET -->
+<div class="opt-chooser-ov" id="optChooserOv">
+  <div class="opt-chooser">
+    <div class="oc-handle"></div>
+    <div class="oc-title" id="ocTitle">Choose an option</div>
+    <div class="oc-options" id="ocOptions"></div>
+    <button class="oc-confirm-btn" id="ocConfirmBtn"><i class="fas fa-check"></i> Confirm</button>
+  </div>
+</div>
 
 <!-- AI EXPLANATION OVERLAY -->
 <div class="ai-ov" id="aiOv">
@@ -596,10 +656,22 @@ function renderHome(){
 
 window.selectExam=id=>{
   _exam=EXAMS.find(e=>e.id===id);
-  document.getElementById('subjExamName').textContent=_exam.name;
-  document.getElementById('subjExamDesc').textContent='Choose a subject to study';
-  renderSubjects();
-  navigateTo('subjects');
+  // Show option chooser for mode selection
+  showOptionChooser({
+    title:'How do you want to study?',
+    options:[
+      {name:'Study Mode',sub:'Read notes, watch videos, learn at your own pace',icon:'fas fa-book-open',bg:'rgba(0,210,255,.1)',border:'rgba(0,210,255,.2)',color:'var(--blue)'},
+      {name:'Practice Quiz',sub:'Test yourself with past questions and AI explanations',icon:'fas fa-graduation-cap',bg:'rgba(255,204,51,.1)',border:'rgba(255,204,51,.2)',color:'var(--gold)'},
+      {name:'Mock Exam',sub:'Timed full exam simulation with real exam conditions',icon:'fas fa-clock',bg:'rgba(239,68,68,.1)',border:'rgba(239,68,68,.2)',color:'var(--red)'},
+    ],
+    onConfirm:(idx)=>{
+      if(idx===1||idx===2){_mode=idx===2?'exam':'study';}
+      document.getElementById('subjExamName').textContent=_exam.name;
+      document.getElementById('subjExamDesc').textContent='Choose a subject to '+(idx===0?'study':'practice');
+      renderSubjects();
+      navigateTo('subjects');
+    }
+  });
 };
 
 // ── RENDER SUBJECTS ────────────────────────────────────────────
@@ -811,9 +883,27 @@ document.getElementById('lessonNext').addEventListener('click',()=>{
 
 // Take test card
 document.getElementById('takeTestCard').addEventListener('click',()=>{
-  document.getElementById('qs-qcount').textContent='40';
-  document.getElementById('quizCostLbl').textContent=QUIZ_COST[_mode]+' LNX';
-  navigateTo('quiz-setup');
+  showOptionChooser({
+    title:'Choose Practice Mode',
+    options:[
+      {name:'Study Mode',sub:'See answers immediately after each question · 10 LNX',icon:'fas fa-book-open',bg:'rgba(0,210,255,.1)',border:'rgba(0,210,255,.2)',color:'var(--blue)'},
+      {name:'Exam Mode',sub:'Timed · See results at the end · 20 LNX',icon:'fas fa-clock',bg:'rgba(239,68,68,.1)',border:'rgba(239,68,68,.2)',color:'var(--red)'},
+      {name:'Quick Quiz',sub:'10 questions only · Fast practice · 5 LNX',icon:'fas fa-bolt',bg:'rgba(255,204,51,.1)',border:'rgba(255,204,51,.2)',color:'var(--gold)'},
+    ],
+    onConfirm:(idx)=>{
+      if(idx===0){_mode='study';}
+      else if(idx===1){_mode='exam';}
+      else{_mode='study';} // quick quiz uses study mode
+      const qcount=idx===2?10:40;
+      document.getElementById('qs-qcount').textContent=qcount;
+      document.getElementById('quizCostLbl').textContent=(idx===2?5:QUIZ_COST[_mode])+' LNX';
+      document.getElementById('qs-topic').textContent=_topic?.name||'—';
+      document.getElementById('qs-subject').textContent=_subject?.name||'—';
+      document.getElementById('qs-exam').textContent=_exam?.name||'—';
+      setMode(_mode);
+      navigateTo('quiz-setup');
+    }
+  });
 });
 
 // ── LOAD VIDEOS ────────────────────────────────────────────────
@@ -1103,22 +1193,29 @@ Give a thorough explanation: Why is ${q.answer} correct? Why are the others wron
     });
     const d=await r.json();
     const content=d.content||'Explanation not available.';
-    // Type the explanation
+    // Type the explanation word by word, then render full markdown
     const area=document.getElementById('aiTypingArea');
-    area.innerHTML='';
-    const cursor=document.createElement('span');cursor.className='typing-cursor';area.appendChild(cursor);
-    const words=content.split(' ');let idx=0;
+    area.innerHTML='<span class="typing-cursor"></span>';
+    // Strip raw markdown symbols for the typing phase
+    const plainText=content.replace(/#{1,3} /g,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/`/g,'');
+    const words=plainText.split(' ');let idx=0;
     const iv=setInterval(()=>{
       if(idx>=words.length){
         clearInterval(iv);
-        area.innerHTML=content;
-        try{renderMathInElement(area,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});}catch{}
+        // Final render — full markdown + KaTeX
+        try{
+          let rendered=typeof marked!=='undefined'?marked.parse(content):content;
+          area.innerHTML=rendered;
+          try{renderMathInElement(area,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});}catch{}
+        }catch{area.innerHTML=content.replace(/\n/g,'<br>');}
         return;
       }
-      area.textContent=words.slice(0,idx+3).join(' ')+' ';
+      const chunk=words.slice(0,Math.min(idx+3,words.length)).join(' ');
+      area.textContent=chunk+' ';
+      const cursor=document.createElement('span');cursor.className='typing-cursor';
       area.appendChild(cursor);
       idx+=3;
-    },30);
+    },28);
   }catch{
     document.getElementById('aiTypingArea').innerHTML='<p style="color:var(--muted)">Could not load AI explanation. Try again.</p>';
   }
@@ -1135,6 +1232,56 @@ function showInsuf(needed){
 document.getElementById('insufAdBtn').addEventListener('click',()=>{document.getElementById('insufOv').classList.remove('show');if(window.parent?.watchAd)window.parent.watchAd();else window.location.href='appskeleton';});
 document.getElementById('insufTopupBtn').addEventListener('click',()=>{document.getElementById('insufOv').classList.remove('show');window.location.href='topup';});
 document.getElementById('insufCancelBtn').addEventListener('click',()=>document.getElementById('insufOv').classList.remove('show'));
+
+// ── CUSTOM CONFIRM DIALOG ─────────────────────────────────────
+function showConfirm({title,msg,icon,iconBg,iconColor,confirmText,cancelText,onConfirm,onCancel}={}){
+  document.getElementById('confirmTitle').textContent=title||'Are you sure?';
+  document.getElementById('confirmMsg').textContent=msg||'This action cannot be undone.';
+  const iconEl=document.getElementById('confirmIcon');
+  iconEl.style.background=iconBg||'rgba(239,68,68,.1)';
+  iconEl.style.border='1px solid '+(iconBg||'rgba(239,68,68,.2)').replace('.1','0.2');
+  iconEl.innerHTML=`<i class="${icon||'fas fa-circle-exclamation'}" style="color:${iconColor||'var(--red)'}"></i>`;
+  document.getElementById('confirmOk').textContent=confirmText||'Confirm';
+  document.getElementById('confirmCancel').textContent=cancelText||'Cancel';
+  document.getElementById('confirmOv').classList.add('show');
+  document.getElementById('confirmOk').onclick=()=>{document.getElementById('confirmOv').classList.remove('show');if(onConfirm)onConfirm();};
+  document.getElementById('confirmCancel').onclick=()=>{document.getElementById('confirmOv').classList.remove('show');if(onCancel)onCancel();};
+}
+document.getElementById('confirmOv').addEventListener('click',e=>{if(e.target===document.getElementById('confirmOv'))document.getElementById('confirmOv').classList.remove('show');});
+
+// ── OPTION CHOOSER ─────────────────────────────────────────────
+let _ocSelected=null,_ocCallback=null;
+function showOptionChooser({title,options,onConfirm}={}){
+  document.getElementById('ocTitle').textContent=title||'Choose an option';
+  _ocSelected=null;_ocCallback=onConfirm;
+  const container=document.getElementById('ocOptions');
+  container.innerHTML=options.map((o,i)=>`
+    <div class="oc-opt" data-idx="${i}" onclick="selectOCOption(${i})">
+      <div class="oc-opt-ic" style="background:${o.bg||'rgba(255,255,255,.06)'};border:1px solid ${o.border||'var(--border)'}">
+        <i class="${o.icon||'fas fa-circle'}" style="color:${o.color||'var(--muted)'}"></i>
+      </div>
+      <div>
+        <div class="oc-opt-name">${o.name}</div>
+        ${o.sub?`<div class="oc-opt-sub">${o.sub}</div>`:''}
+      </div>
+      <div class="oc-radio"></div>
+    </div>`).join('');
+  document.getElementById('ocConfirmBtn').disabled=true;
+  document.getElementById('ocConfirmBtn').style.opacity='0.4';
+  document.getElementById('optChooserOv').classList.add('show');
+}
+window.selectOCOption=idx=>{
+  _ocSelected=idx;
+  document.querySelectorAll('.oc-opt').forEach((el,i)=>el.classList.toggle('selected',i===idx));
+  document.getElementById('ocConfirmBtn').disabled=false;
+  document.getElementById('ocConfirmBtn').style.opacity='1';
+};
+document.getElementById('ocConfirmBtn').addEventListener('click',()=>{
+  if(_ocSelected===null)return;
+  document.getElementById('optChooserOv').classList.remove('show');
+  if(_ocCallback)_ocCallback(_ocSelected);
+});
+document.getElementById('optChooserOv').addEventListener('click',e=>{if(e.target===document.getElementById('optChooserOv'))document.getElementById('optChooserOv').classList.remove('show');});
 
 // ── AUTH ───────────────────────────────────────────────────────
 watchAuth(async user=>{
