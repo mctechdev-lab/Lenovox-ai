@@ -353,6 +353,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
 .attach-sheet{position:fixed;bottom:0;left:0;right:0;z-index:600;background:var(--card);border-radius:20px 20px 0 0;padding:14px 16px 32px;max-width:680px;margin:0 auto;box-shadow:0 -8px 36px rgba(0,0,0,.4);display:none;animation:slideUp .25s ease}
 .attach-sheet.show{display:block}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
 .sheet-ov{position:fixed;inset:0;z-index:599;background:rgba(0,0,0,.6);display:none}
 .sheet-ov.show{display:block}
 .ash-handle{width:36px;height:4px;border-radius:99px;background:var(--border);margin:0 auto 14px}
@@ -440,11 +441,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
 .r-row.ok i{color:var(--green)}.r-row.no i{color:var(--red)}.r-row.info i{color:var(--orange)}
 
 /* ── TABS ── */
-.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0}
-.tab{flex:1;padding:10px 8px;border:none;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.74rem;font-weight:700;cursor:pointer;transition:color .16s;position:relative;display:flex;align-items:center;justify-content:center;gap:5px;-webkit-user-select:none;user-select:none}
-.tab i{font-size:.7rem}
-.tab.active{color:var(--text)}
-.tab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--blue-l);border-radius:2px 2px 0 0}
+/* Tabs bar removed — Memory/Rules accessed via sidebar overlay */
 .panel{display:none;flex-direction:column;flex:1;overflow:hidden}
 .panel.active{display:flex}
 
@@ -604,13 +601,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
     </div>
   </div>
 
-  <div class="tabs">
-    <button class="tab active" data-tab="chat"><i class="fas fa-comments"></i> Chat</button>
-    <button class="tab" data-tab="brain"><i class="fas fa-brain"></i> Memory</button>
-    <button class="tab" data-tab="rules"><i class="fas fa-shield-halved"></i> Rules</button>
-  </div>
+  <!-- No tab bar — Memory/Rules accessed via sidebar -->
 
-  <!-- CHAT PANEL -->
+  <!-- CHAT PANEL — always visible, takes full space -->
   <div class="panel active" id="tab-chat">
     <div class="msgs" id="msgs"></div>
     <div class="inp-area">
@@ -641,8 +634,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
     </div>
   </div>
 
-  <!-- MEMORY PANEL -->
-  <div class="panel" id="tab-brain">
+  <!-- MEMORY PANEL — opened as sidebar overlay -->
+  <div class="panel" id="tab-brain" style="display:none">
     <div class="bb-wrap">
       <div class="bb-info"><i class="fas fa-brain"></i><div><div class="bb-info-title">AI Memory (Brain Box)</div><div class="bb-info-sub">Store context about yourself. The AI includes this automatically in every message. Saved on this device.</div></div></div>
       <div class="bb-sec">
@@ -659,8 +652,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
     </div>
   </div>
 
-  <!-- RULES PANEL -->
-  <div class="panel" id="tab-rules">
+  <!-- RULES PANEL — opened as sidebar overlay -->
+  <div class="panel" id="tab-rules" style="display:none">
     <div class="rules-wrap">
       <div class="r-block">
         <div class="r-block-hdr"><i class="fas fa-circle-check" style="color:var(--green)"></i>&nbsp; What You Can Do</div>
@@ -736,14 +729,8 @@ function nowTime(){return new Date().toLocaleTimeString('en-GB',{hour:'2-digit',
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 // ── TABS ───────────────────────────────────────────────────────
-document.querySelectorAll('.tab[data-tab]').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
-  });
-});
+// Tabs bar removed — panels accessed via sidebar overlay
+// Chat panel is always active
 
 // ── NAV ────────────────────────────────────────────────────────
 window.toggleWebSearchSB=()=>{
@@ -755,16 +742,71 @@ window.toggleWebSearchSB=()=>{
 
 window.switchTab=(tabId)=>{
   closeSB();
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  const tabBtn=document.querySelector(`.tab[data-tab="${tabId}"]`);
-  const tabPanel=document.getElementById('tab-'+tabId);
-  if(tabBtn)tabBtn.classList.add('active');
-  if(tabPanel)tabPanel.classList.add('active');
+  if(tabId==='chat'){
+    // Already showing chat — just close sidebar
+    return;
+  }
+  // Open Memory or Rules as full-screen overlay
+  openPanelOverlay(tabId);
 };
 
+function openPanelOverlay(panelId){
+  const existing=document.getElementById('panelOverlay');
+  if(existing)existing.remove();
+  const panel=document.getElementById('tab-'+panelId);
+  if(!panel)return;
+  const ov=document.createElement('div');
+  ov.id='panelOverlay';
+  ov.style.cssText='position:fixed;inset:0;z-index:800;background:var(--bg);display:flex;flex-direction:column;animation:slideInRight .25s ease';
+  // Header
+  const titles={brain:'Memory (Brain Box)',rules:'Rules & Guidelines'};
+  ov.innerHTML=`<div style="display:flex;align-items:center;gap:9px;padding:12px 14px;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0">
+    <button onclick="document.getElementById('panelOverlay').remove()" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.8rem"><i class="fas fa-arrow-left"></i></button>
+    <div style="font-family:'Orbitron',monospace;font-size:.82rem;font-weight:900;color:var(--text);flex:1">${titles[panelId]||panelId}</div>
+  </div>
+  <div style="flex:1;overflow-y:auto" id="panelOvContent"></div>`;
+  document.body.appendChild(ov);
+  // Copy content from the hidden panel
+  const content=panel.querySelector('.bb-wrap,.rules-wrap');
+  if(content){
+    document.getElementById('panelOvContent').appendChild(content.cloneNode(true));
+    // Re-wire buttons in the clone
+    rewirePanelButtons(panelId, document.getElementById('panelOvContent'));
+  }
+}
+
+function rewirePanelButtons(panelId, container){
+  if(panelId==='brain'){
+    container.querySelector('#addP')?.addEventListener('click',()=>addBBItem('p','pkInp','pvInp'));
+    container.querySelector('#addS')?.addEventListener('click',()=>addBBItem('s','skInp','svInp'));
+    container.querySelector('#clrP')?.addEventListener('click',()=>{if(confirm('Clear all personal memory?')){_mem.p={};saveMem();}});
+    container.querySelector('#clrS')?.addEventListener('click',()=>{if(confirm('Clear all study memory?')){_mem.s={};saveMem();}});
+    // Re-render memory in overlay
+    renderMemInContainer(container);
+  }
+}
+
+function renderMemInContainer(container){
+  function rSec(data,elId){
+    const el=container.querySelector('#'+elId);if(!el)return;
+    const entries=Object.entries(data);
+    if(!entries.length){el.innerHTML='<div class="bb-empty"><i class="fas fa-inbox"></i><span>Nothing saved yet</span></div>';return;}
+    el.innerHTML=entries.map(([k,v])=>'<div class="bb-item"><div style="flex:1"><div class="bb-k">'+k+'</div><div class="bb-v">'+v+'</div></div><button class="bb-del" data-sec="'+(elId==='bbP'?'p':'s')+'" data-k="'+k+'"><i class="fas fa-trash"></i></button></div>').join('');
+    el.querySelectorAll('.bb-del').forEach(btn=>btn.onclick=()=>{delete _mem[btn.dataset.sec][btn.dataset.k];saveMem();renderMemInContainer(container);});
+  }
+  rSec(_mem.p,'bbP');rSec(_mem.s,'bbS');
+}
+
 document.getElementById('sbHome').onclick=()=>{if(window.parent?.navigateTo)window.parent.navigateTo('dashboard');else window.location.href='appskeleton';};
-document.getElementById('sbStudio').onclick=()=>{if(window.parent?.navigateTo)window.parent.navigateTo('ai-imagine');else window.location.href='ai-imagine';};
+document.getElementById('sbStudio').addEventListener('click',()=>{
+  closeSB();
+  // Navigate to AI Studio
+  if(window.parent && window.parent.navigateTo){
+    window.parent.navigateTo('ai-imagine');
+  } else {
+    window.location.href = 'ai-imagine';
+  }
+});
 document.getElementById('balPill').onclick=()=>window.location.href='topup';
 
 // ── SIDEBAR ────────────────────────────────────────────────────
@@ -773,7 +815,13 @@ function closeSB(){document.getElementById('sb').classList.remove('open');docume
 document.getElementById('menuBtn').addEventListener('click',openSB);
 document.getElementById('sbX').addEventListener('click',closeSB);
 document.getElementById('sbOv').addEventListener('click',closeSB);
-document.getElementById('sbNew').addEventListener('click',()=>{newChat();closeSB();});
+document.getElementById('sbNew').addEventListener('click',()=>{
+  newChat();
+  closeSB();
+  // Make sure chat panel is shown
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-chat').classList.add('active');
+});
 
 function renderSBList(){
   if(!_uid)return;

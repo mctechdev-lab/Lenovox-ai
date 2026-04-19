@@ -1066,7 +1066,7 @@ const DC_QUESTIONS = [
   {q:'What is the speed of light in a vacuum (approximately)?',opts:['3×10⁸ m/s','3×10⁶ m/s','3×10¹⁰ m/s','3×10⁴ m/s'],ans:0,diff:'Medium',subject:'Physics',lnx:8},
   {q:'Which organ is responsible for pumping blood in the human body?',opts:['Liver','Kidney','Lungs','Heart'],ans:3,diff:'Easy',subject:'Biology',lnx:5},
   {q:'What is 15% of 400?',opts:['45','60','55','70'],ans:1,diff:'Easy',subject:'Mathematics',lnx:5},
-  {q:'Which gas makes up the largest percentage of Earth's atmosphere?',opts:['Oxygen','Carbon dioxide','Nitrogen','Hydrogen'],ans:2,diff:'Medium',subject:'Chemistry',lnx:8},
+  {q:'Which gas makes up the largest percentage of Earth atmosphere?',opts:['Oxygen','Carbon dioxide','Nitrogen','Hydrogen'],ans:2,diff:'Medium',subject:'Chemistry',lnx:8},
 ];
 
 function loadDailyChallenge(){
@@ -1085,7 +1085,7 @@ function loadDailyChallenge(){
   if(done){
     const result = JSON.parse(done);
     container.innerHTML=`<div class="dc-card">
-      <div class="dc-top"><div class="dc-label"><i class="fas fa-fire"></i> Today's Challenge — ${q.subject}</div><span class="dc-diff ${q.diff.toLowerCase()}">${q.diff}</span></div>
+      <div class="dc-top"><div class="dc-label"><i class="fas fa-fire"></i> Today — ${q.subject}</div><span class="dc-diff ${q.diff.toLowerCase()}">${q.diff}</span></div>
       <div class="dc-q">${q.q}</div>
       <div style="text-align:center;padding:12px 0">
         <div style="font-size:1.6rem;margin-bottom:6px">${result.correct?'✅':'❌'}</div>
@@ -1097,14 +1097,14 @@ function loadDailyChallenge(){
     return;
   }
 
-  container.innerHTML=`<div class="dc-card">
-    <div class="dc-top"><div class="dc-label"><i class="fas fa-fire"></i> Today's Challenge — ${q.subject}</div><span class="dc-diff ${q.diff.toLowerCase()}">${q.diff}</span></div>
-    <div class="dc-q">${q.q}</div>
-    <div class="dc-opts">
-      ${'ABCD'.split('').map((l,i)=>`<button class="dc-opt" onclick="answerDC(${i})"><div class="dc-opt-letter">${l}</div>${q.opts[i]}</button>`).join('')}
-    </div>
-    <div style="font-size:.65rem;color:var(--muted);margin-top:8px;text-align:center"><i class="fas fa-coins" style="color:var(--gold)"></i> Correct answer earns +${q.lnx} LNX</div>
-  </div>`;
+  let dcOptsHtml2='';
+  ['A','B','C','D'].forEach(function(l,i){dcOptsHtml2+='<button class="dc-opt" onclick="answerDC('+i+')">'+'<div class="dc-opt-letter">'+l+'</div>'+esc(q.opts[i])+'</button>';});
+  container.innerHTML='<div class="dc-card">'
+    +'<div class="dc-top"><div class="dc-label"><i class="fas fa-fire"></i> Today — '+q.subject+'</div><span class="dc-diff '+q.diff.toLowerCase()+'">'+q.diff+'</span></div>'
+    +'<div class="dc-q">'+esc(q.q)+'</div>'
+    +'<div class="dc-opts">'+dcOptsHtml2+'</div>'
+    +'<div style="font-size:.65rem;color:var(--muted);margin-top:8px;text-align:center"><i class="fas fa-coins" style="color:var(--gold)"></i> Correct earns +'+q.lnx+' LNX</div>'
+    +'</div>';
 }
 
 window.answerDC = async idx => {
