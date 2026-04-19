@@ -450,6 +450,14 @@ canvas#claimCv{position:fixed;inset:0;z-index:9998;pointer-events:none}
     <!-- Rendered by JS -->
   </div>
 
+  <!-- ══ IN-PAGE PUSH BANNER — Monetag zone 10879026 ══ -->
+  <div style="margin:0 12px 14px;border-radius:13px;overflow:hidden;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05)">
+    <div style="font-size:.56rem;font-weight:800;color:rgba(255,255,255,.18);text-transform:uppercase;letter-spacing:.6px;padding:4px 10px;display:flex;align-items:center;gap:3px">
+      <i class="fas fa-rectangle-ad" style="font-size:.52rem"></i> Sponsored
+    </div>
+    <div id="inPagePushSlot"></div>
+  </div>
+
   <!-- AD EARN -->
   <div class="ad-card">
     <div class="ad-inner">
@@ -542,10 +550,7 @@ function startCd(nextMs){
   const btn=document.getElementById('claimBtn'),cd=document.getElementById('claimCd');
   btn.className='btn-claim done';btn.innerHTML='<i class="fas fa-check"></i> Claimed';btn.disabled=true;cd.style.display='block';
   document.getElementById('claimAdReq').style.display='none';
-  function tick(){const d=nextMs-Date.now();if(d<=0){cd.style.display='none';clearInterval(cdIv);btn.className='btn-claim ready';btn.innerHTML='<i class="fas fa-hand-holding-heart"></i> Claim';btn.disabled=false;updateAdUI();
-  loadExamCountdowns();
-  loadDailyChallenge();
-  renderStudyTimer();return;}
+  function tick(){const d=nextMs-Date.now();if(d<=0){cd.style.display='none';clearInterval(cdIv);btn.className='btn-claim ready';btn.innerHTML='<i class="fas fa-hand-holding-heart"></i> Claim';btn.disabled=false;updateAdUI();return;}
   const h=String(Math.floor(d/3600000)).padStart(2,'0'),m=String(Math.floor((d%3600000)/60000)).padStart(2,'0'),s=String(Math.floor((d%60000)/1000)).padStart(2,'0');cd.textContent=`Next: ${h}:${m}:${s}`;}
   tick();clearInterval(cdIv);cdIv=setInterval(tick,1000);
 }
@@ -605,15 +610,29 @@ window.doClaim=async()=>{
 let _adTimer=null;
 let _adWatchCount=0; // tracks ads watched this session
 
-// ── Load Monetag script (zone 10879026) ──
+// ── Load Popunder (zone 229846) — fires when Watch Ad is tapped ──
 function loadMonetagScript(){
-  if(document.getElementById('monetag-script'))return;
+  if(document.getElementById('monetag-popunder'))return;
   const s=document.createElement('script');
-  s.id='monetag-script';
-  s.dataset.zone='10879026';
-  s.src='https://nap5k.com/tag.min.js';
+  s.id='monetag-popunder';
+  s.src='https://quge5.com/88/tag.min.js';
+  s.dataset.zone='229846';
   s.async=true;
+  s.setAttribute('data-cfasync','false');
   document.body.appendChild(s);
+}
+
+// ── Load In-Page Push banner (zone 10879026) ──
+function loadInPagePush(){
+  if(document.getElementById('inpage-push-loaded'))return;
+  const slot=document.getElementById('inPagePushSlot');
+  if(!slot)return;
+  // Inject the In-Page Push script
+  const s=document.createElement('script');
+  s.id='inpage-push-loaded';
+  // Self-executing format as provided by Monetag
+  s.textContent=`(function(s){s.dataset.zone='10879026',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`;
+  slot.appendChild(s);
 }
 
 // ── Show full-screen ad overlay with Monetag ──
@@ -1159,8 +1178,22 @@ function renderStudyTimer(){
 
 window.setSTPreset = (idx,mins) => {
   if(mins===0){
-    const input = prompt('Enter minutes (1-120):');
-    mins = Math.min(120,Math.max(1,parseInt(input)||25));
+    // Show inline custom input instead of prompt (prompt is blocked in iframes)
+    const customMins = parseInt(window._stCustomMins||'25');
+    mins = customMins;
+    // Show mini input in the card
+    const presetEl = document.getElementById('stPresets');
+    if(presetEl){
+      const inp = document.createElement('input');
+      inp.type='number';inp.min='1';inp.max='120';inp.value='25';
+      inp.placeholder='Minutes';
+      inp.style.cssText='width:80px;padding:5px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:.8rem;font-family:Nunito,sans-serif;outline:none;margin-left:4px';
+      inp.onchange=e=>{window._stCustomMins=e.target.value;};
+      inp.onkeydown=e=>{if(e.key==='Enter'){const m=Math.min(120,Math.max(1,parseInt(inp.value)||25));_stSeconds=m*60;_stTotal=m*60;inp.remove();updateSTDisplay();}};
+      presetEl.appendChild(inp);
+      setTimeout(()=>inp.focus(),50);
+      return;
+    }
   }
   _stSeconds = mins * 60;
   _stTotal = mins * 60;
@@ -1239,6 +1272,11 @@ watchAuth(async user=>{
   document.getElementById('userName').textContent=name.split(' ')[0];
   document.getElementById('avatarEl').textContent=name[0].toUpperCase();
   updateAdUI();
+  loadExamCountdowns();
+  loadDailyChallenge();
+  renderStudyTimer();
+  // Load In-Page Push banner (zone 10879026) after auth
+  loadInPagePush();
   try{
     onSnapshot(doc(db,'wallets',_uid),s=>{
       if(!s.exists())return;const d=s.data();_bal=d.balance||0;
