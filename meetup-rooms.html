@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Study Rooms — Lenovox MeetUp</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03030b;--card:rgba(11,11,30,.97);--card2:rgba(18,18,40,.98);--purple:#8b5cf6;--pink:#ff3d70;--blue:#00d2ff;--green:#10b981;--gold:#ffcc33;--orange:#ff9500;--red:#ef4444;--border:rgba(255,255,255,.07);--text:#e8eaf6;--muted:#8892a4}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+button,[onclick]{touch-action:manipulation;cursor:pointer}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+.shell{display:flex;flex-direction:column;height:100vh;max-width:640px;margin:0 auto}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:9px;padding:11px 13px;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0}
+.back-btn{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:.8rem;transition:.16s;flex-shrink:0}
+.back-btn:hover{color:var(--purple);border-color:rgba(139,92,246,.3)}
+.hdr-title{font-family:'Orbitron',monospace;font-size:.88rem;font-weight:900;color:var(--text);flex:1}
+.hdr-sub{font-size:.64rem;color:var(--muted);margin-top:1px}
+.create-room-btn{display:flex;align-items:center;gap:5px;padding:6px 11px;border:none;border-radius:9px;background:linear-gradient(135deg,var(--purple),#6d28d9);color:#fff;font-family:'Nunito',sans-serif;font-size:.74rem;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(139,92,246,.3);transition:.18s;flex-shrink:0}
+.create-room-btn:hover{transform:translateY(-1px)}
+
+/* TABS */
+.room-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0}
+.rt{flex:1;padding:10px 6px;border:none;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.74rem;font-weight:700;cursor:pointer;transition:.16s;position:relative}
+.rt.active{color:var(--text)}
+.rt.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2.5px;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:2px 2px 0 0}
+
+/* ROOM LIST */
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.subject-filter{display:flex;gap:7px;padding:10px 12px;overflow-x:auto;border-bottom:1px solid var(--border);flex-shrink:0;scrollbar-width:none}
+.subject-filter::-webkit-scrollbar{display:none}
+.sf-chip{padding:5px 12px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:.16s;flex-shrink:0}
+.sf-chip.active{background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.35);color:var(--purple)}
+.room-card{display:flex;align-items:center;gap:11px;padding:13px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s;position:relative}
+.room-card:hover{background:rgba(255,255,255,.02)}
+.room-card:active{background:rgba(255,255,255,.05)}
+.room-av{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.room-info{flex:1;min-width:0}
+.room-name{font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:2px}
+.room-meta{font-size:.65rem;color:var(--muted);display:flex;align-items:center;gap:8px}
+.room-members{display:flex;align-items:center;gap:3px}
+.room-members i{font-size:.6rem}
+.room-activity{display:flex;align-items:center;gap:3px}
+.live-badge{padding:2px 7px;border-radius:999px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);font-size:.58rem;font-weight:800;color:var(--red);display:flex;align-items:center;gap:3px;flex-shrink:0}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--red);animation:livePulse .9s ease-in-out infinite}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.3}}
+.join-btn{padding:7px 14px;border:none;border-radius:9px;background:linear-gradient(135deg,var(--purple),#6d28d9);color:#fff;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;flex-shrink:0;transition:.16s}
+.join-btn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(139,92,246,.3)}
+.empty-rooms{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;gap:12px;color:var(--muted);text-align:center}
+.empty-rooms i{font-size:2.5rem;opacity:.3;margin-bottom:4px}
+.empty-rooms h3{font-size:.88rem;font-weight:800;color:var(--text);opacity:.5}
+.empty-rooms p{font-size:.76rem;line-height:1.6}
+
+/* CHAT ROOM SCREEN */
+.chat-screen{position:fixed;inset:0;z-index:500;background:var(--bg);display:none;flex-direction:column;max-width:640px;margin:0 auto}
+.chat-screen.show{display:flex}
+.chat-hdr{display:flex;align-items:center;gap:9px;padding:11px 13px;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0}
+.chat-hdr-av{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.88rem;flex-shrink:0}
+.chat-hdr-name{font-weight:800;font-size:.86rem;color:var(--text)}
+.chat-hdr-meta{font-size:.63rem;color:var(--muted);display:flex;align-items:center;gap:5px;margin-top:1px}
+.online-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;scrollbar-width:none}
+.chat-msgs::-webkit-scrollbar{display:none}
+.msg-row{display:flex;gap:8px;align-items:flex-end;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.msg-row.mine{flex-direction:row-reverse}
+.msg-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0;background:linear-gradient(135deg,var(--purple),var(--pink))}
+.msg-bubble{max-width:72%;background:var(--card);border:1px solid var(--border);border-radius:16px 16px 16px 4px;padding:8px 12px}
+.msg-row.mine .msg-bubble{background:linear-gradient(135deg,rgba(139,92,246,.25),rgba(109,40,217,.2));border-color:rgba(139,92,246,.3);border-radius:16px 16px 4px 16px}
+.msg-name{font-size:.62rem;font-weight:800;color:var(--purple);margin-bottom:3px}
+.msg-row.mine .msg-name{display:none}
+.msg-text{font-size:.83rem;color:var(--text);line-height:1.55}
+.msg-time{font-size:.58rem;color:var(--muted);margin-top:4px;text-align:right}
+.system-msg{text-align:center;padding:6px 12px}
+.system-msg span{font-size:.67rem;color:var(--muted);background:rgba(255,255,255,.04);padding:3px 10px;border-radius:999px;border:1px solid var(--border)}
+.chat-inp-area{padding:8px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--border);background:var(--card);display:flex;gap:8px;align-items:flex-end;flex-shrink:0}
+.chat-inp{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:999px;padding:9px 14px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:600;outline:none;resize:none;min-height:36px;max-height:80px;line-height:1.4;transition:border-color .18s}
+.chat-inp:focus{border-color:rgba(139,92,246,.4)}
+.chat-inp::placeholder{color:var(--muted)}
+.chat-send{width:36px;height:36px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--purple),#6d28d9);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.86rem;cursor:pointer;flex-shrink:0;box-shadow:0 3px 10px rgba(139,92,246,.35);transition:.18s}
+.chat-send:hover{transform:scale(1.07)}
+.chat-send:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.members-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:.78rem;cursor:pointer;flex-shrink:0;transition:.16s}
+.members-btn:hover{background:rgba(139,92,246,.1);color:var(--purple)}
+.members-panel{position:fixed;right:0;top:0;bottom:0;width:220px;background:var(--card);border-left:1px solid var(--border);z-index:600;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column}
+.members-panel.show{transform:translateX(0)}
+.mp-hdr{padding:12px 13px;border-bottom:1px solid var(--border);font-weight:800;font-size:.82rem;display:flex;align-items:center;justify-content:space-between}
+.mp-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.82rem}
+.member-item{display:flex;align-items:center;gap:8px;padding:10px 13px;border-bottom:1px solid var(--border)}
+.member-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--pink));flex-shrink:0}
+.member-name{font-size:.78rem;font-weight:700;color:var(--text)}
+.member-status{font-size:.6rem;color:var(--green);display:flex;align-items:center;gap:3px}
+
+/* CREATE ROOM SHEET */
+.sheet-ov{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none;align-items:flex-end;justify-content:center}
+.sheet-ov.show{display:flex}
+.sheet{background:var(--card);border-radius:22px 22px 0 0;padding:16px 16px 36px;width:100%;max-width:640px;animation:slideUp .26s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sh-handle{width:36px;height:4px;border-radius:99px;background:var(--border);margin:0 auto 14px}
+.sh-title{font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:14px;text-align:center}
+.inp-group{margin-bottom:12px}
+.inp-label{font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.inp-field{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:700;outline:none;transition:border-color .18s;-webkit-appearance:none}
+.inp-field:focus{border-color:rgba(139,92,246,.4)}
+.subject-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}
+.subj-chip{padding:8px 6px;border:1.5px solid var(--border);border-radius:10px;background:rgba(255,255,255,.03);color:var(--muted);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;text-align:center;transition:.16s}
+.subj-chip.sel{border-color:rgba(139,92,246,.5);background:rgba(139,92,246,.12);color:var(--purple)}
+.create-btn{width:100%;padding:13px;border:none;border-radius:13px;background:linear-gradient(135deg,var(--purple),#6d28d9);color:#fff;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(139,92,246,.3);transition:.2s}
+.create-btn:hover{transform:translateY(-1px)}
+.create-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* TOAST */
+#toasts{position:fixed;top:11px;right:11px;z-index:9999;display:flex;flex-direction:column;gap:5px;max-width:260px}
+.toast{padding:9px 11px;border-radius:9px;font-size:.74rem;font-weight:700;display:flex;align-items:center;gap:6px;border:1px solid;animation:tIn .24s ease}
+.toast.success{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.22);color:#6ee7b7}
+.toast.error{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.22);color:#fca5a5}
+.toast.info{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.2);color:#c4b5fd}
+@keyframes tIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:currentColor;border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="toasts"></div>
+
+<!-- CREATE ROOM SHEET -->
+<div class="sheet-ov" id="createSheetOv">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-title">Create Study Room</div>
+    <div class="inp-group">
+      <div class="inp-label">Room Name</div>
+      <input class="inp-field" id="roomNameInp" placeholder="e.g. JAMB Maths Study Group" maxlength="50">
+    </div>
+    <div class="inp-group">
+      <div class="inp-label">Choose Subject</div>
+      <div class="subject-grid" id="subjectGrid"></div>
+    </div>
+    <div class="inp-group">
+      <div class="inp-label">Description (optional)</div>
+      <input class="inp-field" id="roomDescInp" placeholder="What will you study today?">
+    </div>
+    <button class="create-btn" id="doCreateRoomBtn"><i class="fas fa-plus"></i> Create Room</button>
+  </div>
+</div>
+
+<!-- CHAT ROOM SCREEN -->
+<div class="chat-screen" id="chatScreen">
+  <div class="chat-hdr">
+    <button class="back-btn" id="chatBackBtn"><i class="fas fa-arrow-left"></i></button>
+    <div class="chat-hdr-av" id="chatRoomAv"></div>
+    <div style="flex:1;min-width:0">
+      <div class="chat-hdr-name" id="chatRoomName">Room</div>
+      <div class="chat-hdr-meta"><div class="online-dot"></div><span id="chatMemberCount">0 online</span></div>
+    </div>
+    <button class="members-btn" id="membersBtn"><i class="fas fa-users"></i></button>
+  </div>
+  <div class="chat-msgs" id="chatMsgs"></div>
+  <div class="chat-inp-area">
+    <textarea class="chat-inp" id="chatInp" placeholder="Type a message..." rows="1"></textarea>
+    <button class="chat-send" id="chatSendBtn"><i class="fas fa-paper-plane"></i></button>
+  </div>
+</div>
+
+<!-- MEMBERS PANEL -->
+<div class="members-panel" id="membersPanel">
+  <div class="mp-hdr">
+    <span>Members</span>
+    <button class="mp-close" id="mpClose"><i class="fas fa-xmark"></i></button>
+  </div>
+  <div style="overflow-y:auto;flex:1" id="membersList"></div>
+</div>
+
+<div class="shell">
+  <div class="hdr">
+    <button class="back-btn" onclick="window.location.href='meetup'"><i class="fas fa-arrow-left"></i></button>
+    <div>
+      <div class="hdr-title">Study Rooms</div>
+      <div class="hdr-sub">Live real-time study sessions</div>
+    </div>
+    <button class="create-room-btn" id="createRoomBtn"><i class="fas fa-plus"></i> New Room</button>
+  </div>
+
+  <div class="room-tabs">
+    <button class="rt active" data-tab="active">Active Now</button>
+    <button class="rt" data-tab="mine">My Rooms</button>
+    <button class="rt" data-tab="popular">Popular</button>
+  </div>
+
+  <div class="subject-filter" id="subjectFilter">
+    <button class="sf-chip active" data-subj="all">All Subjects</button>
+  </div>
+
+  <div class="scroll" id="roomList">
+    <div class="empty-rooms" id="loadingRooms">
+      <div class="spinner" style="width:24px;height:24px;border-top-color:var(--purple);margin-bottom:8px"></div>
+      <p>Loading rooms...</p>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { watchAuth, db } from './auth.js';
+import { collection, doc, addDoc, getDoc, updateDoc, deleteDoc, onSnapshot,
+  query, orderBy, limit, where, serverTimestamp, increment, setDoc, getDocs }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── CONFIG ──────────────────────────────────────────────────────
+const SUBJECTS = [
+  'Mathematics','English','Biology','Chemistry','Physics',
+  'Economics','Government','Literature','Geography','History',
+  'Commerce','Accounting','Computer','Agric Science','Civic Ed',
+  'Further Maths','CRS / IRS','Languages','Basic Science','General'
+];
+const SUBJECT_COLORS = {
+  'Mathematics':'rgba(245,158,11,.1)','Physics':'rgba(255,61,112,.1)',
+  'Biology':'rgba(16,185,129,.1)','Chemistry':'rgba(139,92,246,.1)',
+  'English':'rgba(0,210,255,.1)','Economics':'rgba(249,115,22,.1)',
+  'General':'rgba(255,255,255,.07)'
+};
+const ROOM_EXPIRY_MS = 2 * 60 * 60 * 1000; // 2 hours
+
+let _uid = null, _name = '', _avatar = '';
+let _currentRoom = null, _roomUnsub = null, _msgUnsub = null;
+let _activeTab = 'active', _filterSubj = 'all';
+let _members = {};
+
+// ── TOAST ──────────────────────────────────────────────────────
+function toast(m, t='success'){
+  const el=document.createElement('div');el.className='toast '+t;
+  const ic={success:'fa-check',error:'fa-circle-exclamation',info:'fa-circle-info'};
+  el.innerHTML='<i class="fas '+(ic[t]||ic.info)+'"></i><span>'+m+'</span>';
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>el.remove(),3500);
+}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function timeAgo(ts){if(!ts)return '';const d=Date.now()-(ts.toMillis?ts.toMillis():ts);const m=Math.floor(d/60000);if(m<1)return 'now';if(m<60)return m+'m ago';return Math.floor(m/60)+'h ago';}
+function roomColor(subj){return SUBJECT_COLORS[subj]||SUBJECT_COLORS['General'];}
+
+// ── RENDER SUBJECTS IN FILTER & SHEET ─────────────────────────
+function renderSubjectFilter(){
+  const sf=document.getElementById('subjectFilter');
+  sf.innerHTML='<button class="sf-chip active" data-subj="all">All Subjects</button>'
+    + SUBJECTS.map(s=>`<button class="sf-chip" data-subj="${s}">${s}</button>`).join('');
+  sf.querySelectorAll('.sf-chip').forEach(b=>b.addEventListener('click',()=>{
+    sf.querySelectorAll('.sf-chip').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');_filterSubj=b.dataset.subj;loadRooms();
+  }));
+}
+
+function renderSubjectGrid(){
+  const grid=document.getElementById('subjectGrid');
+  grid.innerHTML=SUBJECTS.map(s=>`<button class="subj-chip" data-s="${s}">${s}</button>`).join('');
+  let _sel='';
+  grid.querySelectorAll('.subj-chip').forEach(b=>b.addEventListener('click',()=>{
+    grid.querySelectorAll('.subj-chip').forEach(x=>x.classList.remove('sel'));
+    b.classList.add('sel');_sel=b.dataset.s;
+  }));
+  // Expose selected to outer scope
+  Object.defineProperty(window,'_selectedSubject',{get:()=>_sel,configurable:true});
+}
+
+// ── LOAD ROOMS ─────────────────────────────────────────────────
+async function loadRooms(){
+  const list=document.getElementById('roomList');
+  list.innerHTML='<div class="empty-rooms" id="loadingRooms"><div class="spinner" style="width:22px;height:22px;border-top-color:var(--purple);margin-bottom:8px"></div><p>Loading rooms...</p></div>';
+  try{
+    let q=query(collection(db,'studyRooms'),orderBy('lastActivity','desc'),limit(30));
+    if(_activeTab==='mine') q=query(collection(db,'studyRooms'),where('createdBy','==',_uid),orderBy('lastActivity','desc'));
+    if(_activeTab==='popular') q=query(collection(db,'studyRooms'),orderBy('memberCount','desc'),limit(20));
+
+    const snap=await getDocs(q);
+    const now=Date.now();
+    let rooms=[];
+    snap.forEach(d=>{
+      const r={id:d.id,...d.data()};
+      const lastAct=r.lastActivity?.toMillis?.()||0;
+      if(now-lastAct>ROOM_EXPIRY_MS && _activeTab==='active') return; // expired
+      if(_filterSubj!=='all' && r.subject!==_filterSubj) return;
+      rooms.push(r);
+    });
+
+    if(!rooms.length){
+      list.innerHTML=`<div class="empty-rooms">
+        <i class="fas fa-door-open"></i>
+        <h3>No rooms ${_activeTab==='mine'?'created by you':_filterSubj!=='all'?'for '+_filterSubj:'active'}</h3>
+        <p>Be the first to start a study room!</p>
+      </div>`;
+      return;
+    }
+
+    list.innerHTML=rooms.map(r=>`
+      <div class="room-card" onclick="joinRoom('${r.id}')">
+        <div class="room-av" style="background:${roomColor(r.subject)};border:1px solid ${roomColor(r.subject).replace('.1','0.25')}">${getSubjectIcon(r.subject)}</div>
+        <div class="room-info">
+          <div class="room-name">${esc(r.name)}</div>
+          <div class="room-meta">
+            <span class="room-members"><i class="fas fa-users"></i> ${r.memberCount||0}</span>
+            <span>${esc(r.subject)}</span>
+            <span>${timeAgo(r.lastActivity)}</span>
+          </div>
+          ${r.description?`<div style="font-size:.65rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.description)}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+          ${(r.memberCount||0)>0?'<div class="live-badge"><div class="live-dot"></div>LIVE</div>':''}
+          <button class="join-btn">Join</button>
+        </div>
+      </div>`).join('');
+  }catch(e){
+    list.innerHTML='<div class="empty-rooms"><i class="fas fa-wifi-slash"></i><h3>Could not load rooms</h3><p>Check your connection</p></div>';
+  }
+}
+
+function getSubjectIcon(subj){
+  const icons={'Mathematics':'<i class="fas fa-square-root-variable" style="color:#f59e0b"></i>','Physics':'<i class="fas fa-atom" style="color:#ff3d70"></i>','Biology':'<i class="fas fa-dna" style="color:#10b981"></i>','Chemistry':'<i class="fas fa-flask" style="color:#8b5cf6"></i>','English':'<i class="fas fa-pen-nib" style="color:#00d2ff"></i>','Economics':'<i class="fas fa-chart-line" style="color:#ff9500"></i>'};
+  return icons[subj]||'<i class="fas fa-book-open" style="color:#8892a4"></i>';
+}
+
+// ── JOIN ROOM ──────────────────────────────────────────────────
+window.joinRoom=async(roomId)=>{
+  if(!_uid){toast('Sign in to join rooms','error');return;}
+  try{
+    const roomRef=doc(db,'studyRooms',roomId);
+    const snap=await getDoc(roomRef);
+    if(!snap.exists()){toast('Room no longer exists','error');loadRooms();return;}
+    _currentRoom={id:roomId,...snap.data()};
+    openChatScreen(_currentRoom);
+    // Update member count
+    await updateDoc(roomRef,{memberCount:increment(1),lastActivity:serverTimestamp()});
+    // Add member record
+    await setDoc(doc(db,'studyRooms',roomId,'members',_uid),{
+      uid:_uid,name:_name,joinedAt:serverTimestamp(),online:true
+    });
+    // Send join system message
+    await addDoc(collection(db,'studyRooms',roomId,'messages'),{
+      type:'system',text:`${_name} joined the room`,timestamp:serverTimestamp()
+    });
+  }catch(e){toast('Failed to join room','error');}
+};
+
+function openChatScreen(room){
+  const screen=document.getElementById('chatScreen');
+  document.getElementById('chatRoomName').textContent=room.name;
+  document.getElementById('chatRoomAv').innerHTML=getSubjectIcon(room.subject);
+  document.getElementById('chatRoomAv').style.cssText=`width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.88rem;background:${roomColor(room.subject)};flex-shrink:0`;
+  screen.classList.add('show');
+  document.getElementById('chatMsgs').innerHTML='';
+  loadMessages(room.id);
+  loadMembers(room.id);
+}
+
+// ── MESSAGES ───────────────────────────────────────────────────
+function loadMessages(roomId){
+  if(_msgUnsub)_msgUnsub();
+  const q=query(collection(db,'studyRooms',roomId,'messages'),orderBy('timestamp','asc'),limit(50));
+  _msgUnsub=onSnapshot(q,snap=>{
+    const msgs=document.getElementById('chatMsgs');
+    msgs.innerHTML='';
+    snap.forEach(d=>{
+      const m={id:d.id,...d.data()};
+      if(m.type==='system'){
+        msgs.innerHTML+=`<div class="system-msg"><span>${esc(m.text)}</span></div>`;
+      } else {
+        const isMine=m.uid===_uid;
+        const initials=(m.name||'?')[0].toUpperCase();
+        msgs.innerHTML+=`<div class="msg-row${isMine?' mine':''}">
+          ${!isMine?`<div class="msg-av">${initials}</div>`:''}
+          <div class="msg-bubble">
+            ${!isMine?`<div class="msg-name">${esc(m.name)}</div>`:''}
+            <div class="msg-text">${esc(m.text)}</div>
+            <div class="msg-time">${timeAgo(m.timestamp)}</div>
+          </div>
+        </div>`;
+      }
+    });
+    msgs.scrollTop=msgs.scrollHeight;
+    // Update member count
+    document.getElementById('chatMemberCount').textContent=Object.keys(_members).length+' online';
+  });
+}
+
+async function sendMessage(){
+  const inp=document.getElementById('chatInp');
+  const text=inp.value.trim();
+  if(!text||!_currentRoom)return;
+  inp.value='';inp.style.height='';
+  try{
+    await addDoc(collection(db,'studyRooms',_currentRoom.id,'messages'),{
+      uid:_uid,name:_name,text,timestamp:serverTimestamp(),type:'chat'
+    });
+    await updateDoc(doc(db,'studyRooms',_currentRoom.id),{lastActivity:serverTimestamp()});
+  }catch{toast('Failed to send','error');}
+}
+
+document.getElementById('chatSendBtn').addEventListener('click',sendMessage);
+document.getElementById('chatInp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
+document.getElementById('chatInp').addEventListener('input',e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,80)+'px';});
+
+// ── MEMBERS ────────────────────────────────────────────────────
+function loadMembers(roomId){
+  const q=query(collection(db,'studyRooms',roomId,'members'),where('online','==',true));
+  onSnapshot(q,snap=>{
+    _members={};
+    snap.forEach(d=>{_members[d.id]={...d.data()};});
+    document.getElementById('chatMemberCount').textContent=snap.size+' online';
+    const list=document.getElementById('membersList');
+    list.innerHTML=Object.values(_members).map(m=>`
+      <div class="member-item">
+        <div class="member-av">${(m.name||'?')[0].toUpperCase()}</div>
+        <div>
+          <div class="member-name">${esc(m.name)}</div>
+          <div class="member-status"><div class="online-dot"></div> Online</div>
+        </div>
+      </div>`).join('');
+  });
+}
+
+document.getElementById('membersBtn').addEventListener('click',()=>document.getElementById('membersPanel').classList.toggle('show'));
+document.getElementById('mpClose').addEventListener('click',()=>document.getElementById('membersPanel').classList.remove('show'));
+
+// ── LEAVE ROOM ─────────────────────────────────────────────────
+async function leaveRoom(){
+  if(!_currentRoom||!_uid)return;
+  try{
+    await updateDoc(doc(db,'studyRooms',_currentRoom.id),{memberCount:increment(-1)});
+    await setDoc(doc(db,'studyRooms',_currentRoom.id,'members',_uid),{online:false},{merge:true});
+    await addDoc(collection(db,'studyRooms',_currentRoom.id,'messages'),{
+      type:'system',text:`${_name} left the room`,timestamp:serverTimestamp()
+    });
+  }catch{}
+  if(_msgUnsub)_msgUnsub();
+  _currentRoom=null;
+  document.getElementById('chatScreen').classList.remove('show');
+  document.getElementById('membersPanel').classList.remove('show');
+  loadRooms();
+}
+
+document.getElementById('chatBackBtn').addEventListener('click',leaveRoom);
+
+// ── CREATE ROOM ────────────────────────────────────────────────
+document.getElementById('createRoomBtn').addEventListener('click',()=>{
+  renderSubjectGrid();
+  document.getElementById('createSheetOv').classList.add('show');
+});
+document.getElementById('createSheetOv').addEventListener('click',e=>{if(e.target===document.getElementById('createSheetOv'))document.getElementById('createSheetOv').classList.remove('show');});
+
+document.getElementById('doCreateRoomBtn').addEventListener('click',async()=>{
+  const name=document.getElementById('roomNameInp').value.trim();
+  const subject=window._selectedSubject||'General';
+  const desc=document.getElementById('roomDescInp').value.trim();
+  if(!name){toast('Enter a room name','error');return;}
+  if(!subject||subject===''){toast('Choose a subject','error');return;}
+  const btn=document.getElementById('doCreateRoomBtn');
+  btn.disabled=true;btn.innerHTML='<div class="spinner" style="border-top-color:#fff"></div> Creating...';
+  try{
+    const ref=await addDoc(collection(db,'studyRooms'),{
+      name,subject,description:desc,
+      createdBy:_uid,createdByName:_name,
+      memberCount:0,lastActivity:serverTimestamp(),
+      createdAt:serverTimestamp()
+    });
+    document.getElementById('createSheetOv').classList.remove('show');
+    document.getElementById('roomNameInp').value='';
+    document.getElementById('roomDescInp').value='';
+    toast('Room created!','success');
+    joinRoom(ref.id);
+  }catch{toast('Failed to create room','error');}
+  finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-plus"></i> Create Room';}
+});
+
+// ── TABS ───────────────────────────────────────────────────────
+document.querySelectorAll('.rt').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.rt').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');_activeTab=b.dataset.tab;loadRooms();
+}));
+
+// ── AUTH ───────────────────────────────────────────────────────
+watchAuth(async user=>{
+  if(!user){window.location.replace('login');return;}
+  _uid=user.uid;
+  const snap=await getDoc(doc(db,'users',_uid)).catch(()=>null);
+  _name=snap?.data()?.name||user.displayName||user.email?.split('@')[0]||'Student';
+  renderSubjectFilter();
+  loadRooms();
+
+  // Auto-cleanup expired rooms every 10 min
+  setInterval(async()=>{
+    const cutoff=new Date(Date.now()-ROOM_EXPIRY_MS);
+    const q=query(collection(db,'studyRooms'),where('lastActivity','<',cutoff));
+    const snap=await getDocs(q).catch(()=>({forEach:()=>{}}));
+    snap.forEach(d=>{if((d.data().memberCount||0)===0)deleteDoc(d.ref).catch(()=>{});});
+  },10*60*1000);
+});
+</script>
+</body>
+</html>

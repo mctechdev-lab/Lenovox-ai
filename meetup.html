@@ -28,10 +28,92 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
 .live-btn:hover{transform:translateY(-1px)}
 .live-dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:lP .9s ease-in-out infinite}
 @keyframes lP{0%,100%{opacity:1}50%{opacity:.3}}
-.bnav{display:flex;border-top:1px solid var(--border);background:var(--card);flex-shrink:0;padding:4px 0 calc(6px + env(safe-area-inset-bottom));position:relative;z-index:100}
-.bn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;border:none;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.57rem;font-weight:700;cursor:pointer;transition:.18s;-webkit-user-select:none;user-select:none}
-.bn i{font-size:1.05rem;transition:.18s}
-.bn.active{color:var(--purple)}.bn.active i{color:var(--purple)}
+/* ── FLOATING PILL NAV ── */
+.bnav-wrap{
+  position:relative;
+  flex-shrink:0;
+  padding:8px 16px calc(14px + env(safe-area-inset-bottom));
+  background:transparent;
+  z-index:200;
+}
+/* Media type tray — slides up above nav when + is tapped */
+.create-tray{
+  position:absolute;
+  bottom:calc(100% - 8px);
+  left:50%;
+  transform:translateX(-50%) translateY(10px);
+  background:linear-gradient(135deg,#5b21b6,#7c3aed);
+  border-radius:999px;
+  padding:10px 16px;
+  display:flex;gap:14px;align-items:center;
+  box-shadow:0 8px 32px rgba(139,92,246,.5);
+  opacity:0;pointer-events:none;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  z-index:201;
+  white-space:nowrap;
+}
+.create-tray.show{
+  opacity:1;pointer-events:all;
+  transform:translateX(-50%) translateY(0);
+}
+.ct-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  background:none;border:none;cursor:pointer;padding:2px 6px;
+  color:#fff;font-family:'Nunito',sans-serif;font-size:.6rem;font-weight:800;
+  transition:.16s;
+}
+.ct-btn:active{transform:scale(.92)}
+.ct-btn i{font-size:1.05rem}
+/* The pill itself */
+.bnav{
+  display:flex;align-items:center;
+  background:var(--card);
+  border-radius:999px;
+  padding:6px 10px;
+  box-shadow:0 8px 32px rgba(0,0,0,.4),0 2px 8px rgba(0,0,0,.2);
+  border:1px solid rgba(255,255,255,.07);
+  position:relative;
+}
+/* Normal nav buttons */
+.bn{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:2px;padding:6px 4px;
+  border:none;background:transparent;
+  color:var(--muted);
+  font-family:'Nunito',sans-serif;font-size:.55rem;font-weight:700;
+  cursor:pointer;transition:.18s;
+  -webkit-user-select:none;user-select:none;
+  border-radius:999px;
+}
+.bn i{font-size:1rem;transition:.2s}
+.bn.active{color:var(--purple)}
+.bn.active i{color:var(--purple)}
+.bn:active{background:rgba(255,255,255,.06)}
+/* Center create button — elevated pill bubble */
+.bn-create{
+  display:flex;align-items:center;justify-content:center;
+  width:52px;height:52px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#7c3aed,#6d28d9);
+  border:3px solid var(--bg);
+  box-shadow:0 4px 18px rgba(124,58,237,.55);
+  margin:-16px 6px 0;
+  flex-shrink:0;
+  cursor:pointer;
+  transition:all .22s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+  z-index:10;
+}
+.bn-create i{font-size:1.15rem;color:#fff;transition:.22s}
+.bn-create.open{
+  background:linear-gradient(135deg,#dc2626,#991b1b);
+  box-shadow:0 4px 18px rgba(220,38,38,.5);
+  transform:rotate(45deg) scale(1.05);
+}
+.bn-create:active{transform:scale(.92)}
+/* Tray overlay to close on outside tap */
+.tray-ov{position:fixed;inset:0;z-index:199;display:none}
+.tray-ov.show{display:block}
 .panel{display:none;flex-direction:column;flex:1;overflow:hidden}
 .panel.active{display:flex}
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior:contain}
@@ -464,12 +546,31 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito
     </div>
   </div>
 
-  <div class="bnav">
-    <button class="bn active" data-pan="feed"><i class="fas fa-house"></i>Feed</button>
-    <button class="bn" data-pan="reels"><i class="fas fa-film"></i>Reels</button>
-    <button class="bn" id="createBtn"><i class="fas fa-plus-circle" style="font-size:1.3rem"></i></button>
-    <button class="bn" data-pan="live"><i class="fas fa-video"></i>Live</button>
-    <button class="bn" data-pan="profile"><i class="fas fa-user"></i>Profile</button>
+  <!-- Tray overlay (closes tray on outside tap) -->
+  <div class="tray-ov" id="trayOv"></div>
+
+  <div class="bnav-wrap">
+    <!-- Media type selector tray -->
+    <div class="create-tray" id="createTray">
+      <button class="ct-btn" onclick="openCreate('photo')"><i class="fas fa-image"></i>Photo</button>
+      <button class="ct-btn" onclick="openCreate('video')"><i class="fas fa-video"></i>Video</button>
+      <button class="ct-btn" onclick="openCreate('text')"><i class="fas fa-pen-nib"></i>Text</button>
+      <button class="ct-btn" onclick="openCreate('note')"><i class="fas fa-book-open"></i>Note</button>
+    </div>
+
+    <!-- Pill navigation -->
+    <div class="bnav">
+      <button class="bn active" data-pan="feed"><i class="fas fa-house"></i><span>Feed</span></button>
+      <button class="bn" data-pan="reels"><i class="fas fa-film"></i><span>Reels</span></button>
+
+      <!-- Center elevated create button -->
+      <button class="bn-create" id="createBtn" title="Create">
+        <i class="fas fa-plus"></i>
+      </button>
+
+      <button class="bn" onclick="window.location.href='meetup-rooms'"><i class="fas fa-comments"></i><span>Rooms</span></button>
+      <button class="bn" data-pan="profile"><i class="fas fa-user"></i><span>Profile</span></button>
+    </div>
   </div>
 </div>
 
@@ -519,7 +620,30 @@ document.querySelectorAll('.bn[data-pan]').forEach(btn=>{
     else{internalNavigate('feed');}
   });
 });
-document.getElementById('createBtn').addEventListener('click',openComposer);
+// ── PILL NAV CREATE TRAY ──
+const createBtn=document.getElementById('createBtn');
+const createTray=document.getElementById('createTray');
+const trayOv=document.getElementById('trayOv');
+
+createBtn.addEventListener('click',(e)=>{
+  e.stopPropagation();
+  const isOpen=createTray.classList.contains('show');
+  if(isOpen){closeTray();}
+  else{createTray.classList.add('show');trayOv.classList.add('show');createBtn.classList.add('open');}
+});
+trayOv.addEventListener('click',closeTray);
+function closeTray(){createTray.classList.remove('show');trayOv.classList.remove('show');createBtn.classList.remove('open');}
+
+window.openCreate=(type)=>{
+  closeTray();
+  openComposer();
+  setTimeout(()=>{
+    const typeMap={photo:'image',video:'video',text:'text',note:'studyNote'};
+    document.querySelectorAll('.comp-type-btn').forEach(b=>{
+      b.classList.toggle('active',b.dataset.type===typeMap[type]);
+    });
+  },80);
+};
 
 // FEED TABS
 document.querySelectorAll('.ft[data-feed]').forEach(btn=>{
