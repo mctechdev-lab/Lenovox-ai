@@ -450,20 +450,14 @@ canvas#claimCv{position:fixed;inset:0;z-index:9998;pointer-events:none}
     <!-- Rendered by JS -->
   </div>
 
-  <!-- ══ IN-PAGE PUSH BANNER — Monetag zone 10879026 ══ -->
-  <div style="margin:0 12px 14px;border-radius:13px;overflow:hidden;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05)">
-    <div style="font-size:.56rem;font-weight:800;color:rgba(255,255,255,.18);text-transform:uppercase;letter-spacing:.6px;padding:4px 10px;display:flex;align-items:center;gap:3px">
-      <i class="fas fa-rectangle-ad" style="font-size:.52rem"></i> Sponsored
-    </div>
-    <div id="inPagePushSlot"></div>
-  </div>
+
 
   <!-- AD EARN -->
   <div class="ad-card">
     <div class="ad-inner">
       <div class="ad-icon"><i class="fas fa-play-circle"></i></div>
       <div class="ad-body">
-        <div class="ad-title">Watch Google Ads & Earn LNX</div>
+        <div class="ad-title">Watch Ads & Earn LNX — Coming Soon</div>
         <div class="ad-sub">Watch a real Google ad, earn <b>+8 LNX</b>. Google must approve the ad view first. Up to <b>20 ads/day</b>. 3-min cooldown.</div>
         <div class="ad-progress">
           <div class="adp-dots"><div class="adp-dot" id="adDot1"></div><div class="adp-dot" id="adDot2"></div></div>
@@ -610,30 +604,14 @@ window.doClaim=async()=>{
 let _adTimer=null;
 let _adWatchCount=0; // tracks ads watched this session
 
-// ── Load Popunder (zone 229846) — fires when Watch Ad is tapped ──
+// ── Ad network removed — awaiting Google AdSense approval ──
+// Watch Ad button shows a placeholder until AdSense is approved
 function loadMonetagScript(){
-  if(document.getElementById('monetag-popunder'))return;
-  const s=document.createElement('script');
-  s.id='monetag-popunder';
-  s.src='https://quge5.com/88/tag.min.js';
-  s.dataset.zone='229846';
-  s.async=true;
-  s.setAttribute('data-cfasync','false');
-  document.body.appendChild(s);
+  // Monetag removed — Google AdSense pending approval
+  console.log('Ad network: pending AdSense approval');
 }
 
-// ── Load In-Page Push banner (zone 10879026) ──
-function loadInPagePush(){
-  if(document.getElementById('inpage-push-loaded'))return;
-  const slot=document.getElementById('inPagePushSlot');
-  if(!slot)return;
-  // Inject the In-Page Push script
-  const s=document.createElement('script');
-  s.id='inpage-push-loaded';
-  // Self-executing format as provided by Monetag
-  s.textContent=`(function(s){s.dataset.zone='10879026',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`;
-  slot.appendChild(s);
-}
+// Ad network removed — awaiting Google AdSense approval
 
 // ── Show full-screen ad overlay with Monetag ──
 function showAdOverlay(onComplete,onDismiss){
@@ -656,11 +634,10 @@ function showAdOverlay(onComplete,onDismiss){
     <!-- Ad content area — Monetag loads here -->
     <div id="adHolder" style="padding:16px;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
       <div style="text-align:center">
-        <div style="font-size:2.2rem;margin-bottom:8px">📺</div>
-        <div style="font-size:.82rem;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:4px">Ad is loading...</div>
-        <div style="font-size:.7rem;color:rgba(255,255,255,.3)">Please wait while the advertisement loads</div>
+        <div style="font-size:2.2rem;margin-bottom:8px">⏳</div>
+        <div style="font-size:.82rem;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:4px">Ad Rewards Coming Soon</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.3);line-height:1.6;max-width:240px">We are awaiting Google AdSense approval. Ad rewards will be available very soon!</div>
       </div>
-      <div id="adLoadSpinner" style="width:28px;height:28px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite"></div>
     </div>
 
     <!-- Progress bar -->
@@ -1275,8 +1252,7 @@ watchAuth(async user=>{
   loadExamCountdowns();
   loadDailyChallenge();
   renderStudyTimer();
-  // Load In-Page Push banner (zone 10879026) after auth
-  loadInPagePush();
+
   try{
     onSnapshot(doc(db,'wallets',_uid),s=>{
       if(!s.exists())return;const d=s.data();_bal=d.balance||0;

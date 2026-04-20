@@ -1,0 +1,29 @@
+User-agent: *
+Allow: /
+Allow: /index
+Allow: /about
+Allow: /privacy
+Allow: /terms
+Allow: /plans
+Allow: /login
+Allow: /signup
+Allow: /classroom
+Allow: /quiz
+Allow: /smart-tutor
+Allow: /referral
+
+# Block private user pages from crawlers
+Disallow: /userdashboard
+Disallow: /appskeleton
+Disallow: /ai-chat-bot-assitant
+Disallow: /ai-imagine
+Disallow: /lenovox-settings
+Disallow: /topup
+Disallow: /transaction-detail
+Disallow: /badges
+Disallow: /ranking
+Disallow: /meetup
+Disallow: /gaming-section
+Disallow: /api/
+
+Sitemap: https://lenovox.com.ng/sitemap.xml

@@ -801,11 +801,7 @@ document.getElementById('sbHome').onclick=()=>{if(window.parent?.navigateTo)wind
 document.getElementById('sbStudio').addEventListener('click',()=>{
   closeSB();
   // Navigate to AI Studio
-  if(window.parent && window.parent.navigateTo){
-    window.parent.navigateTo('ai-imagine');
-  } else {
-    window.location.href = 'ai-imagine';
-  }
+  window.location.href = 'ai-imagine';
 });
 document.getElementById('balPill').onclick=()=>window.location.href='topup';
 
@@ -1135,7 +1131,7 @@ function renderEmpty(){
       <button class="sug" data-q="Generate 10 WAEC Biology multiple choice questions with answers"><i class="fas fa-graduation-cap" style="color:#ec4899"></i>Quiz Me</button>
     </div>
   </div>`;
-  msgs.querySelector('#studioPromoBtn').addEventListener('click',()=>{if(window.parent?.navigateTo)window.parent.navigateTo('ai-imagine');else window.location.href='ai-imagine';});
+  msgs.querySelector('#studioPromoBtn').addEventListener('click',()=>{window.location.href='ai-imagine';});
   msgs.querySelectorAll('.sug[data-q]').forEach(btn=>{btn.addEventListener('click',()=>{document.getElementById('chatTa').value=btn.dataset.q;doSend();});});
 }
 
@@ -1303,7 +1299,7 @@ function showRedirectCard(){
     </div>
   </div></div>`;
   msgs.appendChild(d);scrollMsgs();
-  d.querySelector('#redir-studio').onclick=()=>{if(window.parent?.navigateTo)window.parent.navigateTo('ai-imagine');else window.location.href='ai-imagine';};
+  d.querySelector('#redir-studio').onclick=()=>{window.location.href='ai-imagine';};
   d.querySelector('#redir-here').onclick=()=>{d.remove();doSendActual();};
 }
 
