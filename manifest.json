@@ -1,0 +1,49 @@
+{
+  "name": "Lenovox AI",
+  "short_name": "Lenovox",
+  "description": "Nigeria's #1 AI-powered EdTech platform. Study smarter, earn LNX, ace your exams.",
+  "start_url": "/appskeleton",
+  "display": "standalone",
+  "background_color": "#03030b",
+  "theme_color": "#03030b",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity"],
+  "lang": "en-NG",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://res.cloudinary.com/dgancsmua/image/upload/v1/lenovox/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://res.cloudinary.com/dgancsmua/image/upload/v1/lenovox/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "AI Chat",
+      "short_name": "AI",
+      "description": "Open Lenovox AI Chat",
+      "url": "/appskeleton?tab=ai",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Classroom",
+      "short_name": "Class",
+      "description": "Open Lenovox Classroom",
+      "url": "/classroom",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    }
+  ]
+}
