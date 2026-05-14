@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Color Rush — Lenovox</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229569177818177" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#03030b;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;height:100vh;touch-action:none}
+.hud{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,61,112,.2);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
+.hud-back{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:.85rem}
+.hud-title{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:900;background:linear-gradient(135deg,#ff3d70,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hud-right{display:flex;gap:14px;align-items:center}
+.hud-stat{text-align:center}
+.hud-val{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:900}
+.hud-lbl{font-size:.55rem;color:#555;text-transform:uppercase}
+canvas{position:fixed;top:52px;left:50%;transform:translateX(-50%)}
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(3,3,11,.94);backdrop-filter:blur(18px);gap:14px;padding:24px}
+.overlay.hidden{display:none}
+.ov-icon{font-size:3.5rem;animation:pulse 1.2s ease infinite alternate}
+@keyframes pulse{from{transform:scale(1)}to{transform:scale(1.1)}}
+.ov-title{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,#ff3d70,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ov-score{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:#facc15}
+.ov-lnx{color:#555;font-size:.82rem}
+.ov-sub{color:#444;font-size:.82rem;text-align:center;max-width:260px;line-height:1.6}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.o-btn{padding:12px 22px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+.o-btn:hover{transform:translateY(-2px)}
+.o-btn-primary{background:linear-gradient(135deg,#ff3d70,#f97316);color:#fff;box-shadow:0 6px 20px rgba(255,61,112,.3)}
+.o-btn-gold{background:linear-gradient(135deg,#facc15,#f97316);color:#000}
+.o-btn-ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#666}
+/* COLOR BUTTONS */
+.color-btns{position:fixed;bottom:20px;left:0;right:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px;z-index:100;max-width:440px;margin:0 auto}
+.color-btn{height:62px;border:none;border-radius:16px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;transition:.12s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.color-btn:active{transform:scale(.93);box-shadow:0 2px 10px rgba(0,0,0,.2)}
+</style>
+</head>
+<body>
+<div class="hud">
+  <div class="hud-back" onclick="goBack()">←</div>
+  <div class="hud-title">🎨 COLOR RUSH</div>
+  <div class="hud-right">
+    <div class="hud-stat"><div class="hud-val" id="livesDisplay" style="color:#ff3d70">❤️❤️❤️</div><div class="hud-lbl">Lives</div></div>
+    <div class="hud-stat"><div class="hud-val" id="scoreDisplay">0</div><div class="hud-lbl">Score</div></div>
+  </div>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+<div class="color-btns" id="colorBtns"></div>
+
+<!-- OVERLAYS -->
+<div class="overlay" id="startOverlay">
+  <div class="ov-icon">🎨</div>
+  <div class="ov-title">COLOR RUSH</div>
+  <div class="ov-sub">Balls fall from above! Tap the matching color button before they hit the bottom! Speed increases every 10 points!</div>
+  <div class="btn-row">
+    <button class="o-btn o-btn-primary" onclick="startGame()">▶ PLAY</button>
+    <button class="o-btn o-btn-gold" onclick="showAdFromGame()">📺 +30 LNX</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="gameoverOverlay">
+  <div class="ov-icon">💔</div>
+  <div class="ov-title">GAME OVER!</div>
+  <div class="ov-score" id="finalScore">0</div>
+  <div class="ov-lnx" id="earnedLNX">+0 LNX</div>
+  <div class="ov-sub" id="finalMsg">Wrong color!</div>
+  <div class="btn-row">
+    <button class="o-btn o-btn-primary" onclick="startGame()">▶ RETRY</button>
+    <button class="o-btn o-btn-gold" onclick="showAdFromGame()">📺 +30 LNX</button>
+    <button class="o-btn o-btn-ghost" onclick="goBack()">← Menu</button>
+  </div>
+</div>
+
+<script type="module">
+import { watchAuth, db } from './auth.js';
+import { initAds, showRewardedAd, setAdUser } from './game-ads.js';
+import { doc, updateDoc, increment, addDoc, collection, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+let _uid=null;
+watchAuth(u=>{if(u){_uid=u.uid;setAdUser(u.uid);}});
+initAds(db,null);
+window.showAdFromGame=()=>showRewardedAd();
+
+const canvas=document.getElementById('gameCanvas');
+const ctx=canvas.getContext('2d');
+let W,H,balls,score,lives,animId,spawnTimer,gameRunning,speed,particles=[];
+
+const COLORS=[
+  {name:'RED',  hex:'#ff3d70',light:'#ff6b8a'},
+  {name:'BLUE', hex:'#00d2ff',light:'#33ddff'},
+  {name:'GREEN',hex:'#10b981',light:'#34d39e'},
+  {name:'GOLD', hex:'#facc15',light:'#fdd83a'},
+];
+
+function resize(){
+  W=Math.min(window.innerWidth,440);
+  H=window.innerHeight-52-100;
+  canvas.width=W;canvas.height=H;
+}
+resize();
+
+// Build color buttons
+function buildButtons(){
+  const wrap=document.getElementById('colorBtns');
+  wrap.innerHTML='';
+  COLORS.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='color-btn';
+    btn.style.background=`linear-gradient(135deg,${c.hex},${c.light}22)`;
+    btn.style.border=`2px solid ${c.hex}66`;
+    btn.style.color=c.hex;
+    btn.style.boxShadow=`0 6px 20px ${c.hex}44`;
+    btn.innerHTML=`<span style="font-size:1.1rem">●</span>${c.name}`;
+    btn.addEventListener('pointerdown',()=>tapColor(c.name));
+    wrap.appendChild(btn);
+  });
+}
+buildButtons();
+
+window.startGame=()=>{
+  document.getElementById('startOverlay').classList.add('hidden');
+  document.getElementById('gameoverOverlay').classList.add('hidden');
+  balls=[];particles=[];score=0;lives=3;speed=2;gameRunning=true;
+  updateHUD();
+  clearInterval(spawnTimer);
+  spawnTimer=setInterval(spawnBall,1200);
+  cancelAnimationFrame(animId);animId=requestAnimationFrame(loop);
+};
+
+function spawnBall(){
+  if(!gameRunning)return;
+  const color=COLORS[Math.floor(Math.random()*COLORS.length)];
+  const r=20+Math.random()*14;
+  balls.push({x:r+(Math.random()*(W-r*2)),y:-r,r,color,speed:speed+(Math.random()*.8)});
+}
+
+function tapColor(name){
+  if(!gameRunning)return;
+  // Find lowest ball of this color
+  let hit=null,hitIdx=-1;
+  balls.forEach((b,i)=>{if(b.color.name===name&&b.y>0){if(!hit||b.y>hit.y){hit=b;hitIdx=i;}}});
+  if(hitIdx>=0){
+    explode(hit.x,hit.y,hit.color.hex);
+    balls.splice(hitIdx,1);
+    score++;
+    if(score%10===0){speed+=0.3;clearInterval(spawnTimer);spawnTimer=setInterval(spawnBall,Math.max(400,1200-score*8));}
+    updateHUD();
+  } else {
+    // Wrong tap — lose a life
+    lives--;updateHUD();
+    // Flash red
+    ctx.fillStyle='rgba(255,61,112,.25)';ctx.fillRect(0,0,W,H);
+    if(lives<=0)endGame();
+  }
+}
+
+function explode(x,y,color){
+  for(let i=0;i<14;i++){
+    const a=Math.random()*Math.PI*2,s=3+Math.random()*5;
+    particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,color,size:3+Math.random()*4});
+  }
+}
+
+function loop(){
+  if(!gameRunning)return;
+  ctx.clearRect(0,0,W,H);
+  // Dark BG
+  ctx.fillStyle='#03030b';ctx.fillRect(0,0,W,H);
+  // Grid lines
+  ctx.strokeStyle='rgba(255,255,255,.03)';ctx.lineWidth=1;
+  for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  // Danger zone
+  ctx.fillStyle='rgba(255,61,112,.04)';ctx.fillRect(0,H-30,W,30);
+  ctx.strokeStyle='rgba(255,61,112,.2)';ctx.lineWidth=1;
+  ctx.setLineDash([6,4]);ctx.beginPath();ctx.moveTo(0,H-30);ctx.lineTo(W,H-30);ctx.stroke();ctx.setLineDash([]);
+  // Particles
+  particles=particles.filter(p=>{
+    ctx.save();ctx.globalAlpha=p.life;ctx.shadowColor=p.color;ctx.shadowBlur=8;
+    ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);ctx.fill();ctx.restore();
+    p.x+=p.vx;p.y+=p.vy;p.vx*=.88;p.vy*=.88;p.life-=.05;return p.life>0;
+  });
+  // Balls
+  for(let i=balls.length-1;i>=0;i--){
+    const b=balls[i];b.y+=b.speed;
+    if(b.y-b.r>H){
+      balls.splice(i,1);
+      lives--;updateHUD();
+      if(lives<=0){endGame();return;}
+      continue;
+    }
+    // Draw ball
+    ctx.save();
+    ctx.shadowColor=b.color.hex;ctx.shadowBlur=18;
+    const g=ctx.createRadialGradient(b.x-b.r*.3,b.y-b.r*.3,1,b.x,b.y,b.r);
+    g.addColorStop(0,'rgba(255,255,255,.6)');g.addColorStop(.4,b.color.hex);g.addColorStop(1,b.color.hex+'88');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();
+    // Label
+    ctx.fillStyle='#fff';ctx.font=`bold ${b.r*.7}px Orbitron,monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(b.color.name[0],b.x,b.y);
+    ctx.restore();
+  }
+  animId=requestAnimationFrame(loop);
+}
+
+function updateHUD(){
+  document.getElementById('scoreDisplay').textContent=score;
+  const h=['❤️','❤️','❤️'].map((_,i)=>i<lives?'❤️':'🖤').join('');
+  document.getElementById('livesDisplay').textContent=h;
+}
+
+async function endGame(){
+  gameRunning=false;cancelAnimationFrame(animId);clearInterval(spawnTimer);
+  const lnx=score>=50?20:score>=30?14:score>=20?9:score>=10?5:2;
+  document.getElementById('finalScore').textContent=score+' pts';
+  document.getElementById('earnedLNX').textContent=`+${lnx} LNX`;
+  document.getElementById('finalMsg').textContent=score>=50?'COLOR MASTER! 🔥':score>=30?'Great reflexes!':score>=20?'Not bad!':'Keep practising!';
+  if(_uid){try{await updateDoc(doc(db,'wallets',_uid),{balance:increment(lnx),totalEarned:increment(lnx)});await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(lnx)});await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Game Reward',amount:lnx,game:'Color Rush',score,timestamp:serverTimestamp()});}catch{}}
+  document.getElementById('gameoverOverlay').classList.remove('hidden');
+}
+window.goBack=()=>{cancelAnimationFrame(animId);clearInterval(spawnTimer);history.back();};
+</script>
+</body>
+</html>

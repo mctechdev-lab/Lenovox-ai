@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Gem Match — Lenovox</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229569177818177" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#03030b;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;height:100vh}
+.hud{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);border-bottom:1px solid rgba(157,80,187,.2);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
+.hud-back{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:.85rem}
+.hud-title{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:900;background:linear-gradient(135deg,#c084fc,#9d50bb);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hud-right{display:flex;gap:12px;align-items:center}
+.hud-stat{text-align:center}
+.hud-val{font-family:'Orbitron',monospace;font-size:.88rem;font-weight:900}
+.hud-lbl{font-size:.55rem;color:#555;text-transform:uppercase}
+/* MOVES BAR */
+.moves-bar{position:fixed;top:52px;left:0;right:0;height:5px;background:rgba(255,255,255,.06);z-index:99}
+.moves-fill{height:100%;background:linear-gradient(90deg,#c084fc,#6366f1);transition:width .3s}
+/* BOARD WRAP */
+.board-wrap{padding:68px 10px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;max-width:440px;margin:0 auto}
+/* GRID */
+.gem-grid{display:grid;gap:5px}
+.gem{border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;cursor:pointer;transition:transform .12s,box-shadow .12s;user-select:none;-webkit-user-select:none;position:relative;border:1.5px solid transparent}
+.gem:active,.gem.selected{transform:scale(.88);box-shadow:0 0 0 3px rgba(255,255,255,.5)!important}
+.gem.selected{z-index:10;animation:gemPulse .4s ease infinite alternate}
+@keyframes gemPulse{from{transform:scale(.88)}to{transform:scale(.94)}}
+.gem.match{animation:gemMatch .3s ease forwards}
+@keyframes gemMatch{0%{transform:scale(1.2);opacity:1}100%{transform:scale(0);opacity:0}}
+.gem.fall{animation:gemFall .25s ease}
+@keyframes gemFall{from{transform:translateY(-40px);opacity:0}to{transform:translateY(0);opacity:1}}
+/* SCORE POPUP */
+.score-pop{position:fixed;pointer-events:none;z-index:500;font-family:'Orbitron',monospace;font-weight:900;font-size:1.1rem;color:#facc15;text-shadow:0 0 12px rgba(250,204,21,.6);animation:scoreFly .8s ease forwards}
+@keyframes scoreFly{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-60px)}}
+/* AD BUTTON */
+.ad-btn{background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.25);color:#facc15;padding:8px 16px;border-radius:12px;font-weight:800;font-size:.8rem;cursor:pointer;transition:.2s;font-family:'Nunito',sans-serif}
+.ad-btn:hover{background:rgba(250,204,21,.15)}
+/* OVERLAY */
+.overlay{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(3,3,11,.94);backdrop-filter:blur(18px);gap:14px;padding:24px}
+.overlay.hidden{display:none}
+.ov-icon{font-size:3.5rem;animation:float 1.8s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.ov-title{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,#c084fc,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ov-score{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:#facc15}
+.ov-lnx{color:#555;font-size:.82rem}
+.ov-sub{color:#444;font-size:.82rem;text-align:center;max-width:260px;line-height:1.6}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.o-btn{padding:12px 22px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+.o-btn:hover{transform:translateY(-2px)}
+.o-btn-primary{background:linear-gradient(135deg,#9d50bb,#6e3592);color:#fff;box-shadow:0 6px 20px rgba(157,80,187,.3)}
+.o-btn-gold{background:linear-gradient(135deg,#facc15,#f97316);color:#000}
+.o-btn-ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#666}
+</style>
+</head>
+<body>
+<div class="hud">
+  <div class="hud-back" onclick="goBack()">←</div>
+  <div class="hud-title">💎 GEM MATCH</div>
+  <div class="hud-right">
+    <div class="hud-stat"><div class="hud-val" id="movesDisplay" style="color:#c084fc">30</div><div class="hud-lbl">Moves</div></div>
+    <div class="hud-stat"><div class="hud-val" id="targetDisplay" style="color:#facc15">1000</div><div class="hud-lbl">Target</div></div>
+    <div class="hud-stat"><div class="hud-val" id="scoreDisplay">0</div><div class="hud-lbl">Score</div></div>
+    <button class="ad-btn" onclick="showAdFromGame()">📺 LNX</button>
+  </div>
+</div>
+<div class="moves-bar"><div class="moves-fill" id="movesFill"></div></div>
+
+<div class="board-wrap">
+  <div class="gem-grid" id="gemGrid"></div>
+</div>
+
+<div class="overlay" id="startOverlay">
+  <div class="ov-icon">💎</div>
+  <div class="ov-title">GEM MATCH</div>
+  <div class="ov-sub">Swap adjacent gems to make matches of 3 or more! Reach the target score before you run out of moves!</div>
+  <div class="btn-row">
+    <button class="o-btn o-btn-primary" onclick="startGame()">▶ PLAY</button>
+    <button class="o-btn o-btn-gold" onclick="showAdFromGame()">📺 +30 LNX</button>
+  </div>
+</div>
+<div class="overlay hidden" id="winOverlay">
+  <div class="ov-icon">🏆</div>
+  <div class="ov-title">LEVEL CLEAR!</div>
+  <div class="ov-score" id="winScore">0</div>
+  <div class="ov-lnx" id="winLNX">+0 LNX</div>
+  <div class="btn-row">
+    <button class="o-btn o-btn-primary" onclick="nextLevel()">▶ NEXT LEVEL</button>
+    <button class="o-btn o-btn-gold" onclick="showAdFromGame()">📺 +30 LNX</button>
+  </div>
+</div>
+<div class="overlay hidden" id="loseOverlay">
+  <div class="ov-icon">💔</div>
+  <div class="ov-title">OUT OF MOVES!</div>
+  <div class="ov-score" id="loseScore">0</div>
+  <div class="ov-lnx" id="loseLNX">+0 LNX</div>
+  <div class="ov-sub" id="loseMsg">Almost there!</div>
+  <div class="btn-row">
+    <button class="o-btn o-btn-primary" onclick="startGame()">▶ RETRY</button>
+    <button class="o-btn o-btn-gold" onclick="showAdFromGame()">📺 +30 LNX</button>
+    <button class="o-btn o-btn-ghost" onclick="goBack()">← Menu</button>
+  </div>
+</div>
+
+<script type="module">
+import { watchAuth, db } from './auth.js';
+import { initAds, showRewardedAd, setAdUser } from './game-ads.js';
+import { doc, updateDoc, increment, addDoc, collection, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+let _uid=null;
+watchAuth(u=>{if(u){_uid=u.uid;setAdUser(u.uid);}});
+initAds(db,null);
+window.showAdFromGame=()=>showRewardedAd();
+
+const COLS=7,ROWS=8;
+const GEMS=[
+  {emoji:'💎',color:'#00d2ff',shadow:'rgba(0,210,255,.4)'},
+  {emoji:'🔴',color:'#ff3d70',shadow:'rgba(255,61,112,.4)'},
+  {emoji:'💚',color:'#10b981',shadow:'rgba(16,185,129,.4)'},
+  {emoji:'🌟',color:'#facc15',shadow:'rgba(250,204,21,.4)'},
+  {emoji:'💜',color:'#c084fc',shadow:'rgba(192,132,252,.4)'},
+  {emoji:'🔶',color:'#f97316',shadow:'rgba(249,115,22,.4)'},
+];
+
+let board,selected,score,moves,maxMoves,targetScore,level,busy;
+
+function rand(){return Math.floor(Math.random()*GEMS.length);}
+
+function makeBoard(){
+  let b=Array.from({length:ROWS},()=>Array.from({length:COLS},rand));
+  // Remove initial matches
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    while(hasMatchAt(b,r,c)){b[r][c]=rand();}
+  }
+  return b;
+}
+
+function hasMatchAt(b,r,c){
+  const v=b[r][c];
+  if(c>=2&&b[r][c-1]===v&&b[r][c-2]===v)return true;
+  if(r>=2&&b[r-1][c]===v&&b[r-2][c]===v)return true;
+  return false;
+}
+
+function getMatches(b){
+  const matched=new Set();
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS-2;c++){
+      const v=b[r][c];if(v<0)continue;
+      let run=1;while(c+run<COLS&&b[r][c+run]===v)run++;
+      if(run>=3){for(let i=0;i<run;i++)matched.add(r*COLS+c+i);}
+    }
+  }
+  for(let c=0;c<COLS;c++){
+    for(let r=0;r<ROWS-2;r++){
+      const v=b[r][c];if(v<0)continue;
+      let run=1;while(r+run<ROWS&&b[r+run][c]===v)run++;
+      if(run>=3){for(let i=0;i<run;i++)matched.add((r+i)*COLS+c);}
+    }
+  }
+  return matched;
+}
+
+function calcCellSize(){
+  const avW=Math.min(window.innerWidth,440)-20;
+  return Math.floor(avW/COLS);
+}
+
+window.startGame=()=>{
+  document.getElementById('startOverlay').classList.add('hidden');
+  document.getElementById('winOverlay').classList.add('hidden');
+  document.getElementById('loseOverlay').classList.add('hidden');
+  level=1;score=0;targetScore=1000;maxMoves=30;
+  initLevel();
+};
+window.nextLevel=()=>{
+  document.getElementById('winOverlay').classList.add('hidden');
+  level++;targetScore=1000*level;maxMoves=30+level*5;
+  initLevel();
+};
+
+function initLevel(){
+  board=makeBoard();selected=null;moves=maxMoves;busy=false;
+  updateHUD();renderBoard();
+}
+
+function renderBoard(){
+  const grid=document.getElementById('gemGrid');
+  const cs=calcCellSize();
+  grid.style.gridTemplateColumns=`repeat(${COLS},${cs}px)`;
+  grid.innerHTML='';
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const g=GEMS[board[r][c]];
+    const cell=document.createElement('div');
+    cell.className='gem';
+    cell.style.width=cell.style.height=cs+'px';
+    cell.style.fontSize=(cs*.55)+'px';
+    cell.style.background=g.color+'18';
+    cell.style.borderColor=g.color+'44';
+    cell.style.boxShadow=`inset 0 1px 0 rgba(255,255,255,.15),0 4px 12px ${g.shadow}`;
+    cell.textContent=g.emoji;
+    cell.dataset.r=r;cell.dataset.c=c;
+    cell.addEventListener('click',()=>onGemClick(r,c));
+    grid.appendChild(cell);
+  }
+}
+
+function cellEl(r,c){return document.querySelector(`[data-r="${r}"][data-c="${c}"]`);}
+
+function onGemClick(r,c){
+  if(busy)return;
+  if(!selected){selected={r,c};cellEl(r,c)?.classList.add('selected');return;}
+  const {r:sr,c:sc}=selected;
+  cellEl(sr,sc)?.classList.remove('selected');
+  if(sr===r&&sc===c){selected=null;return;}
+  // Must be adjacent
+  if(Math.abs(r-sr)+Math.abs(c-sc)!==1){selected={r,c};cellEl(r,c)?.classList.add('selected');return;}
+  selected=null;
+  trySwap(sr,sc,r,c);
+}
+
+async function trySwap(r1,c1,r2,c2){
+  busy=true;
+  // Swap
+  [board[r1][c1],board[r2][c2]]=[board[r2][c2],board[r1][c1]];
+  const matches=getMatches(board);
+  if(!matches.size){[board[r1][c1],board[r2][c2]]=[board[r2][c2],board[r1][c1]];busy=false;return;}
+  moves--;updateHUD();
+  await resolveMatches();
+  if(score>=targetScore){winLevel();return;}
+  if(moves<=0){endGame();return;}
+  busy=false;
+}
+
+async function resolveMatches(){
+  let matches=getMatches(board);
+  while(matches.size){
+    let pts=0;
+    matches.forEach(idx=>{
+      const r=Math.floor(idx/COLS),c=idx%COLS;
+      pts+=GEMS[board[r][c]]?10:5;
+      board[r][c]=-1;
+    });
+    score+=pts;updateHUD();
+    showScorePop(pts);
+    renderBoard();
+    await sleep(300);
+    // Drop
+    for(let c=0;c<COLS;c++){
+      let empty=[];
+      for(let r=ROWS-1;r>=0;r--){if(board[r][c]===-1)empty.push(r);}
+      for(const er of empty){for(let r=er;r>0;r--)board[r][c]=board[r-1][c];board[0][c]=rand();}
+    }
+    renderBoard();
+    await sleep(250);
+    matches=getMatches(board);
+  }
+}
+
+function showScorePop(pts){
+  const el=document.createElement('div');el.className='score-pop';el.textContent=`+${pts}`;
+  el.style.left=(W()/2-30)+'px';el.style.top='100px';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),800);
+}
+function W(){return Math.min(window.innerWidth,440);}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+function updateHUD(){
+  document.getElementById('scoreDisplay').textContent=score;
+  document.getElementById('movesDisplay').textContent=moves;
+  document.getElementById('targetDisplay').textContent=targetScore;
+  document.getElementById('movesFill').style.width=(moves/maxMoves*100)+'%';
+}
+
+async function winLevel(){
+  const lnx=level*8;
+  document.getElementById('winScore').textContent=score+' pts';
+  document.getElementById('winLNX').textContent=`+${lnx} LNX earned!`;
+  await creditLNX(lnx,'Gem Match - Level '+level);
+  document.getElementById('winOverlay').classList.remove('hidden');
+  busy=false;
+}
+
+async function endGame(){
+  busy=false;
+  const lnx=score>=2000?20:score>=1000?14:score>=500?9:score>=200?5:2;
+  document.getElementById('loseScore').textContent=score+' pts';
+  document.getElementById('loseLNX').textContent=`+${lnx} LNX`;
+  document.getElementById('loseMsg').textContent=score>=targetScore*.8?'So close! Try again!':'Match more gems!';
+  await creditLNX(lnx,'Gem Match');
+  document.getElementById('loseOverlay').classList.remove('hidden');
+}
+
+async function creditLNX(lnx,game){
+  if(!_uid)return;
+  try{await updateDoc(doc(db,'wallets',_uid),{balance:increment(lnx),totalEarned:increment(lnx)});await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(lnx)});await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Game Reward',amount:lnx,game,score,timestamp:serverTimestamp()});}catch{}
+}
+window.goBack=()=>history.back();
+</script>
+</body>
+</html>
