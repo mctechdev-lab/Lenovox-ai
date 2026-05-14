@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229569177818177" crossorigin="anonymous"></script>
+<!-- Lenovox Favicon -->
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+<link rel="manifest" href="/manifest.json">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Lenovox — Games</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03030b;--card:rgba(11,11,30,.95);--blue:#00d2ff;--gold:#ffcc33;--green:#10b981;--pink:#ff3d70;--border:rgba(255,255,255,.07);--text:#e8eaf6;--muted:#8892a4}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;padding-bottom:100px}
+.bg-glow{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 50% 35% at 15% 10%,rgba(255,61,112,.07),transparent 60%),radial-gradient(ellipse 40% 30% at 85% 85%,rgba(0,210,255,.05),transparent 60%),var(--bg)}
+.page{max-width:540px;margin:0 auto;padding:0 13px}
+
+/* ── HEADER ── */
+.g-hdr{padding:18px 0 10px;display:flex;align-items:center;justify-content:space-between}
+.g-hdr-left h2{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;display:flex;align-items:center;gap:8px}
+.g-hdr-left p{font-size:.7rem;color:var(--muted);margin-top:2px}
+.lnx-pill{display:flex;align-items:center;gap:5px;background:rgba(255,204,51,.08);border:1.5px solid rgba(255,204,51,.2);border-radius:999px;padding:6px 14px;cursor:pointer;transition:.2s}
+.lnx-pill:hover{background:rgba(255,204,51,.14)}
+.lnx-pill i{color:var(--gold);font-size:.72rem}
+.lnx-pill span{font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;color:var(--gold)}
+
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:15px}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px 8px;text-align:center}
+.stat-box .val{font-family:'Orbitron',monospace;font-size:.88rem;font-weight:900;display:block;margin-bottom:2px}
+.stat-box .lbl{font-size:.58rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+
+/* ── AD REWARD BANNER ── */
+.ad-banner{background:linear-gradient(135deg,rgba(255,204,51,.1),rgba(249,115,22,.07));border:2px solid rgba(255,204,51,.28);border-radius:16px;padding:13px 15px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.ad-banner:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,204,51,.18)}
+.ad-banner::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);transition:left .5s}
+.ad-banner:hover::before{left:100%}
+.ad-icon-wrap{width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#facc15,#f97316);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 6px 18px rgba(255,204,51,.3)}
+.ad-body{flex:1;min-width:0}
+.ad-body-title{font-weight:800;font-size:.9rem}
+.ad-body-sub{font-size:.7rem;color:var(--muted);margin-top:2px}
+.ad-claim-btn{background:linear-gradient(135deg,#facc15,#f97316);color:#000;border:none;padding:9px 16px;border-radius:10px;font-weight:800;font-size:.78rem;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:'Nunito',sans-serif}
+
+/* ── CATEGORY TABS ── */
+.cat-tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:15px;scrollbar-width:none}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tab{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--border);background:var(--card);font-size:.75rem;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;transition:.2s;flex-shrink:0}
+.cat-tab.active{background:rgba(0,210,255,.1);border-color:rgba(0,210,255,.35);color:var(--blue)}
+.cat-tab i{font-size:.68rem}
+
+/* ── SECTION LABEL ── */
+.sec-label{font-size:.68rem;font-weight:800;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:11px;display:flex;align-items:center;gap:6px}
+
+/* ── GAME CARDS GRID ── */
+.games-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+
+/* ── GAME CARD ── */
+.gc{background:var(--card);border:1.5px solid var(--border);border-radius:18px;overflow:hidden;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;display:flex;flex-direction:column}
+.gc:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,.4);border-color:rgba(255,255,255,.12)}
+.gc:active{transform:scale(.96)}
+
+/* Image area */
+.gc-img-area{position:relative;height:108px;overflow:hidden;flex-shrink:0}
+.gc-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.gc:hover .gc-img{transform:scale(1.06)}
+.gc-img-area::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(3,3,11,.95))}
+.gc-badge{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:6px;font-size:.6rem;font-weight:800;letter-spacing:.5px;z-index:2;color:#fff}
+.gc-emoji{position:absolute;bottom:10px;right:10px;font-size:1.5rem;z-index:2;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
+
+/* Card body */
+.gc-body{padding:10px 11px 12px;flex:1;display:flex;flex-direction:column;gap:5px}
+.gc-name{font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;line-height:1.3}
+.gc-desc{font-size:.63rem;color:var(--muted);line-height:1.5;flex:1}
+.gc-footer{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:4px}
+.gc-reward{display:flex;align-items:center;gap:4px;font-size:.65rem;font-weight:800;color:var(--gold)}
+.gc-reward i{font-size:.6rem}
+.gc-play{padding:6px 12px;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:4px;transition:.2s;color:#fff;flex-shrink:0}
+.gc-play:hover{filter:brightness(1.18);transform:scale(1.05)}
+.gc-play i{font-size:.65rem}
+
+/* ── AD OVERLAY ── */
+.ad-overlay{position:fixed;inset:0;z-index:9999;background:rgba(3,3,11,.97);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px}
+.ad-overlay.show{display:flex}
+.ao-icon{width:76px;height:76px;border-radius:22px;background:linear-gradient(135deg,#facc15,#f97316);display:flex;align-items:center;justify-content:center;font-size:2.2rem;animation:aoPulse 1.1s ease infinite alternate;box-shadow:0 10px 32px rgba(250,204,21,.35)}
+@keyframes aoPulse{from{transform:scale(1)}to{transform:scale(1.08)}}
+.ao-title{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;color:#fff;text-align:center}
+.ao-reward{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:#facc15}
+.ao-reward span{font-size:1rem;color:var(--muted)}
+.ao-sub{color:var(--muted);font-size:.82rem;text-align:center;max-width:270px;line-height:1.6}
+.ao-count{font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:900;color:#fff}
+.ao-prog-wrap{width:100%;max-width:300px;height:8px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden}
+.ao-prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#facc15,#f97316);width:0%;transition:width .1s linear}
+.ao-ad-unit{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;width:100%;max-width:320px;min-height:150px;display:flex;align-items:center;justify-content:center;color:#333;font-size:.75rem;text-align:center;padding:14px}
+.ao-claim-btn{padding:12px 30px;border:none;border-radius:13px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:not-allowed;transition:.3s;background:rgba(255,255,255,.05);border:1px solid var(--border);color:#444}
+.ao-claim-btn.ready{background:linear-gradient(135deg,#10b981,#059669);color:#fff;cursor:pointer;border-color:transparent;box-shadow:0 6px 20px rgba(16,185,129,.35);animation:bounce .6s ease infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-5px)}}
+
+/* ── MINI GAMES (inline) ── */
+.mini-game-overlay{position:fixed;inset:0;z-index:8000;background:var(--bg);display:none;flex-direction:column}
+.mini-game-overlay.show{display:flex}
+.mini-hdr{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.5);backdrop-filter:blur(10px);flex-shrink:0}
+.mini-back{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted)}
+.mini-title{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:700;flex:1}
+.mini-score{font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;color:var(--gold)}
+.mini-body{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;align-items:center;gap:14px}
+/* Game result */
+.game-result{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:26px;text-align:center;width:100%;max-width:340px}
+.gr-emoji{font-size:3rem;margin-bottom:10px}
+.gr-title{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;margin-bottom:4px}
+.gr-sub{color:var(--muted);font-size:.85rem;margin-bottom:14px}
+.gr-lnx{font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:900;color:var(--gold);margin-bottom:16px}
+.gr-lnx span{font-size:.9rem;color:var(--muted)}
+.gr-btns{display:flex;gap:10px;justify-content:center}
+.gr-btn{padding:10px 22px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;transition:.2s}
+.gr-btn:hover{transform:translateY(-2px)}
+
+/* ── INLINE GAME STYLES ── */
+/* Math */
+.math-box{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:22px;text-align:center;width:100%;max-width:360px}
+.math-q{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;margin-bottom:6px}
+.math-opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+.math-opt{padding:14px;border-radius:13px;border:1.5px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-family:'Orbitron',monospace;font-size:.95rem;font-weight:700;cursor:pointer;transition:.2s}
+.math-opt:hover{background:rgba(0,210,255,.1);border-color:rgba(0,210,255,.35)}
+.math-opt.correct{background:rgba(16,185,129,.2);border-color:var(--green);color:var(--green)}
+.math-opt.wrong{background:rgba(239,68,68,.15);border-color:#ef4444;color:#ef4444}
+/* Memory */
+.mem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;width:100%;max-width:340px}
+.mem-card{aspect-ratio:1;border-radius:11px;background:rgba(255,255,255,.05);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;transition:all .2s;user-select:none}
+.mem-card.flipped{background:rgba(0,210,255,.1);border-color:rgba(0,210,255,.35)}
+.mem-card.matched{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.4);cursor:default}
+/* Word */
+.word-box{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:18px;text-align:center;width:100%;max-width:340px}
+.word-scrambled{font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;letter-spacing:6px;color:var(--blue);margin-bottom:10px}
+.word-hint{font-size:.78rem;color:var(--muted);margin-bottom:14px}
+.word-row{display:flex;gap:8px}
+.word-inp{flex:1;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px;color:var(--text);font-size:.95rem;font-family:'Nunito',sans-serif;text-transform:uppercase;outline:none;transition:.2s}
+.word-inp:focus{border-color:rgba(0,210,255,.45);background:rgba(255,255,255,.08)}
+.word-submit{padding:11px 15px;border-radius:11px;border:none;background:linear-gradient(135deg,var(--blue),#3a7bd5);color:#fff;font-weight:800;font-size:.85rem;cursor:pointer}
+/* Reaction */
+.reaction-box{width:100%;max-width:320px;aspect-ratio:1;border-radius:24px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;cursor:pointer;transition:all .15s;text-align:center;line-height:1.5;user-select:none}
+.rb-wait{background:rgba(239,68,68,.15);border:3px solid rgba(239,68,68,.3);color:#ef4444}
+.rb-ready{background:rgba(16,185,129,.2);border:3px solid rgba(16,185,129,.5);color:var(--green)}
+.rb-done{background:rgba(0,210,255,.15);border:3px solid rgba(0,210,255,.35);color:var(--blue)}
+/* Typing */
+.typing-sentence{background:rgba(249,115,22,.1);border:2px solid rgba(249,115,22,.3);border-radius:14px;padding:16px;width:100%;max-width:360px;font-size:1rem;font-weight:700;line-height:1.6;text-align:center}
+.typing-area{width:100%;max-width:360px;background:rgba(255,255,255,.07);border:2px solid var(--border);border-radius:12px;padding:14px;color:var(--text);font-size:.95rem;resize:none;outline:none}
+/* TicTacToe */
+.ttt-board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:280px;width:100%}
+.ttt-cell{aspect-ratio:1;background:var(--card);border:2px solid var(--border);border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;cursor:pointer;transition:.2s;user-select:none}
+.ttt-cell:hover:not(.taken){background:rgba(0,210,255,.08);border-color:rgba(0,210,255,.25)}
+.ttt-cell.x{color:var(--blue)}.ttt-cell.o{color:var(--pink)}.ttt-cell.win{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.4)}
+/* T/F */
+.tf-q{background:rgba(99,102,241,.1);border:2px solid rgba(99,102,241,.3);border-radius:16px;padding:20px;text-align:center;font-size:1rem;font-weight:700;max-width:340px;width:100%;min-height:90px;display:flex;align-items:center;justify-content:center}
+.tf-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:320px;width:100%}
+.tf-btn{padding:18px;border-radius:14px;border:none;font-size:1rem;font-weight:800;cursor:pointer;transition:.2s;color:#fff}
+.tf-btn:hover{transform:scale(1.03)}
+/* Flappy canvas */
+#flappyCanvas{border-radius:16px;display:block;margin:0 auto;cursor:pointer;touch-action:none;max-width:100%}
+
+/* ── TOASTS ── */
+#toasts{position:fixed;top:12px;right:12px;z-index:99990;display:flex;flex-direction:column;gap:7px;max-width:250px}
+.toast{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;font-size:.79rem;font-weight:700;background:var(--card);border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.3);animation:tIn .3s ease}
+@keyframes tIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast.removing{animation:tOut .25s ease forwards}
+@keyframes tOut{to{transform:translateX(110%);opacity:0}}
+.toast.success i{color:var(--green)}.toast.error i{color:#ef4444}.toast.info i{color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div id="toasts"></div>
+
+<!-- ── AD OVERLAY ── -->
+<div class="ad-overlay" id="adOverlay">
+  <div class="ao-icon">📺</div>
+  <div class="ao-title">Watch Ad · Earn Coins!</div>
+  <div class="ao-reward" id="adRewardAmt">30 <span>LNX coins</span></div>
+  <div class="ao-sub">A short ad supports Lenovox AI and earns you real coins instantly!</div>
+  <div class="ao-count" id="adCount">30</div>
+  <div class="ao-prog-wrap"><div class="ao-prog-fill" id="adProgFill"></div></div>
+  <div class="ao-ad-unit">
+    <div style="text-align:center">
+      <div style="font-size:2rem;margin-bottom:8px">📢</div>
+      <div style="color:#333;margin-bottom:8px;font-size:.75rem">Advertisement</div>
+      <ins class="adsbygoogle" style="display:inline-block;width:280px;height:100px"
+        data-ad-client="ca-pub-6229569177818177"
+        data-ad-slot="YOUR_REWARDED_AD_SLOT_ID"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    </div>
+  </div>
+  <button class="ao-claim-btn" id="adClaimBtn" onclick="claimAd()">Skip in 30s</button>
+</div>
+
+<!-- ── MINI GAME OVERLAY (inline games) ── -->
+<div class="mini-game-overlay" id="miniGameOverlay">
+  <div class="mini-hdr">
+    <div class="mini-back" onclick="closeMiniGame()"><i class="fas fa-arrow-left"></i></div>
+    <div class="mini-title" id="miniTitle">Game</div>
+    <div class="mini-score" id="miniScore"></div>
+  </div>
+  <div class="mini-body" id="miniBody"></div>
+</div>
+
+<!-- ── MAIN PAGE ── -->
+<div class="page">
+
+  <!-- Header -->
+  <div class="g-hdr">
+    <div class="g-hdr-left">
+      <h2><i class="fas fa-gamepad" style="color:var(--pink)"></i> Games</h2>
+      <p>Play real games · Win LNX coins</p>
+    </div>
+    <div class="lnx-pill">
+      <i class="fas fa-coins"></i>
+      <span id="balDisplay">0</span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-box"><span class="val" id="statEarned" style="color:var(--gold)">0</span><div class="lbl"><i class="fas fa-coins" style="color:var(--gold)"></i> Today</div></div>
+    <div class="stat-box"><span class="val" id="statPlayed" style="color:var(--blue)">0</span><div class="lbl"><i class="fas fa-gamepad" style="color:var(--blue)"></i> Played</div></div>
+    <div class="stat-box"><span class="val" id="statLeft" style="color:var(--green)">200</span><div class="lbl"><i class="fas fa-fire" style="color:var(--green)"></i> Left</div></div>
+  </div>
+
+  <!-- Ad Banner -->
+  <div class="ad-banner" onclick="showAdOverlay()" id="adBanner">
+    <div class="ad-icon-wrap">📺</div>
+    <div class="ad-body">
+      <div class="ad-body-title">Watch Ad · Earn 30 LNX!</div>
+      <div class="ad-body-sub" id="adBannerSub">Tap to watch a short ad and earn coins</div>
+    </div>
+    <button class="ad-claim-btn">▶ Watch</button>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="cat-tabs" id="catTabs">
+    <div class="cat-tab active" onclick="filterCat('all',this)"><i class="fas fa-gamepad"></i> All (19)</div>
+    <div class="cat-tab" onclick="filterCat('action',this)"><i class="fas fa-person-running"></i> Action</div>
+    <div class="cat-tab" onclick="filterCat('puzzle',this)"><i class="fas fa-puzzle-piece"></i> Puzzle</div>
+    <div class="cat-tab" onclick="filterCat('strategy',this)"><i class="fas fa-chess"></i> Strategy</div>
+    <div class="cat-tab" onclick="filterCat('educational',this)"><i class="fas fa-graduation-cap"></i> Edu</div>
+    <div class="cat-tab" onclick="filterCat('skill',this)"><i class="fas fa-star"></i> Skill</div>
+  </div>
+
+  <!-- Games Grid -->
+  <div class="sec-label"><i class="fas fa-trophy"></i> Choose Your Game</div>
+  <div class="games-grid" id="gamesGrid"></div>
+
+</div>
+
+<script type="module">
+import { watchAuth, db } from './auth.js';
+import { doc, onSnapshot, updateDoc, increment, addDoc, collection, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { GAMES } from './games-data.js';
+
+let _uid = null, _bal = 0;
+const DAILY_CAP = 200, SESSION_CAP = 50, AD_REWARD = 30;
+
+// ── THEME ─────────────────────────────────────────────────────
+const t = localStorage.getItem('lenovox_theme')||'dark';
+document.documentElement.setAttribute('data-theme', t==='dark'?'':t);
+
+// ── TOAST ─────────────────────────────────────────────────────
+function toast(m, type='success') {
+  const ic = {success:'fa-circle-check',error:'fa-circle-exclamation',info:'fa-circle-info'};
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = `<i class="fas ${ic[type]||ic.info}"></i><span>${m}</span>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => { el.classList.add('removing'); setTimeout(() => el.remove(), 260); }, 4000);
+}
+
+// ── DAILY STATS ───────────────────────────────────────────────
+const dayKey = () => 'lnx_games_' + new Date().toDateString();
+const getDayStats = () => { try { return JSON.parse(localStorage.getItem(dayKey()))||{earned:0,played:0}; } catch { return {earned:0,played:0}; }};
+const saveDayStats = s => localStorage.setItem(dayKey(), JSON.stringify(s));
+function updateStatsUI() {
+  const s = getDayStats();
+  document.getElementById('statEarned').textContent = s.earned;
+  document.getElementById('statPlayed').textContent = s.played;
+  document.getElementById('statLeft').textContent = Math.max(0, DAILY_CAP - s.earned);
+}
+
+// ── CREDIT LNX ────────────────────────────────────────────────
+async function creditLNX(amount, desc) {
+  if (!_uid) return 0;
+  const s = getDayStats();
+  const can = Math.min(amount, Math.max(0, DAILY_CAP - s.earned), SESSION_CAP);
+  if (can <= 0) { toast('Daily limit reached (200 LNX/day)!', 'info'); return 0; }
+  try {
+    await updateDoc(doc(db,'wallets',_uid), {balance:increment(can), totalEarned:increment(can)});
+    await updateDoc(doc(db,'users',_uid), {lnxBalance:increment(can)});
+    await addDoc(collection(db,'wallets',_uid,'transactions'), {type:'Game Reward',amount:can,game:desc,timestamp:serverTimestamp()});
+    s.earned += can; s.played = (s.played||0)+1;
+    saveDayStats(s); updateStatsUI();
+    return can;
+  } catch(e) { console.error(e); return 0; }
+}
+
+// ── RENDER GAMES ──────────────────────────────────────────────
+function renderGames(cat = 'all') {
+  const list = cat === 'all' ? GAMES : GAMES.filter(g => g.category === cat);
+  const grid = document.getElementById('gamesGrid');
+  grid.innerHTML = list.map(g => `
+    <div class="gc" onclick="launchGame('${g.id}','${g.file}')">
+      <div class="gc-img-area">
+        <img class="gc-img" src="${g.image}" alt="${g.name}" loading="lazy"
+          onerror="this.parentElement.style.background='${g.gradient}';this.style.display='none'">
+        <span class="gc-badge" style="background:${g.badgeColor}">${g.badge}</span>
+        <span class="gc-emoji">${g.emoji}</span>
+      </div>
+      <div class="gc-body">
+        <div class="gc-name">${g.name}</div>
+        <div class="gc-desc">${g.desc}</div>
+        <div class="gc-footer">
+          <div class="gc-reward"><i class="fas fa-coins"></i><span>${g.reward}</span></div>
+          <button class="gc-play" style="background:${g.gradient}">
+            <i class="fas fa-play"></i> Play
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+window.filterCat = (cat, el) => {
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderGames(cat);
+};
+
+// ── GAME LAUNCHER ─────────────────────────────────────────────
+// Games with their own HTML file → navigate via parent
+// Inline games → open mini overlay
+const INLINE_GAMES = ['math','memory','word','reaction','typing','truefalse','tictactoe','flappy'];
+
+window.launchGame = (id, file) => {
+  if (INLINE_GAMES.includes(id)) {
+    openMiniGame(id);
+    return;
+  }
+  // Navigate to separate game file via parent
+  if (window.parent && window.parent !== window) {
+    // Inside iframe — use parent navigation
+    try {
+      window.parent.postMessage({ type: 'NAVIGATE_GAME', file: file + '.html' }, '*');
+    } catch {}
+    // Fallback: direct navigation
+    window.location.href = '/' + file;
+  } else {
+    window.location.href = '/' + file;
+  }
+};
+
+// ── MINI GAME OVERLAY ─────────────────────────────────────────
+function openMiniGame(id) {
+  document.getElementById('miniGameOverlay').classList.add('show');
+  const map = {
+    math: startMath, memory: startMemory, word: startWord,
+    reaction: startReaction, typing: startTyping,
+    truefalse: startTrueFalse, tictactoe: startTTT, flappy: startFlappy
+  };
+  map[id]?.();
+}
+window.closeMiniGame = () => {
+  document.getElementById('miniGameOverlay').classList.remove('show');
+  clearInterval(mathTimer); clearInterval(reactionTimer);
+  cancelAnimationFrame(flappyAnim);
+  document.removeEventListener('keydown', flappyKey);
+};
+function setMiniTitle(t) { document.getElementById('miniTitle').textContent = t; document.getElementById('miniScore').textContent = ''; }
+function setMiniScore(s) { document.getElementById('miniScore').textContent = s; }
+function setMiniBody(html) { document.getElementById('miniBody').innerHTML = html; }
+
+function showResult(emoji, title, sub, lnx, replayFn) {
+  document.getElementById('miniScore').textContent = '';
+  setMiniBody(`
+    <div class="game-result">
+      <div class="gr-emoji">${emoji}</div>
+      <div class="gr-title">${title}</div>
+      <div class="gr-sub">${sub}</div>
+      <div class="gr-lnx">+${lnx} <span>LNX earned</span></div>
+      <div class="gr-btns">
+        <button class="gr-btn" style="background:linear-gradient(135deg,var(--blue),#3a7bd5);color:#fff" onclick="${replayFn}()">
+          <i class="fas fa-redo"></i> Again
+        </button>
+        <button class="gr-btn" style="background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text)" onclick="closeMiniGame()">
+          Menu
+        </button>
+      </div>
+    </div>`);
+}
+
+// ── MATH BLITZ ────────────────────────────────────────────────
+let mathScore=0, mathIdx=0, mathTimer=null;
+window.startMath = () => { setMiniTitle('🧮 Math Blitz'); mathScore=0; mathIdx=0; nextMath(); };
+function nextMath() {
+  if(mathIdx >= 10) { endMath(); return; }
+  clearInterval(mathTimer); let secs=10;
+  const ops=['+','-','×']; const op=ops[Math.floor(Math.random()*ops.length)];
+  let a,b,ans;
+  if(op==='+'){a=Math.floor(Math.random()*50)+1;b=Math.floor(Math.random()*50)+1;ans=a+b;}
+  else if(op==='-'){a=Math.floor(Math.random()*50)+10;b=Math.floor(Math.random()*a)+1;ans=a-b;}
+  else{a=Math.floor(Math.random()*12)+1;b=Math.floor(Math.random()*12)+1;ans=a*b;}
+  const opts=[ans];
+  while(opts.length<4){const w=ans+Math.floor(Math.random()*20)-10;if(!opts.includes(w)&&w>=0)opts.push(w);}
+  opts.sort(()=>Math.random()-.5);
+  setMiniScore(`${mathIdx+1}/10 · ${mathScore}pts`);
+  setMiniBody(`
+    <div class="math-box">
+      <div class="math-q">${a} ${op} ${b} = ?</div>
+      <div style="font-size:.75rem;color:var(--muted)"><i class="fas fa-clock"></i> <span id="mSecs">${secs}s</span></div>
+      <div class="math-opts">${opts.map(o=>`<button class="math-opt" onclick="checkMath(${o},${ans})">${o}</button>`).join('')}</div>
+    </div>`);
+  mathTimer = setInterval(()=>{secs--;const el=document.getElementById('mSecs');if(el)el.textContent=secs+'s';if(secs<=0){clearInterval(mathTimer);mathIdx++;setTimeout(nextMath,400);}},1000);
+}
+window.checkMath = async(val,ans) => {
+  clearInterval(mathTimer);
+  document.querySelectorAll('.math-opt').forEach(b=>{b.disabled=true;if(parseInt(b.textContent)===ans)b.classList.add('correct');else if(parseInt(b.textContent)===val)b.classList.add('wrong');});
+  if(val===ans) mathScore++;
+  mathIdx++; setTimeout(nextMath,700);
+};
+async function endMath(){const lnx=await creditLNX(mathScore,'Math Blitz');showResult('🧮',`${mathScore}/10 Correct`,mathScore>=8?'Genius!':mathScore>=5?'Good!':'Keep going!',lnx,'startMath');}
+
+// ── MEMORY MATCH ──────────────────────────────────────────────
+let memCards=[], memFlipped=[], memMatched=0, memLock=false;
+window.startMemory = () => {
+  setMiniTitle('🧠 Memory Match');
+  const emojis=['🎯','🚀','💡','🎮','📚','🏆','🌟','💎'];
+  memCards=[...emojis,...emojis].sort(()=>Math.random()-.5);
+  memFlipped=[]; memMatched=0; memLock=false; renderMem();
+};
+function renderMem(){
+  setMiniScore(`${memMatched}/8 pairs`);
+  setMiniBody(`<div class="mem-grid">${memCards.map((_,i)=>`<div class="mem-card" id="mc${i}" onclick="flipMem(${i})"></div>`).join('')}</div>`);
+}
+window.flipMem = (i) => {
+  if(memLock||memFlipped.includes(i)||document.getElementById('mc'+i)?.classList.contains('matched'))return;
+  const el=document.getElementById('mc'+i);
+  el.textContent=memCards[i]; el.classList.add('flipped'); memFlipped.push(i);
+  if(memFlipped.length===2){
+    memLock=true;
+    const [a,b]=memFlipped;
+    if(memCards[a]===memCards[b]){
+      document.getElementById('mc'+a)?.classList.add('matched');
+      document.getElementById('mc'+b)?.classList.add('matched');
+      memMatched++; memFlipped=[]; memLock=false;
+      setMiniScore(`${memMatched}/8 pairs`);
+      if(memMatched===8) setTimeout(async()=>{const lnx=await creditLNX(15,'Memory Match');showResult('🧠','All Pairs!','Great memory!',lnx,'startMemory');},400);
+    } else {
+      setTimeout(()=>{
+        ['mc'+a,'mc'+b].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='';el.classList.remove('flipped');}});
+        memFlipped=[]; memLock=false;
+      },900);
+    }
+  }
+};
+
+// ── WORD SCRAMBLE ─────────────────────────────────────────────
+const WORDS=[{w:'SCIENCE',h:'Study of the natural world'},{w:'ALGEBRA',h:'Branch of mathematics'},{w:'BIOLOGY',h:'Study of living things'},{w:'HISTORY',h:'Study of past events'},{w:'PHYSICS',h:'Study of matter and energy'},{w:'ENGLISH',h:'A major world language'},{w:'NIGERIA',h:'Most populous African country'},{w:'COMPUTER',h:'Electronic device'},{w:'EDUCATION',h:'Process of learning'},{w:'CHEMISTRY',h:'Study of substances'}];
+let wScore=0,wIdx=0,wList=[],wAns='';
+window.startWord=()=>{wScore=0;wIdx=0;wList=[...WORDS].sort(()=>Math.random()-.5);setMiniTitle('📝 Word Scramble');nextWord();};
+function nextWord(){
+  if(wIdx>=10){endWord();return;}
+  const item=wList[wIdx]; wAns=item.w;
+  const sc=item.w.split('').sort(()=>Math.random()-.5).join('');
+  setMiniScore(`${wIdx+1}/10 · ${wScore}pts`);
+  setMiniBody(`
+    <div class="word-box">
+      <div class="word-scrambled">${sc}</div>
+      <div class="word-hint">💡 ${item.h}</div>
+      <div class="word-row">
+        <input class="word-inp" id="wInp" placeholder="Type answer..." maxlength="12" onkeydown="if(event.key==='Enter')checkWord()">
+        <button class="word-submit" onclick="checkWord()"><i class="fas fa-check"></i></button>
+      </div>
+    </div>
+    <button onclick="skipWord()" style="background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);padding:9px 18px;border-radius:10px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif">Skip <i class="fas fa-forward"></i></button>`);
+  setTimeout(()=>document.getElementById('wInp')?.focus(),100);
+}
+window.checkWord=()=>{const v=document.getElementById('wInp')?.value?.trim().toUpperCase();if(!v)return;if(v===wAns){wScore++;toast('✅ Correct!','success');}else toast(`❌ It was: ${wAns}`,'error');wIdx++;setTimeout(nextWord,600);};
+window.skipWord=()=>{wIdx++;nextWord();};
+async function endWord(){const lnx=await creditLNX(wScore,'Word Scramble');showResult('📝',`${wScore}/10 Words`,`${Math.round(wScore/10*100)}% correct`,lnx,'startWord');}
+
+// ── REACTION TEST ─────────────────────────────────────────────
+let rState='idle',rStart=0,rTimes=[],reactionTimer=null;
+window.startReaction=()=>{setMiniTitle('⚡ Reaction Test');rTimes=[];rState='idle';nextReaction();};
+function nextReaction(){
+  if(rTimes.length>=5){endReaction();return;}
+  rState='wait';
+  setMiniScore(`Round ${rTimes.length+1}/5`);
+  setMiniBody(`<div class="reaction-box rb-wait" id="rBox" onclick="rTap()"><div>Wait for GREEN<br>then TAP FAST!</div></div>`);
+  clearTimeout(reactionTimer);
+  reactionTimer=setTimeout(()=>{rState='go';rStart=Date.now();const b=document.getElementById('rBox');if(b){b.className='reaction-box rb-ready';b.innerHTML='<div>🟢 TAP NOW!</div>';}},1500+Math.random()*3000);
+}
+window.rTap=()=>{
+  clearTimeout(reactionTimer);
+  if(rState==='wait'){rTimes.push(999);const b=document.getElementById('rBox');if(b){b.className='reaction-box rb-done';b.innerHTML='<div>Too early! 😅</div>';}setTimeout(nextReaction,900);}
+  else if(rState==='go'){const ms=Date.now()-rStart;rTimes.push(ms);rState='idle';const b=document.getElementById('rBox');if(b){b.className='reaction-box rb-done';b.innerHTML=`<div>${ms}ms ⚡</div>`;}setTimeout(nextReaction,800);}
+};
+async function endReaction(){const valid=rTimes.filter(t=>t<900);const avg=valid.length?Math.round(valid.reduce((a,b)=>a+b,0)/valid.length):999;const lnx=avg<200?8:avg<350?6:avg<500?4:2;const earned=await creditLNX(lnx,'Reaction Test');showResult('⚡',`Avg: ${avg}ms`,avg<250?'Lightning fast!':avg<400?'Great reflexes!':'Keep practising!',earned,'startReaction');}
+
+// ── SPEED TYPING ──────────────────────────────────────────────
+const SENTS=['The quick brown fox jumps over the lazy dog','Education is the most powerful weapon you can use','Lenovox AI helps Nigerian students learn faster','Hard work beats talent when talent does not work hard'];
+let tStart=0,tSent='',tDone=false,tTimer=null;
+window.startTyping=()=>{
+  setMiniTitle('⌨️ Speed Typing');tDone=false;
+  tSent=SENTS[Math.floor(Math.random()*SENTS.length)];tStart=Date.now();
+  setMiniBody(`
+    <div class="typing-sentence">${tSent}</div>
+    <textarea class="typing-area" id="tInp" rows="3" placeholder="Type the sentence above..." oninput="checkTyping()"></textarea>
+    <div style="font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;color:#f97316" id="tTime">0.0s</div>`);
+  tTimer=setInterval(()=>{if(tDone)return;const el=document.getElementById('tTime');if(el)el.textContent=((Date.now()-tStart)/1000).toFixed(1)+'s';},100);
+  setTimeout(()=>document.getElementById('tInp')?.focus(),150);
+};
+window.checkTyping=async()=>{if(tDone)return;const v=document.getElementById('tInp')?.value||'';if(v.trim().toLowerCase()===tSent.toLowerCase()){tDone=true;clearInterval(tTimer);const secs=(Date.now()-tStart)/1000;const wpm=Math.round((tSent.split(' ').length/secs)*60);const lnx=wpm>60?12:wpm>40?9:wpm>25?6:3;const earned=await creditLNX(lnx,'Speed Typing');showResult('⌨️',`${wpm} WPM`,wpm>60?'Blazing fast!':wpm>40?'Great speed!':'Good job!',earned,'startTyping');}};
+
+// ── TRUE OR FALSE ─────────────────────────────────────────────
+const TRUTHS=[{q:'Water boils at 100°C at sea level.',a:true},{q:'The Great Wall of China is visible from space.',a:false},{q:'Humans have 206 bones as adults.',a:true},{q:'Lightning never strikes the same place twice.',a:false},{q:'Sound travels faster than light.',a:false},{q:'The sun is a star.',a:true},{q:'Bats are completely blind.',a:false},{q:'Nigeria is the most populous African country.',a:true},{q:'Oxygen makes up 78% of Earth\'s atmosphere.',a:false},{q:'Plants absorb CO₂ during photosynthesis.',a:true},{q:'Amazon is the longest river in the world.',a:false},{q:'Diamonds are made of carbon.',a:true},{q:'The moon produces its own light.',a:false},{q:'Spiders are insects.',a:false},{q:'Mount Everest is the tallest mountain on Earth.',a:true}];
+let tfScore=0,tfIdx=0,tfList=[];
+window.startTrueFalse=()=>{tfScore=0;tfIdx=0;tfList=[...TRUTHS].sort(()=>Math.random()-.5).slice(0,10);setMiniTitle('✅ True or False');nextTF();};
+function nextTF(){
+  if(tfIdx>=10){endTF();return;}
+  const q=tfList[tfIdx];
+  setMiniScore(`Q${tfIdx+1}/10 · ${tfScore}pts`);
+  setMiniBody(`
+    <div class="tf-q">${q.q}</div>
+    <div class="tf-btns">
+      <button class="tf-btn" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="checkTF(true)"><i class="fas fa-check"></i> TRUE</button>
+      <button class="tf-btn" style="background:linear-gradient(135deg,#ef4444,#dc2626)" onclick="checkTF(false)"><i class="fas fa-xmark"></i> FALSE</button>
+    </div>`);
+}
+window.checkTF=async(val)=>{const c=tfList[tfIdx].a;if(val===c){tfScore++;toast('✅ Correct!','success');}else toast(`❌ It was ${c?'TRUE':'FALSE'}`,'error');tfIdx++;setTimeout(nextTF,700);};
+async function endTF(){const lnx=await creditLNX(tfScore,'True or False');showResult('🧠',`${tfScore}/10 Correct`,`${tfScore*10}% score`,lnx,'startTrueFalse');}
+
+// ── TIC TAC TOE ───────────────────────────────────────────────
+let tttB,tttX,tttOver;
+window.startTTT=()=>{setMiniTitle('❌ Tic Tac Toe');tttB=Array(9).fill('');tttX=true;tttOver=false;renderTTT('Your turn (X)');};
+function renderTTT(status){
+  setMiniScore('');
+  setMiniBody(`
+    <div style="font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;text-align:center;min-height:22px;margin-bottom:8px;color:var(--text)">${status}</div>
+    <div class="ttt-board">${tttB.map((v,i)=>`<div class="ttt-cell ${v?'taken':''} ${v.toLowerCase()}" onclick="tttMove(${i})">${v}</div>`).join('')}</div>`);
+}
+window.tttMove=(i)=>{
+  if(tttB[i]||tttOver||!tttX)return;
+  tttB[i]='X';tttX=false;
+  const xw=checkTTTWin('X');
+  if(xw){tttOver=true;hlTTT(xw);setTimeout(async()=>{const lnx=await creditLNX(15,'Tic Tac Toe');showResult('❌','You Win!','Beat the AI!',lnx,'startTTT');},700);return;}
+  if(tttB.every(c=>c)){setTimeout(async()=>{const lnx=await creditLNX(5,'Tic Tac Toe');showResult('🤝','Draw!','Close game!',lnx,'startTTT');},400);return;}
+  renderTTT('AI thinking...');
+  setTimeout(()=>{
+    if(tttOver)return;
+    const ai=bestTTT();tttB[ai]='O';tttX=true;
+    const ow=checkTTTWin('O');
+    if(ow){tttOver=true;hlTTT(ow);setTimeout(async()=>{const lnx=await creditLNX(3,'Tic Tac Toe');showResult('⭕','AI Wins!','Try again!',lnx,'startTTT');},700);}
+    else if(tttB.every(c=>c)){setTimeout(async()=>{const lnx=await creditLNX(5,'Tic Tac Toe');showResult('🤝','Draw!','Good game!',lnx,'startTTT');},400);}
+    else renderTTT('Your turn (X)');
+  },600);
+};
+function checkTTTWin(p){const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];return w.find(l=>l.every(i=>tttB[i]===p))||null;}
+function hlTTT(win){renderTTT('');win.forEach(i=>document.querySelectorAll('.ttt-cell')[i]?.classList.add('win'));}
+function bestTTT(){const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];for(const p of['O','X']){for(const l of w){const e=l.filter(i=>tttB[i]==='');if(e.length===1&&l.filter(i=>tttB[i]===p).length===2)return e[0];}}if(!tttB[4])return 4;const c=[0,2,6,8].filter(i=>!tttB[i]);if(c.length)return c[Math.floor(Math.random()*c.length)];const e=tttB.map((v,i)=>v?null:i).filter(i=>i!==null);return e[Math.floor(Math.random()*e.length)];}
+
+// ── FLAPPY BIRD ───────────────────────────────────────────────
+let fBird,fPipes,fScore,fFrame,fRunning=false,flappyAnim;
+window.startFlappy=()=>{
+  setMiniTitle('🐦 Flappy Bird');
+  setMiniScore('Tap to start!');
+  setMiniBody(`
+    <canvas id="flappyCanvas" width="310" height="420" style="border-radius:16px;background:linear-gradient(180deg,#03030b,#0a0a1a);max-width:100%"></canvas>
+    <div style="font-size:.75rem;color:var(--muted);font-weight:700">Tap or press SPACE to flap</div>`);
+  const cv=document.getElementById('flappyCanvas');
+  fBird={x:60,y:210,vy:0,r:13};fPipes=[];fScore=0;fFrame=0;fRunning=false;
+  cv.addEventListener('click',fTap);
+  cv.addEventListener('touchstart',e=>{e.preventDefault();fTap();},{passive:false});
+  document.addEventListener('keydown',flappyKey);
+  fDraw(cv);
+};
+function flappyKey(e){if(e.code==='Space'){e.preventDefault();fTap();}}
+function fTap(){if(!fRunning){fRunning=true;fLoop();return;}fBird.vy=-7;}
+function fLoop(){
+  if(!fRunning)return;
+  const cv=document.getElementById('flappyCanvas');if(!cv)return;
+  fFrame++;fBird.vy+=0.4;fBird.y+=fBird.vy;
+  if(fFrame%90===0){const gap=115,top=50+Math.random()*180;fPipes.push({x:310,top,bot:top+gap,scored:false});}
+  fPipes.forEach(p=>{p.x-=2.5;if(!p.scored&&p.x+50<fBird.x){p.scored=true;fScore++;}});
+  fPipes=fPipes.filter(p=>p.x>-60);
+  if(fBird.y-fBird.r<0||fBird.y+fBird.r>420){fEnd(cv);return;}
+  for(const p of fPipes){if(fBird.x+fBird.r>p.x&&fBird.x-fBird.r<p.x+50&&(fBird.y-fBird.r<p.top||fBird.y+fBird.r>p.bot)){fEnd(cv);return;}}
+  fDraw(cv);flappyAnim=requestAnimationFrame(fLoop);
+}
+function fDraw(cv){
+  if(!cv)return;const c=cv.getContext('2d'),W=310,H=420;
+  c.clearRect(0,0,W,H);
+  // Stars
+  c.fillStyle='rgba(255,255,255,.4)';for(let i=0;i<20;i++){c.beginPath();c.arc((i*47)%W,(i*31)%H,1,0,Math.PI*2);c.fill();}
+  // Ground
+  c.fillStyle='rgba(0,210,255,.12)';c.fillRect(0,412,W,8);
+  // Pipes
+  fPipes.forEach(p=>{const g=c.createLinearGradient(p.x,0,p.x+50,0);g.addColorStop(0,'#00d2ff');g.addColorStop(1,'#3a7bd5');c.fillStyle=g;c.beginPath();if(c.roundRect)c.roundRect(p.x,0,50,p.top,6);else c.rect(p.x,0,50,p.top);c.fill();c.beginPath();if(c.roundRect)c.roundRect(p.x,p.bot,50,H-p.bot,6);else c.rect(p.x,p.bot,50,H-p.bot);c.fill();});
+  // Bird
+  const b=fBird;
+  c.save();c.translate(b.x,b.y);c.rotate(Math.min(Math.max(b.vy*.06,-.5),.8));
+  const bg=c.createRadialGradient(-2,-2,1,0,0,b.r);bg.addColorStop(0,'#fff176');bg.addColorStop(1,'#facc15');
+  c.fillStyle=bg;c.beginPath();c.arc(0,0,b.r,0,Math.PI*2);c.fill();
+  c.fillStyle='#fff';c.beginPath();c.arc(4,-3,5,0,Math.PI*2);c.fill();
+  c.fillStyle='#1a1a2e';c.beginPath();c.arc(6,-3,2.5,0,Math.PI*2);c.fill();
+  c.fillStyle='#f97316';c.beginPath();c.moveTo(13,0);c.lineTo(20,-3);c.lineTo(20,3);c.closePath();c.fill();
+  c.restore();
+  // Score
+  c.fillStyle='#fff';c.font='bold 20px Orbitron,monospace';c.textAlign='center';c.fillText(fScore,W/2,34);
+  if(!fRunning&&fFrame===0){c.fillStyle='rgba(0,210,255,.9)';c.font='bold 15px Nunito,sans-serif';c.fillText('TAP TO START',W/2,H/2);}
+}
+async function fEnd(cv){fRunning=false;cancelAnimationFrame(flappyAnim);document.removeEventListener('keydown',flappyKey);const lnx=fScore>=20?20:fScore>=10?14:fScore>=5?9:fScore>=2?5:2;const earned=await creditLNX(lnx,'Flappy Bird');showResult('🐦',`Score: ${fScore}`,fScore>=20?'Unstoppable!':fScore>=10?'Great!':'Keep trying!',earned,'startFlappy');}
+
+// ── AD SYSTEM ─────────────────────────────────────────────────
+let adSecs=30, adTimer=null;
+
+window.showAdOverlay = () => {
+  const last = parseInt(localStorage.getItem('lnx_last_ad')||'0');
+  const elapsed = Date.now()-last;
+  if(elapsed < 30*60*1000) {
+    const m=Math.ceil((30*60*1000-elapsed)/60000);
+    toast(`Next ad available in ${m} min`,'info'); return;
+  }
+  adSecs=30;
+  document.getElementById('adOverlay').classList.add('show');
+  document.getElementById('adCount').textContent=adSecs;
+  document.getElementById('adProgFill').style.width='0%';
+  document.getElementById('adClaimBtn').className='ao-claim-btn';
+  document.getElementById('adClaimBtn').textContent=`Skip in ${adSecs}s`;
+  try{(adsbygoogle=window.adsbygoogle||[]).push({});}catch{}
+  clearInterval(adTimer);
+  adTimer=setInterval(()=>{
+    adSecs--;
+    document.getElementById('adCount').textContent=adSecs;
+    document.getElementById('adProgFill').style.width=((30-adSecs)/30*100)+'%';
+    if(adSecs<=0){
+      clearInterval(adTimer);
+      const btn=document.getElementById('adClaimBtn');
+      btn.className='ao-claim-btn ready';
+      btn.textContent='🎉 Claim 30 LNX!';
+    } else {
+      document.getElementById('adClaimBtn').textContent=`Skip in ${adSecs}s`;
+    }
+  },1000);
+};
+
+window.claimAd = async () => {
+  if(adSecs>0){toast('Watch the full ad first!','error');return;}
+  clearInterval(adTimer);
+  document.getElementById('adOverlay').classList.remove('show');
+  const s=getDayStats();
+  const can=Math.min(AD_REWARD,Math.max(0,DAILY_CAP-s.earned));
+  if(can>0 && _uid){
+    try{
+      await updateDoc(doc(db,'wallets',_uid),{balance:increment(can),totalEarned:increment(can)});
+      await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(can)});
+      await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Ad Reward',amount:can,timestamp:serverTimestamp()});
+      s.earned+=can; saveDayStats(s); updateStatsUI();
+      localStorage.setItem('lnx_last_ad',Date.now().toString());
+      toast(`🎉 +${can} LNX earned from watching ad!`,'success');
+      updateAdBanner();
+    }catch(e){toast('Error crediting coins','error');}
+  } else if(s.earned>=DAILY_CAP){
+    toast('Daily limit reached (200 LNX/day)','info');
+  }
+};
+
+function updateAdBanner(){
+  const last=parseInt(localStorage.getItem('lnx_last_ad')||'0');
+  const elapsed=Date.now()-last;
+  const sub=document.getElementById('adBannerSub');
+  if(!sub)return;
+  if(elapsed<30*60*1000){
+    const m=Math.ceil((30*60*1000-elapsed)/60000);
+    sub.textContent=`Next ad available in ${m} minutes`;
+  } else {
+    sub.textContent='Tap to watch a short ad and earn coins';
+  }
+}
+
+// ── AUTH ──────────────────────────────────────────────────────
+watchAuth(user => {
+  if(!user){window.location.replace('login');return;}
+  _uid=user.uid;
+  onSnapshot(doc(db,'wallets',_uid), s=>{if(s.exists()){_bal=s.data().balance||0;document.getElementById('balDisplay').textContent=_bal.toLocaleString();}});
+  updateStatsUI();
+  updateAdBanner();
+});
+
+// Init
+renderGames('all');
+// Refresh ad banner every minute
+setInterval(updateAdBanner,60000);
+</script>
+</body>
+</html>

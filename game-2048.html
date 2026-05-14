@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>2048 Blitz — Lenovox</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229569177818177" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#03030b;font-family:'Nunito',sans-serif;color:#fff;min-height:100vh;touch-action:none}
+.hud{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);border-bottom:1px solid rgba(250,204,21,.15);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
+.hud-back{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888}
+.hud-title{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:900;color:#facc15}
+.hud-right{display:flex;gap:12px;align-items:center}
+.hud-stat{text-align:center}
+.hud-val{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:900}
+.hud-lbl{font-size:.55rem;color:#555;text-transform:uppercase}
+/* BOARD */
+.board-wrap{padding:62px 14px 14px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:rgba(255,255,255,.05);border:2px solid rgba(250,204,21,.15);border-radius:16px;padding:10px;max-width:360px;width:100%}
+.cell{aspect-ratio:1;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-weight:900;font-size:1.2rem;transition:all .12s;position:relative;overflow:hidden}
+.cell::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);border-radius:10px;pointer-events:none}
+/* Colors per value */
+.v2{background:rgba(0,210,255,.15);border-color:rgba(0,210,255,.3);color:#00d2ff}
+.v4{background:rgba(0,210,255,.25);border-color:rgba(0,210,255,.5);color:#00d2ff}
+.v8{background:rgba(16,185,129,.2);border-color:rgba(16,185,129,.4);color:#10b981}
+.v16{background:rgba(16,185,129,.3);border-color:rgba(16,185,129,.6);color:#10b981}
+.v32{background:rgba(249,115,22,.2);border-color:rgba(249,115,22,.4);color:#f97316}
+.v64{background:rgba(249,115,22,.3);border-color:rgba(249,115,22,.6);color:#f97316}
+.v128{background:rgba(250,204,21,.2);border-color:rgba(250,204,21,.4);color:#facc15}
+.v256{background:rgba(250,204,21,.35);border-color:rgba(250,204,21,.6);color:#facc15;font-size:1rem}
+.v512{background:rgba(157,80,187,.25);border-color:rgba(157,80,187,.5);color:#c084fc;font-size:.9rem}
+.v1024{background:rgba(157,80,187,.4);border-color:rgba(157,80,187,.7);color:#c084fc;font-size:.75rem}
+.v2048{background:linear-gradient(135deg,#facc15,#f97316);border-color:#facc15;color:#000;font-size:.75rem;box-shadow:0 0 24px rgba(250,204,21,.5)}
+.cell.pop{animation:cellPop .15s ease}
+@keyframes cellPop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+/* BOTTOM */
+.bottom-bar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:360px;width:100%;margin-top:4px}
+.b-btn{padding:10px 18px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+.b-btn:hover{transform:translateY(-2px)}
+.b-btn-new{background:linear-gradient(135deg,#facc15,#f97316);color:#000}
+.b-btn-ad{background:linear-gradient(135deg,rgba(250,204,21,.15),rgba(249,115,22,.1));border:1px solid rgba(250,204,21,.3);color:#facc15}
+/* OVERLAY */
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(3,3,11,.93);backdrop-filter:blur(16px);gap:14px;padding:24px}
+.overlay.hidden{display:none}
+.ov-title{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;color:#facc15}
+.ov-score{font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:900;color:#fff}
+.ov-lnx{color:#555;font-size:.82rem}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.o-btn{padding:12px 22px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:.2s}
+.o-btn:hover{transform:translateY(-2px)}
+.o-btn-primary{background:linear-gradient(135deg,#facc15,#f97316);color:#000}
+.o-btn-ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#666}
+.o-btn-gold{background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.3);color:#facc15}
+</style>
+</head>
+<body>
+<div class="hud">
+  <div class="hud-back" onclick="goBack()">←</div>
+  <div class="hud-title">⬛ 2048</div>
+  <div class="hud-right">
+    <div class="hud-stat"><div class="hud-val" id="scoreDisplay" style="color:#facc15">0</div><div class="hud-lbl">Score</div></div>
+    <div class="hud-stat"><div class="hud-val" id="bestDisplay" style="color:#888">0</div><div class="hud-lbl">Best</div></div>
+  </div>
+</div>
+
+<div class="board-wrap">
+  <div class="board" id="board"></div>
+  <div class="bottom-bar">
+    <button class="b-btn b-btn-new" onclick="initGame()">🔄 New Game</button>
+    <button class="b-btn b-btn-ad" onclick="showAdFromGame()">📺 +30 LNX</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="winOverlay">
+  <div style="font-size:3rem">🏆</div>
+  <div class="ov-title">YOU GOT 2048!</div>
+  <div class="ov-score" id="winScore">0</div>
+  <div class="ov-lnx" id="winLNX">+30 LNX earned</div>
+  <div class="btn-row">
+    <button class="o-btn o-btn-primary" onclick="continueGame()">Keep Going</button>
+    <button class="o-btn o-btn-gold" onclick="showAdFromGame()">📺 +30 LNX</button>
+    <button class="o-btn o-btn-ghost" onclick="initGame()">New Game</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="loseOverlay">
+  <div style="font-size:3rem">😔</div>
+  <div class="ov-title">NO MORE MOVES</div>
+  <div class="ov-score" id="loseScore">0</div>
+  <div class="ov-lnx" id="loseLNX">+0 LNX</div>
+  <div class="btn-row">
+    <button class="o-btn o-btn-primary" onclick="initGame()">▶ Try Again</button>
+    <button class="o-btn o-btn-gold" onclick="showAdFromGame()">📺 +30 LNX</button>
+    <button class="o-btn o-btn-ghost" onclick="goBack()">← Menu</button>
+  </div>
+</div>
+
+<script type="module">
+import { watchAuth, db } from './auth.js';
+import { initAds, showRewardedAd, setAdUser } from './game-ads.js';
+import { doc, updateDoc, increment, addDoc, collection, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+let _uid=null;
+watchAuth(u=>{if(u){_uid=u.uid;setAdUser(u.uid);}});
+initAds(db,null);
+window.showAdFromGame=()=>showRewardedAd();
+
+let board,score,won,over;
+const SIZE=4;
+
+function empty(){return Array.from({length:SIZE},()=>Array(SIZE).fill(0));}
+window.initGame=()=>{
+  document.getElementById('winOverlay').classList.add('hidden');
+  document.getElementById('loseOverlay').classList.add('hidden');
+  board=empty();score=0;won=false;over=false;
+  addTile();addTile();render();
+};
+window.continueGame=()=>{document.getElementById('winOverlay').classList.add('hidden');won=true;};
+
+function addTile(){
+  const empty=[];
+  for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++)if(!board[r][c])empty.push([r,c]);
+  if(!empty.length)return;
+  const [r,c]=empty[Math.floor(Math.random()*empty.length)];
+  board[r][c]=Math.random()<0.9?2:4;
+}
+
+function render(){
+  const el=document.getElementById('board');
+  el.innerHTML='';
+  board.forEach(row=>row.forEach(v=>{
+    const d=document.createElement('div');
+    d.className='cell'+(v?' v'+Math.min(v,2048):'');
+    d.textContent=v||'';
+    if(v)d.classList.add('pop');
+    el.appendChild(d);
+  }));
+  document.getElementById('scoreDisplay').textContent=score;
+  const best=Math.max(score,parseInt(localStorage.getItem('2048_best')||'0'));
+  localStorage.setItem('2048_best',best);
+  document.getElementById('bestDisplay').textContent=best;
+}
+
+function slide(row){
+  let r=row.filter(v=>v);
+  for(let i=0;i<r.length-1;i++){if(r[i]===r[i+1]){r[i]*=2;score+=r[i];r.splice(i+1,1);}}
+  while(r.length<SIZE)r.push(0);
+  return r;
+}
+
+function move(dir){
+  if(over)return;
+  let moved=false;
+  const prev=JSON.stringify(board);
+  if(dir==='left')board=board.map(row=>slide(row));
+  if(dir==='right')board=board.map(row=>slide([...row].reverse()).reverse());
+  if(dir==='up'){board=transpose(board).map(r=>slide(r));board=transpose(board);}
+  if(dir==='down'){board=transpose(board).map(r=>slide([...r].reverse()).reverse());board=transpose(board);}
+  moved=JSON.stringify(board)!==prev;
+  if(moved){addTile();render();checkWin();checkLose();}
+}
+
+function transpose(m){return m[0].map((_,i)=>m.map(r=>r[i]));}
+
+async function checkWin(){
+  if(won)return;
+  if(board.flat().includes(2048)){
+    won=true;
+    document.getElementById('winScore').textContent=score+' pts';
+    const lnx=30;
+    document.getElementById('winLNX').textContent=`+${lnx} LNX earned!`;
+    await creditLNX(lnx,'2048 - Reached 2048!');
+    document.getElementById('winOverlay').classList.remove('hidden');
+  }
+}
+
+async function checkLose(){
+  if(board.flat().includes(0))return;
+  for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++){
+    if(c<SIZE-1&&board[r][c]===board[r][c+1])return;
+    if(r<SIZE-1&&board[r][c]===board[r+1][c])return;
+  }
+  over=true;
+  const lnx=score>=5000?20:score>=2000?14:score>=1000?9:score>=500?5:2;
+  document.getElementById('loseScore').textContent=score+' pts';
+  document.getElementById('loseLNX').textContent=`+${lnx} LNX earned`;
+  await creditLNX(lnx,'2048');
+  document.getElementById('loseOverlay').classList.remove('hidden');
+}
+
+async function creditLNX(lnx,game){
+  if(!_uid)return;
+  try{
+    await updateDoc(doc(db,'wallets',_uid),{balance:increment(lnx),totalEarned:increment(lnx)});
+    await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(lnx)});
+    await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Game Reward',amount:lnx,game,score,timestamp:serverTimestamp()});
+  }catch{}
+}
+
+// Keys
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft')move('left');
+  if(e.key==='ArrowRight')move('right');
+  if(e.key==='ArrowUp'){e.preventDefault();move('up');}
+  if(e.key==='ArrowDown'){e.preventDefault();move('down');}
+});
+// Touch
+let tx,ty;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx;
+  const dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>Math.abs(dy)){move(dx>0?'right':'left');}
+  else{move(dy>0?'down':'up');}
+},{passive:true});
+
+document.getElementById('bestDisplay').textContent=localStorage.getItem('2048_best')||'0';
+initGame();
+window.goBack=()=>history.back();
+</script>
+</body>
+</html>

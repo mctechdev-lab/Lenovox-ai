@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Breakout Blitz — Lenovox</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229569177818177" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#03030b;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;height:100vh;touch-action:none}
+.hud{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,210,255,.15);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
+.hud-back{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888}
+.hud-title{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:900;color:#00d2ff}
+.hud-right{display:flex;gap:14px;align-items:center}
+.hud-stat{text-align:center}
+.hud-val{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:900}
+.hud-lbl{font-size:.55rem;color:#555;text-transform:uppercase}
+canvas{display:block;margin:52px auto 0}
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(3,3,11,.93);backdrop-filter:blur(16px);gap:14px;padding:24px}
+.overlay.hidden{display:none}
+.ov-title{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,#00d2ff,#9d50bb);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ov-score{font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:900;color:#facc15}
+.ov-lnx{color:#555;font-size:.82rem}
+.ov-sub{color:#444;font-size:.82rem;text-align:center;max-width:260px;line-height:1.6}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.o-btn{padding:12px 22px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:.2s}
+.o-btn:hover{transform:translateY(-2px)}
+.o-btn-primary{background:linear-gradient(135deg,#00d2ff,#3a7bd5);color:#fff}
+.o-btn-gold{background:linear-gradient(135deg,#facc15,#f97316);color:#000}
+.o-btn-ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#666}
+.lives-row{display:flex;gap:6px;position:fixed;top:58px;left:14px;z-index:100}
+.life{font-size:1rem}
+</style>
+</head>
+<body>
+<div class="hud">
+  <div class="hud-back" onclick="goBack()">←</div>
+  <div class="hud-title">🧱 BREAKOUT</div>
+  <div class="hud-right">
+    <div class="hud-stat"><div class="hud-val" id="levelDisplay" style="color:#c084fc">1</div><div class="hud-lbl">Level</div></div>
+    <div class="hud-stat"><div class="hud-val" id="scoreDisplay">0</div><div class="hud-lbl">Score</div></div>
+  </div>
+</div>
+<div class="lives-row" id="livesRow">❤️❤️❤️</div>
+<canvas id="gameCanvas"></canvas>
+
+<div class="overlay" id="startOverlay">
+  <div style="font-size:3.5rem">🧱</div>
+  <div class="ov-title">BREAKOUT BLITZ</div>
+  <div class="ov-sub">Move the paddle to bounce the ball! Break all blocks to advance. Don't let the ball fall!</div>
+  <div class="btn-row">
+    <button class="o-btn o-btn-primary" onclick="startGame()">▶ PLAY</button>
+    <button class="o-btn o-btn-gold" onclick="showAdFromGame()">📺 +30 LNX</button>
+  </div>
+</div>
+<div class="overlay hidden" id="gameoverOverlay">
+  <div style="font-size:3.5rem">💥</div>
+  <div class="ov-title">GAME OVER</div>
+  <div class="ov-score" id="finalScore">0</div>
+  <div class="ov-lnx" id="earnedLNX">+0 LNX</div>
+  <div class="btn-row">
+    <button class="o-btn o-btn-primary" onclick="startGame()">▶ RETRY</button>
+    <button class="o-btn o-btn-gold" onclick="showAdFromGame()">📺 +30 LNX</button>
+    <button class="o-btn o-btn-ghost" onclick="goBack()">← Menu</button>
+  </div>
+</div>
+<div class="overlay hidden" id="levelOverlay">
+  <div style="font-size:3rem">⭐</div>
+  <div class="ov-title" id="levelClearTitle">LEVEL CLEAR!</div>
+  <div class="btn-row">
+    <button class="o-btn o-btn-primary" onclick="nextLevel()">▶ NEXT LEVEL</button>
+    <button class="o-btn o-btn-gold" onclick="showAdFromGame()">📺 +30 LNX</button>
+  </div>
+</div>
+
+<script type="module">
+import { watchAuth, db } from './auth.js';
+import { initAds, showRewardedAd, setAdUser } from './game-ads.js';
+import { doc, updateDoc, increment, addDoc, collection, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+let _uid=null;
+watchAuth(u=>{if(u){_uid=u.uid;setAdUser(u.uid);}});
+initAds(db,null);
+window.showAdFromGame=()=>showRewardedAd();
+
+const canvas=document.getElementById('gameCanvas');
+const ctx=canvas.getContext('2d');
+let W,H,paddle,ball,bricks,score,lives,level,animId,gameRunning,particles=[];
+
+const COLORS=['#ff3d70','#f97316','#facc15','#10b981','#00d2ff','#c084fc'];
+const BRICK_ROWS=5;
+const BRICK_COLS=8;
+
+function resize(){W=Math.min(window.innerWidth,540);H=window.innerHeight-52;canvas.width=W;canvas.height=H;}
+resize();
+
+function makeBricks(){
+  const bw=(W-20)/BRICK_COLS-6;
+  const bh=20;
+  const bricks=[];
+  const extraHp=Math.floor(level/3);
+  for(let r=0;r<BRICK_ROWS;r++)for(let c=0;c<BRICK_COLS;c++){
+    const hp=1+(BRICK_ROWS-1-r)+extraHp;
+    bricks.push({x:10+c*(bw+6),y:70+r*(bh+6),w:bw,h:bh,hp,maxHp:hp,color:COLORS[r%COLORS.length]});
+  }
+  return bricks;
+}
+
+window.startGame=()=>{
+  document.getElementById('startOverlay').classList.add('hidden');
+  document.getElementById('gameoverOverlay').classList.add('hidden');
+  score=0;lives=3;level=1;
+  initLevel();
+  document.getElementById('scoreDisplay').textContent='0';
+};
+window.nextLevel=()=>{
+  document.getElementById('levelOverlay').classList.add('hidden');
+  level++;initLevel();
+};
+
+function initLevel(){
+  bricks=makeBricks();particles=[];gameRunning=true;
+  paddle={x:W/2-45,y:H-40,w:90,h:12};
+  const spd=3+level*.4;
+  const angle=(Math.random()*.6+.2)*Math.PI;
+  ball={x:W/2,y:H-60,r:8,vx:Math.cos(angle)*spd,vy:-Math.abs(Math.sin(angle)*spd)};
+  updateHUD();cancelAnimationFrame(animId);animId=requestAnimationFrame(loop);
+}
+
+function updateHUD(){
+  document.getElementById('scoreDisplay').textContent=score;
+  document.getElementById('levelDisplay').textContent=level;
+  document.getElementById('livesRow').textContent='❤️'.repeat(lives)+'🖤'.repeat(Math.max(0,3-lives));
+}
+
+// Touch/mouse paddle
+canvas.addEventListener('touchmove',e=>{
+  const x=e.touches[0].clientX-paddle.w/2;
+  paddle.x=Math.max(0,Math.min(W-paddle.w,x));
+  e.preventDefault();
+},{passive:false});
+canvas.addEventListener('mousemove',e=>{
+  const rect=canvas.getBoundingClientRect();
+  paddle.x=Math.max(0,Math.min(W-paddle.w,e.clientX-rect.left-paddle.w/2));
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft')paddle.x=Math.max(0,paddle.x-20);
+  if(e.key==='ArrowRight')paddle.x=Math.min(W-paddle.w,paddle.x+20);
+});
+
+function explode(x,y,color){
+  for(let i=0;i<10;i++){
+    const a=Math.random()*Math.PI*2,s=2+Math.random()*4;
+    particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,color,size:2+Math.random()*3});
+  }
+}
+
+function loop(){
+  if(!gameRunning)return;
+  update();draw();animId=requestAnimationFrame(loop);
+}
+
+function update(){
+  ball.x+=ball.vx;ball.y+=ball.vy;
+  // Walls
+  if(ball.x-ball.r<0){ball.x=ball.r;ball.vx*=-1;}
+  if(ball.x+ball.r>W){ball.x=W-ball.r;ball.vx*=-1;}
+  if(ball.y-ball.r<52){ball.y=52+ball.r;ball.vy*=-1;}
+  // Bottom
+  if(ball.y+ball.r>H){
+    lives--;updateHUD();
+    if(lives<=0){endGame();return;}
+    ball={x:W/2,y:H-60,r:8,vx:ball.vx,vy:-Math.abs(ball.vy)};
+    paddle.x=W/2-45;
+  }
+  // Paddle
+  if(ball.y+ball.r>paddle.y&&ball.y-ball.r<paddle.y+paddle.h&&ball.x>paddle.x&&ball.x<paddle.x+paddle.w){
+    ball.vy=-Math.abs(ball.vy);
+    const hit=(ball.x-(paddle.x+paddle.w/2))/(paddle.w/2);
+    ball.vx=hit*5;
+    // Speed cap
+    const spd=Math.sqrt(ball.vx*ball.vx+ball.vy*ball.vy);
+    if(spd>10){ball.vx=ball.vx/spd*10;ball.vy=ball.vy/spd*10;}
+  }
+  // Bricks
+  for(let i=bricks.length-1;i>=0;i--){
+    const b=bricks[i];
+    if(ball.x+ball.r>b.x&&ball.x-ball.r<b.x+b.w&&ball.y+ball.r>b.y&&ball.y-ball.r<b.y+b.h){
+      const overlapLeft=ball.x+ball.r-b.x;const overlapRight=b.x+b.w-(ball.x-ball.r);
+      const overlapTop=ball.y+ball.r-b.y;const overlapBot=b.y+b.h-(ball.y-ball.r);
+      const minH=Math.min(overlapLeft,overlapRight);const minV=Math.min(overlapTop,overlapBot);
+      if(minH<minV)ball.vx*=-1;else ball.vy*=-1;
+      b.hp--;score+=10*level;
+      explode(b.x+b.w/2,b.y+b.h/2,b.color);
+      if(b.hp<=0)bricks.splice(i,1);
+      document.getElementById('scoreDisplay').textContent=score;
+      break;
+    }
+  }
+  if(bricks.length===0){gameRunning=false;cancelAnimationFrame(animId);document.getElementById('levelClearTitle').textContent=`LEVEL ${level} CLEAR!`;document.getElementById('levelOverlay').classList.remove('hidden');}
+  // Particles
+  particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.life-=0.05;return p.life>0;});
+}
+
+function draw(){
+  ctx.fillStyle='#03030b';ctx.fillRect(0,0,W,H);
+  // Stars bg
+  ctx.fillStyle='rgba(255,255,255,.03)';
+  for(let i=0;i<60;i++){ctx.beginPath();ctx.arc((i*97)%W,(i*67)%H,1,0,Math.PI*2);ctx.fill();}
+  // Particles
+  particles.forEach(p=>{ctx.save();ctx.globalAlpha=p.life;ctx.shadowColor=p.color;ctx.shadowBlur=8;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);ctx.fill();ctx.restore();});
+  // Bricks
+  bricks.forEach(b=>{
+    const ratio=b.hp/b.maxHp;
+    ctx.save();ctx.shadowColor=b.color;ctx.shadowBlur=8*ratio;
+    const g=ctx.createLinearGradient(b.x,b.y,b.x,b.y+b.h);
+    g.addColorStop(0,b.color+'44');g.addColorStop(1,b.color+'11');
+    ctx.fillStyle=g;ctx.beginPath();if(ctx.roundRect)ctx.roundRect(b.x,b.y,b.w,b.h,4);else ctx.rect(b.x,b.y,b.w,b.h);ctx.fill();
+    ctx.strokeStyle=b.color;ctx.lineWidth=1.5;ctx.stroke();
+    // Shine
+    ctx.fillStyle='rgba(255,255,255,.15)';ctx.fillRect(b.x+2,b.y+2,b.w-4,3);
+    // HP indicator
+    if(b.maxHp>1){ctx.fillStyle=b.color;ctx.fillRect(b.x,b.y+b.h-2,b.w*ratio,2);}
+    ctx.restore();
+  });
+  // Paddle
+  const pg=ctx.createLinearGradient(paddle.x,paddle.y,paddle.x,paddle.y+paddle.h);
+  pg.addColorStop(0,'rgba(0,210,255,.6)');pg.addColorStop(1,'rgba(0,210,255,.2)');
+  ctx.save();ctx.shadowColor='#00d2ff';ctx.shadowBlur=20;
+  ctx.fillStyle=pg;ctx.beginPath();if(ctx.roundRect)ctx.roundRect(paddle.x,paddle.y,paddle.w,paddle.h,6);else ctx.rect(paddle.x,paddle.y,paddle.w,paddle.h);ctx.fill();
+  ctx.strokeStyle='#00d2ff';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.restore();
+  // Ball
+  ctx.save();ctx.shadowColor='#facc15';ctx.shadowBlur=16;
+  const bg=ctx.createRadialGradient(ball.x-2,ball.y-2,1,ball.x,ball.y,ball.r);
+  bg.addColorStop(0,'#fff');bg.addColorStop(.5,'#facc15');bg.addColorStop(1,'#f97316');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+}
+
+async function endGame(){
+  gameRunning=false;cancelAnimationFrame(animId);
+  const lnx=score>=2000?25:score>=1000?18:score>=500?12:score>=200?7:3;
+  document.getElementById('finalScore').textContent=score+' pts';
+  document.getElementById('earnedLNX').textContent=`+${lnx} LNX earned`;
+  if(_uid){
+    try{
+      await updateDoc(doc(db,'wallets',_uid),{balance:increment(lnx),totalEarned:increment(lnx)});
+      await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(lnx)});
+      await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Game Reward',amount:lnx,game:'Breakout',score,timestamp:serverTimestamp()});
+    }catch{}
+  }
+  document.getElementById('gameoverOverlay').classList.remove('hidden');
+}
+window.goBack=()=>{cancelAnimationFrame(animId);history.back();};
+</script>
+</body>
+</html>

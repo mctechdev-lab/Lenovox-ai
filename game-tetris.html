@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Tetris Blitz — Lenovox</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229569177818177" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#03030b;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden;height:100vh;touch-action:none}
+.hud{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(0,0,0,.75);backdrop-filter:blur(12px);border-bottom:1px solid rgba(157,80,187,.2);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
+.hud-back{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888}
+.hud-title{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:900;color:#c084fc;text-shadow:0 0 12px rgba(192,132,252,.5)}
+.hud-stats{display:flex;gap:14px;align-items:center}
+.hud-stat{text-align:center}
+.hud-val{font-family:'Orbitron',monospace;font-size:.88rem;font-weight:900}
+.hud-lbl{font-size:.55rem;color:#555;text-transform:uppercase}
+/* LAYOUT */
+.game-layout{position:fixed;top:52px;left:0;right:0;bottom:0;display:flex;justify-content:center;align-items:flex-start;gap:10px;padding:10px}
+#tetrisCanvas{border:2px solid rgba(192,132,252,.3);border-radius:8px;box-shadow:0 0 30px rgba(192,132,252,.15);flex-shrink:0}
+.side-panel{display:flex;flex-direction:column;gap:10px;width:80px}
+.side-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px;text-align:center}
+.side-card-title{font-size:.58rem;color:#555;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+#nextCanvas{border-radius:6px}
+/* CONTROLS */
+.ctrl-row{position:fixed;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:8px;z-index:100;padding:0 10px}
+.ctrl-btn{width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);color:#888;font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;transition:.1s}
+.ctrl-btn:active{background:rgba(192,132,252,.15);border-color:rgba(192,132,252,.4);color:#c084fc;transform:scale(.9)}
+.ctrl-btn.rotate{background:rgba(192,132,252,.1);border-color:rgba(192,132,252,.3);color:#c084fc;width:64px;height:64px;font-size:1.3rem}
+.ctrl-btn.drop{background:rgba(255,204,51,.08);border-color:rgba(255,204,51,.25);color:#facc15}
+/* OVERLAY */
+.overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(3,3,11,.93);backdrop-filter:blur(16px);gap:14px;padding:24px}
+.overlay.hidden{display:none}
+.ov-icon{font-size:3.5rem;animation:float 2s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.ov-title{font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,#c084fc,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ov-score{font-family:'Orbitron',monospace;font-size:1.9rem;font-weight:900;color:#facc15}
+.ov-lnx{color:#555;font-size:.82rem}
+.ov-sub{color:#444;font-size:.82rem;text-align:center;max-width:260px;line-height:1.6}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.o-btn{padding:12px 24px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+.o-btn:hover{transform:translateY(-2px)}
+.o-btn-primary{background:linear-gradient(135deg,#9d50bb,#6e3592);color:#fff;box-shadow:0 8px 24px rgba(157,80,187,.3)}
+.o-btn-gold{background:linear-gradient(135deg,#facc15,#f97316);color:#000}
+.o-btn-ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#666}
+/* Line clear flash */
+.line-flash{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:150;opacity:0;transition:opacity .1s}
+</style>
+</head>
+<body>
+<div class="hud">
+  <div class="hud-back" onclick="goBack()">←</div>
+  <div class="hud-title">🧱 TETRIS BLITZ</div>
+  <div class="hud-stats">
+    <div class="hud-stat"><div class="hud-val" id="levelDisplay" style="color:#c084fc">1</div><div class="hud-lbl">Level</div></div>
+    <div class="hud-stat"><div class="hud-val" id="linesDisplay" style="color:#00d2ff">0</div><div class="hud-lbl">Lines</div></div>
+    <div class="hud-stat"><div class="hud-val" id="scoreDisplay">0</div><div class="hud-lbl">Score</div></div>
+  </div>
+</div>
+
+<div class="game-layout">
+  <canvas id="tetrisCanvas"></canvas>
+  <div class="side-panel">
+    <div class="side-card">
+      <div class="side-card-title">Next</div>
+      <canvas id="nextCanvas" width="70" height="70"></canvas>
+    </div>
+    <div class="side-card">
+      <div class="side-card-title">Best</div>
+      <div style="font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;color:#facc15" id="bestDisplay">0</div>
+    </div>
+    <div class="side-card" onclick="showAdFromGame()" style="cursor:pointer;border-color:rgba(250,204,21,.25);background:rgba(250,204,21,.05)">
+      <div style="font-size:1.3rem">📺</div>
+      <div style="font-size:.6rem;color:#facc15;font-weight:800;margin-top:3px">+30 LNX</div>
+      <div style="font-size:.55rem;color:#555">Watch Ad</div>
+    </div>
+  </div>
+</div>
+
+<div class="ctrl-row">
+  <div class="ctrl-btn" onpointerdown="move(-1)">◀</div>
+  <div class="ctrl-btn drop" onpointerdown="hardDrop()">⬇</div>
+  <div class="ctrl-btn rotate" onpointerdown="rotate()">↻</div>
+  <div class="ctrl-btn" onpointerdown="softDrop()">▼</div>
+  <div class="ctrl-btn" onpointerdown="move(1)">▶</div>
+</div>
+
+<div class="line-flash" id="lineFlash"></div>
+
+<!-- OVERLAYS -->
+<div class="overlay" id="startOverlay">
+  <div class="ov-icon">🧱</div>
+  <div class="ov-title">TETRIS BLITZ</div>
+  <div class="ov-sub">Clear lines to score! Clear 4 lines at once for a TETRIS bonus! Speed increases every 5 lines.</div>
+  <div class="btn-row">
+    <button class="o-btn o-btn-primary" onclick="startGame()">▶ PLAY</button>
+    <button class="o-btn o-btn-gold" onclick="showAdFromGame()">📺 Free 30 LNX</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="gameoverOverlay">
+  <div class="ov-icon">💀</div>
+  <div class="ov-title">GAME OVER</div>
+  <div class="ov-score" id="finalScore">0</div>
+  <div class="ov-lnx" id="earnedLNX">+0 LNX</div>
+  <div class="ov-sub" id="finalMsg">The blocks reached the top!</div>
+  <div class="btn-row">
+    <button class="o-btn o-btn-primary" onclick="startGame()">▶ RETRY</button>
+    <button class="o-btn o-btn-gold" onclick="showAdFromGame()">📺 +30 LNX</button>
+    <button class="o-btn o-btn-ghost" onclick="goBack()">← Menu</button>
+  </div>
+</div>
+
+<script type="module">
+import { watchAuth, db } from './auth.js';
+import { initAds, showRewardedAd, setAdUser } from './game-ads.js';
+import { doc, updateDoc, increment, addDoc, collection, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+let _uid = null;
+watchAuth(u => { if(u){_uid=u.uid; setAdUser(u.uid);} });
+initAds(db, null);
+window.showAdFromGame = () => showRewardedAd();
+
+const canvas = document.getElementById('tetrisCanvas');
+const ctx = canvas.getContext('2d');
+const nextCanvas = document.getElementById('nextCanvas');
+const nCtx = nextCanvas.getContext('2d');
+
+const COLS = 10, ROWS = 20;
+let CELL;
+let board, currentPiece, nextPiece, score, lines, level, gameRunning, dropTimer, dropInterval, animId;
+
+const PIECES = [
+  {shape:[[1,1,1,1]],color:'#00d2ff'},           // I
+  {shape:[[1,1],[1,1]],color:'#facc15'},           // O
+  {shape:[[0,1,0],[1,1,1]],color:'#c084fc'},       // T
+  {shape:[[1,0,0],[1,1,1]],color:'#f97316'},       // L
+  {shape:[[0,0,1],[1,1,1]],color:'#3a7bd5'},       // J
+  {shape:[[0,1,1],[1,1,0]],color:'#10b981'},       // S
+  {shape:[[1,1,0],[0,1,1]],color:'#ff3d70'},       // Z
+];
+
+function resize() {
+  const avH = window.innerHeight - 52 - 80;
+  const avW = window.innerWidth - 110;
+  CELL = Math.floor(Math.min(avH/ROWS, avW/COLS));
+  canvas.width = COLS * CELL;
+  canvas.height = ROWS * CELL;
+}
+resize();
+document.getElementById('bestDisplay').textContent = localStorage.getItem('tetris_best')||'0';
+
+function newPiece() {
+  const p = PIECES[Math.floor(Math.random()*PIECES.length)];
+  return { shape:p.shape.map(r=>[...r]), color:p.color, x:Math.floor(COLS/2)-Math.floor(p.shape[0].length/2), y:0 };
+}
+
+window.startGame = () => {
+  document.getElementById('startOverlay').classList.add('hidden');
+  document.getElementById('gameoverOverlay').classList.add('hidden');
+  board = Array.from({length:ROWS}, ()=>Array(COLS).fill(null));
+  score=0; lines=0; level=1; gameRunning=true;
+  currentPiece = newPiece(); nextPiece = newPiece();
+  updateHUD(); drawNext();
+  clearInterval(dropTimer); dropInterval=600;
+  dropTimer = setInterval(tick, dropInterval);
+  cancelAnimationFrame(animId);
+  animId = requestAnimationFrame(render);
+};
+
+function tick() {
+  if(!gameRunning) return;
+  if(!tryMove(0,1)) lock();
+}
+
+function tryMove(dx,dy,piece=currentPiece) {
+  for(let r=0;r<piece.shape.length;r++) for(let c=0;c<piece.shape[r].length;c++) {
+    if(!piece.shape[r][c]) continue;
+    const nx=piece.x+c+dx, ny=piece.y+r+dy;
+    if(nx<0||nx>=COLS||ny>=ROWS) return false;
+    if(ny>=0 && board[ny][nx]) return false;
+  }
+  return true;
+}
+
+function lock() {
+  currentPiece.shape.forEach((row,r)=>row.forEach((v,c)=>{
+    if(v) { if(currentPiece.y+r<0){endGame();return;} board[currentPiece.y+r][currentPiece.x+c]=currentPiece.color; }
+  }));
+  clearLines();
+  currentPiece = nextPiece; nextPiece = newPiece();
+  drawNext();
+  if(!tryMove(0,0)) endGame();
+}
+
+function clearLines() {
+  let cleared=0;
+  for(let r=ROWS-1;r>=0;r--) {
+    if(board[r].every(c=>c)) { board.splice(r,1); board.unshift(Array(COLS).fill(null)); cleared++; r++; }
+  }
+  if(cleared>0) {
+    lines+=cleared;
+    const pts=[0,100,300,500,800][cleared]*level;
+    score+=pts;
+    level=Math.floor(lines/10)+1;
+    dropInterval=Math.max(80,600-(level-1)*50);
+    clearInterval(dropTimer); dropTimer=setInterval(tick,dropInterval);
+    // Flash effect
+    const flash=document.getElementById('lineFlash');
+    const colors=['','rgba(0,210,255,.3)','rgba(0,255,128,.3)','rgba(157,80,187,.3)','rgba(255,204,51,.5)'];
+    flash.style.background=colors[cleared]||colors[1];
+    flash.style.opacity='1'; setTimeout(()=>flash.style.opacity='0',150);
+    if(cleared===4) showCombo('TETRIS!! +800');
+    updateHUD();
+  }
+}
+
+window.move = (dx) => { if(tryMove(dx,0)){currentPiece.x+=dx;} };
+window.rotate = () => {
+  const rotated = currentPiece.shape[0].map((_,i)=>currentPiece.shape.map(r=>r[i]).reverse());
+  const prev = currentPiece.shape;
+  currentPiece.shape = rotated;
+  if(!tryMove(0,0)){currentPiece.shape=prev;}
+};
+window.softDrop = () => { if(tryMove(0,1)){currentPiece.y++;score+=1;} };
+window.hardDrop = () => {
+  let dist=0; while(tryMove(0,1)){currentPiece.y++;dist++;}
+  score+=dist*2; lock();
+};
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft') move(-1);
+  if(e.key==='ArrowRight') move(1);
+  if(e.key==='ArrowDown') softDrop();
+  if(e.key==='ArrowUp'||e.key==='z') rotate();
+  if(e.key===' '){e.preventDefault();hardDrop();}
+});
+
+let touchX,touchY;
+canvas.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;touchY=e.touches[0].clientY;});
+canvas.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-touchX;
+  const dy=e.changedTouches[0].clientY-touchY;
+  if(Math.abs(dy)>Math.abs(dx)){if(dy>30)hardDrop();else rotate();}
+  else{if(Math.abs(dx)>20)move(dx>0?1:-1);}
+});
+
+function updateHUD() {
+  document.getElementById('scoreDisplay').textContent=score;
+  document.getElementById('linesDisplay').textContent=lines;
+  document.getElementById('levelDisplay').textContent=level;
+}
+
+function drawNext() {
+  nCtx.fillStyle='rgba(3,3,11,.8)'; nCtx.fillRect(0,0,70,70);
+  const p=nextPiece; const cs=14;
+  const ox=Math.floor((70-p.shape[0].length*cs)/2);
+  const oy=Math.floor((70-p.shape.length*cs)/2);
+  p.shape.forEach((row,r)=>row.forEach((v,c)=>{
+    if(!v)return;
+    const x=ox+c*cs, y=oy+r*cs;
+    nCtx.fillStyle=p.color+'22'; nCtx.fillRect(x,y,cs-1,cs-1);
+    nCtx.strokeStyle=p.color; nCtx.lineWidth=1.5;
+    nCtx.strokeRect(x+.75,y+.75,cs-2.5,cs-2.5);
+    nCtx.fillStyle='rgba(255,255,255,.3)'; nCtx.fillRect(x+2,y+2,4,2);
+  }));
+}
+
+function render() {
+  if(!gameRunning){cancelAnimationFrame(animId);return;}
+  ctx.fillStyle='#03030b'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,.03)'; ctx.lineWidth=.5;
+  for(let r=0;r<ROWS;r++){ctx.beginPath();ctx.moveTo(0,r*CELL);ctx.lineTo(COLS*CELL,r*CELL);ctx.stroke();}
+  for(let c=0;c<COLS;c++){ctx.beginPath();ctx.moveTo(c*CELL,0);ctx.lineTo(c*CELL,ROWS*CELL);ctx.stroke();}
+  // Board
+  board.forEach((row,r)=>row.forEach((color,c)=>{if(color)drawBlock(ctx,c,r,color);}));
+  // Ghost
+  let ghost={...currentPiece,shape:currentPiece.shape.map(r=>[...r])};
+  while(tryMove(0,1,ghost)){ghost.y++;}
+  ghost.shape.forEach((row,r)=>row.forEach((v,c)=>{
+    if(!v)return;
+    ctx.strokeStyle=currentPiece.color+'55'; ctx.lineWidth=1.5;
+    ctx.strokeRect(ghost.x*CELL+c*CELL+1,ghost.y*CELL+r*CELL+1,CELL-2,CELL-2);
+  }));
+  // Current piece
+  currentPiece.shape.forEach((row,r)=>row.forEach((v,c)=>{if(v)drawBlock(ctx,currentPiece.x+c,currentPiece.y+r,currentPiece.color);}));
+  animId=requestAnimationFrame(render);
+}
+
+function drawBlock(ctx,c,r,color) {
+  const x=c*CELL, y=r*CELL, s=CELL-1;
+  ctx.fillStyle=color+'18'; ctx.fillRect(x,y,s,s);
+  ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.strokeRect(x+.75,y+.75,s-1.5,s-1.5);
+  ctx.fillStyle='rgba(255,255,255,.25)'; ctx.fillRect(x+2,y+2,s-4,3);
+  ctx.fillStyle='rgba(255,255,255,.08)'; ctx.fillRect(x+2,y+2,3,s-4);
+}
+
+function showCombo(t){const el=document.createElement('div');el.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);font-family:Orbitron,monospace;font-size:1rem;font-weight:900;color:#facc15;text-shadow:0 0 14px rgba(250,204,51,.6);z-index:200;animation:lnxToastIn .3s ease;pointer-events:none;white-space:nowrap';el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),1500);}
+
+async function endGame() {
+  gameRunning=false; clearInterval(dropTimer); cancelAnimationFrame(animId);
+  const best=parseInt(localStorage.getItem('tetris_best')||'0');
+  if(score>best){localStorage.setItem('tetris_best',score);document.getElementById('bestDisplay').textContent=score;}
+  const lnx=score>=3000?25:score>=1500?18:score>=500?12:score>=200?7:3;
+  document.getElementById('finalScore').textContent=score+' pts';
+  document.getElementById('earnedLNX').textContent=`+${lnx} LNX earned`;
+  document.getElementById('finalMsg').textContent=score>=3000?'TETRIS MASTER! 🔥':score>=1500?'Amazing!':score>=500?'Nice stacking!':'Keep practising!';
+  if(_uid){
+    try{
+      await updateDoc(doc(db,'wallets',_uid),{balance:increment(lnx),totalEarned:increment(lnx)});
+      await updateDoc(doc(db,'users',_uid),{lnxBalance:increment(lnx)});
+      await addDoc(collection(db,'wallets',_uid,'transactions'),{type:'Game Reward',amount:lnx,game:'Tetris Blitz',score,timestamp:serverTimestamp()});
+    }catch{}
+  }
+  document.getElementById('gameoverOverlay').classList.remove('hidden');
+}
+window.goBack=()=>{clearInterval(dropTimer);cancelAnimationFrame(animId);history.back();};
+</script>
+</body>
+</html>
