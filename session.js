@@ -3,7 +3,8 @@
 
 const DB_NAME = "lenovox-auth";
 const STORE = "users";
-const VERSION = 2; // bump version so browser upgrades DB
+const SESSION_KEY = "current_session"; // fixed key for active session
+const VERSION = 2;
 
 // ============================
 // Open Database
@@ -14,8 +15,6 @@ function openDB() {
 
     req.onupgradeneeded = () => {
       const db = req.result;
-
-      // Create store if it doesn't exist
       if (!db.objectStoreNames.contains(STORE)) {
         db.createObjectStore(STORE, { keyPath: "uid" });
       }
@@ -28,7 +27,8 @@ function openDB() {
 
 // ============================
 // Save / Update User Profile
-// This MERGES data instead of overwriting
+// Also saves a "current_session" record so guard.js can
+// read without knowing the uid.
 // ============================
 export async function saveSession(uid, newData) {
   if (!uid) throw new Error("UID is required to save session");
@@ -43,18 +43,21 @@ export async function saveSession(uid, newData) {
     getReq.onsuccess = () => {
       const existingData = getReq.result || {};
 
-      // Merge old + new data
       const mergedData = {
         ...existingData,
         ...newData,
         uid: uid,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
+        expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000 // 30 days
       };
 
-      const putReq = store.put(mergedData);
+      store.put(mergedData);
 
-      putReq.onsuccess = () => resolve(true);
-      putReq.onerror = () => reject(putReq.error);
+      // Also save under the fixed SESSION_KEY so guard.js can read it
+      store.put({ ...mergedData, uid: SESSION_KEY });
+
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => reject(tx.error);
     };
 
     getReq.onerror = () => reject(getReq.error);
@@ -63,17 +66,17 @@ export async function saveSession(uid, newData) {
 
 // ============================
 // Load User Profile
+// If uid is omitted, returns the current active session
 // ============================
 export async function getSession(uid) {
-  if (!uid) return null;
+  const key = uid || SESSION_KEY;
 
   const db = await openDB();
   const tx = db.transaction(STORE, "readonly");
   const store = tx.objectStore(STORE);
 
   return new Promise((resolve) => {
-    const req = store.get(uid);
-
+    const req = store.get(key);
     req.onsuccess = () => resolve(req.result || null);
     req.onerror = () => resolve(null);
   });
@@ -83,11 +86,10 @@ export async function getSession(uid) {
 // Delete User (Logout cleanup)
 // ============================
 export async function clearSession(uid) {
-  if (!uid) return;
-
   const db = await openDB();
   const tx = db.transaction(STORE, "readwrite");
   const store = tx.objectStore(STORE);
 
-  store.delete(uid);
+  if (uid) store.delete(uid);
+  store.delete(SESSION_KEY); // always clear the active session pointer
 }

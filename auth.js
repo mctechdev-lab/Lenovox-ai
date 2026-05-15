@@ -25,8 +25,9 @@ import {
   updateDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { saveSession, clearSession } from "./session.js";
 
-// ─── Firebase Config (NEW PROJECT) ───────────────────────────
+// ─── Firebase Config ───────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyBT4Be5OU9m8U2zx9PpvfHVfyuggtq2Wb8",
   authDomain: "lenovox-ai.firebaseapp.com",
@@ -42,6 +43,18 @@ const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
 
+// ─── Save Session to IndexedDB after login ────────────────────
+async function persistSession(user) {
+  await saveSession(user.uid, {
+    uid: user.uid,
+    displayName: user.displayName || '',
+    email: user.email || '',
+    photoURL: user.photoURL || '',
+    phoneNumber: user.phoneNumber || '',
+    expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000 // 30 days
+  });
+}
+
 // ─── Create User Profile in Firestore ────────────────────────
 async function createUserProfile(user, extras = {}) {
   const ref = doc(db, "users", user.uid);
@@ -56,8 +69,8 @@ async function createUserProfile(user, extras = {}) {
       country: extras.country || "",
       plan: "free",
       planExpiry: null,
-      lnxBalance: 200,  // Welcome bonus — Mon-Thu rate
-      dailyLNX: 200,  // Mon-Thu=200, Fri-Sun=150 (set dynamically by claim)
+      lnxBalance: 300,
+      dailyLNX: 300,
       lastClaim: null,
       referralCode: generateReferralCode(user.uid),
       referredBy: extras.referredBy || null,
@@ -65,16 +78,14 @@ async function createUserProfile(user, extras = {}) {
       lastLogin: serverTimestamp()
     });
 
-    // Create wallet
     await setDoc(doc(db, "wallets", user.uid), {
       uid: user.uid,
-      balance: 200,  // Welcome wallet
-      totalEarned: 200,  // Welcome bonus included
+      balance: 300,
+      totalEarned: 300,
       totalSpent: 0,
       lastUpdated: serverTimestamp()
     });
   } else {
-    // Just update last login
     await updateDoc(ref, { lastLogin: serverTimestamp() });
   }
 }
@@ -89,6 +100,7 @@ export async function signUpUser({ email, password, name, referredBy }) {
     const res = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(res.user, { displayName: name });
     await createUserProfile(res.user, { name, referredBy });
+    await persistSession(res.user);
     return { success: true, user: res.user };
   } catch (err) {
     return { success: false, error: friendlyError(err.code) };
@@ -100,6 +112,7 @@ export async function loginUser({ email, password }) {
   try {
     const res = await signInWithEmailAndPassword(auth, email, password);
     await createUserProfile(res.user);
+    await persistSession(res.user); // ← FIXED: saves session so guard.js works
     return { success: true, user: res.user };
   } catch (err) {
     return { success: false, error: friendlyError(err.code) };
@@ -111,6 +124,7 @@ export async function googleLoginUser() {
   try {
     const res = await signInWithPopup(auth, googleProvider);
     await createUserProfile(res.user);
+    await persistSession(res.user); // ← FIXED: saves session so guard.js works
     return { success: true, user: res.user };
   } catch (err) {
     if (err.code === 'auth/popup-closed-by-user') {
@@ -144,6 +158,7 @@ export async function verifyPhoneOTP(code) {
     if (!window.confirmationResult) throw new Error("No OTP session found.");
     const res = await window.confirmationResult.confirm(code);
     await createUserProfile(res.user);
+    await persistSession(res.user); // ← FIXED: saves session so guard.js works
     return { success: true, user: res.user };
   } catch (err) {
     return { success: false, error: "Invalid OTP code. Please try again." };
@@ -161,9 +176,12 @@ export async function resetPassword(email) {
 }
 
 // ─── Logout ───────────────────────────────────────────────────
-export async function logoutUser() {
+export async function logoutUser(uid) {
   try {
     await signOut(auth);
+    await clearSession(uid); // clears IndexedDB session too
+    localStorage.removeItem('guestMode');
+    localStorage.removeItem('guestUser');
     return { success: true };
   } catch (err) {
     return { success: false, error: err.message };
@@ -172,7 +190,24 @@ export async function logoutUser() {
 
 // ─── Watch Auth State ─────────────────────────────────────────
 export function watchAuth(callback) {
-  return onAuthStateChanged(auth, callback);
+  return onAuthStateChanged(auth, async (user) => {
+    // If no Firebase user, check guest mode before redirecting
+    if (!user) {
+      const isGuest = localStorage.getItem('guestMode') === 'true';
+      if (isGuest) {
+        // Build a fake user object for guest so appskeleton works
+        const guestData = localStorage.getItem('guestUser');
+        const guestUser = guestData ? JSON.parse(guestData) : null;
+        if (guestUser) {
+          callback(guestUser); // ← FIXED: pass guest as user so shell doesn't redirect
+          return;
+        }
+      }
+      callback(null);
+      return;
+    }
+    callback(user);
+  });
 }
 
 // ─── Get User Profile from Firestore ─────────────────────────
@@ -201,6 +236,7 @@ function friendlyError(code) {
     'auth/invalid-verification-code': 'Invalid OTP code.',
     'auth/invalid-phone-number': 'Please enter a valid phone number.',
     'auth/network-request-failed': 'Network error. Check your connection.',
+    'auth/invalid-credential': 'Incorrect email or password. Please try again.',
   };
   return map[code] || 'Something went wrong. Please try again.';
 }

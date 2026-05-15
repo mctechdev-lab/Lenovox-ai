@@ -1,26 +1,27 @@
-// guard.js — Fixed: uses clean URLs (no .html extension) + Guest Mode Support
+// guard.js — Fixed: handles Guest Mode + Real session properly
 import { getSession, clearSession } from "./session.js";
 
 export async function protectApp() {
-  // Check for guest mode first
+  // 1. Check guest mode first
   const isGuest = localStorage.getItem('guestMode') === 'true';
   const guestUser = localStorage.getItem('guestUser');
-  
+
   if (isGuest && guestUser) {
-    // Guest mode is active, allow access
+    // Guest is active — allow access
     return;
   }
-  
-  // Check regular session
-  const session = await getSession();
+
+  // 2. Check Firebase auth via session (no uid needed — reads current_session key)
+  const session = await getSession(); // no uid = reads "current_session"
 
   if (!session) {
     window.location.replace("login");
     return;
   }
 
-  if (Date.now() > session.expiresAt) {
-    await clearSession();
+  // 3. Check expiry
+  if (session.expiresAt && Date.now() > session.expiresAt) {
+    await clearSession(session.uid);
     window.location.replace("login");
     return;
   }
