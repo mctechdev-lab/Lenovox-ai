@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229569177818177" crossorigin="anonymous"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+<link rel="apple-touch-icon" sizes="192x192" href="/favicon-192.png">
+<link rel="manifest" href="/manifest.json">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Blog — Lenovox AI | Study Tips, JAMB & WAEC Guides</title>
+<meta name="description" content="Free study guides, JAMB tips, WAEC past question strategies, and AI learning advice for Nigerian students — from the Lenovox AI blog.">
+<meta name="keywords" content="JAMB tips, WAEC guide, Nigeria student blog, study tips, NECO preparation, AI tutor, Nigerian education, how to pass JAMB">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://lenovox.com.ng/blog">
+<meta property="og:title" content="Lenovox AI Blog — Study Tips & Exam Guides for Nigerian Students">
+<meta property="og:description" content="Free JAMB, WAEC and NECO guides from Nigeria's #1 AI study platform.">
+<meta property="og:url" content="https://lenovox.com.ng/blog">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03030b;--blue:#00d2ff;--purple:#9d50bb;--gold:#ffcc33;--green:#10b981;--red:#ef4444;--border:rgba(255,255,255,0.09);--text:#e8eaf6;--muted:#8892a4}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
+.univ{position:fixed;inset:0;z-index:-3;background:radial-gradient(circle at 50% 40%,#0d0d2b 0%,#03030b 70%)}
+.nebula{position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 18% 28%,rgba(93,63,211,.5) 0%,transparent 52%),radial-gradient(circle at 82% 68%,rgba(0,210,255,.32) 0%,transparent 52%),radial-gradient(circle at 52% 85%,rgba(157,80,187,.22) 0%,transparent 45%);filter:blur(72px);opacity:.8}
+#star-canvas{position:fixed;inset:0;z-index:-1;pointer-events:none}
+nav{position:sticky;top:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:rgba(3,3,11,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;text-decoration:none;background:linear-gradient(90deg,#fff 30%,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:8px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#ffb347,var(--gold));box-shadow:0 0 14px var(--gold);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+.nav-links{display:flex;gap:12px;align-items:center}
+.btn-nav{padding:9px 18px;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:700;text-decoration:none;transition:all .25s;display:flex;align-items:center;gap:6px}
+.btn-out{background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text)}
+.btn-out:hover{background:rgba(255,255,255,.13)}
+.btn-sol{background:linear-gradient(135deg,#00d2ff,#3a7bd5);color:#fff;box-shadow:0 6px 20px rgba(0,210,255,.28)}
+.btn-sol:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,210,255,.4)}
+
+/* HERO */
+.hero{text-align:center;padding:70px 20px 50px;max-width:700px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.25);border-radius:999px;padding:6px 16px;font-size:.78rem;font-weight:700;color:var(--blue);margin-bottom:22px;letter-spacing:.5px}
+.hero h1{font-family:'Orbitron',monospace;font-size:2.3rem;font-weight:900;line-height:1.2;margin-bottom:14px;background:linear-gradient(135deg,#fff 40%,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--muted);font-size:1rem;line-height:1.7;font-weight:600}
+
+/* FEATURED */
+.featured{max-width:1100px;margin:0 auto;padding:0 20px 40px}
+.feat-card{background:linear-gradient(145deg,rgba(14,14,42,.95),rgba(5,5,18,.97));border:1px solid rgba(0,210,255,.2);border-radius:24px;padding:40px;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;box-shadow:0 0 60px rgba(0,210,255,.06)}
+@media(max-width:768px){.feat-card{grid-template-columns:1fr}}
+.feat-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,204,51,.15);border:1px solid rgba(255,204,51,.3);border-radius:999px;padding:5px 14px;font-size:.72rem;font-weight:700;color:var(--gold);margin-bottom:14px}
+.feat-title{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:700;line-height:1.3;margin-bottom:14px;color:#fff}
+.feat-meta{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:.8rem;font-weight:600;margin-bottom:16px}
+.feat-meta span{display:flex;align-items:center;gap:5px}
+.feat-excerpt{color:var(--muted);line-height:1.75;font-size:.93rem;margin-bottom:22px}
+.btn-read{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:12px;background:linear-gradient(135deg,#00d2ff,#3a7bd5);color:#fff;font-weight:700;font-size:.9rem;text-decoration:none;transition:all .3s;box-shadow:0 6px 20px rgba(0,210,255,.28)}
+.btn-read:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,210,255,.4)}
+.feat-visual{background:linear-gradient(135deg,rgba(0,210,255,.1),rgba(157,80,187,.1));border:1px solid rgba(0,210,255,.15);border-radius:18px;padding:32px;text-align:center}
+.feat-visual i{font-size:4rem;color:var(--blue);display:block;margin-bottom:16px}
+.feat-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.stat-box{background:rgba(255,255,255,.05);border-radius:12px;padding:12px;text-align:center}
+.stat-num{font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:700;color:#fff}
+.stat-lbl{font-size:.72rem;color:var(--muted);font-weight:600;margin-top:3px}
+
+/* GRID */
+.grid-section{max-width:1100px;margin:0 auto;padding:0 20px 80px}
+.grid-title{font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:10px;color:#fff}
+.grid-title i{color:var(--blue)}
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}
+.blog-card{background:linear-gradient(145deg,rgba(14,14,42,.95),rgba(5,5,18,.97));border:1px solid var(--border);border-radius:20px;padding:28px;transition:all .3s;cursor:pointer;text-decoration:none;display:block;color:var(--text)}
+.blog-card:hover{transform:translateY(-5px);border-color:rgba(0,210,255,.35);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:18px}
+.icon-b{background:rgba(0,210,255,.12);color:var(--blue)}
+.icon-g{background:rgba(16,185,129,.12);color:var(--green)}
+.icon-p{background:rgba(157,80,187,.12);color:var(--purple)}
+.icon-o{background:rgba(255,149,0,.12);color:#ff9500}
+.icon-r{background:rgba(239,68,68,.12);color:var(--red)}
+.card-category{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:8px}
+.card-title{font-weight:800;font-size:1.05rem;line-height:1.4;margin-bottom:10px;color:#fff}
+.card-excerpt{color:var(--muted);font-size:.85rem;line-height:1.6;margin-bottom:18px}
+.card-meta{display:flex;align-items:center;justify-content:space-between;font-size:.75rem;color:var(--muted);font-weight:600}
+.card-meta span{display:flex;align-items:center;gap:5px}
+.read-more{color:var(--blue);font-weight:700;font-size:.82rem;display:flex;align-items:center;gap:5px}
+
+/* ARTICLE MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);display:none;align-items:flex-start;justify-content:center;padding:30px 20px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.article{background:linear-gradient(145deg,rgba(10,10,35,.98),rgba(4,4,18,.99));border:1px solid var(--border);border-radius:24px;max-width:780px;width:100%;padding:44px;position:relative;margin:auto;animation:mIn .35s ease}
+@keyframes mIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{position:absolute;top:18px;right:18px;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:1rem;transition:.2s}
+.modal-close:hover{background:rgba(255,255,255,.16)}
+.art-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.25);border-radius:999px;padding:5px 14px;font-size:.72rem;font-weight:700;color:var(--blue);margin-bottom:16px}
+.art-title{font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:700;line-height:1.3;color:#fff;margin-bottom:14px}
+.art-meta{display:flex;gap:18px;color:var(--muted);font-size:.8rem;font-weight:600;margin-bottom:28px;flex-wrap:wrap}
+.art-meta span{display:flex;align-items:center;gap:5px}
+.art-body{color:#c8cfe0;line-height:1.85;font-size:.97rem}
+.art-body h2{font-family:'Orbitron',monospace;font-size:1.05rem;color:#fff;margin:28px 0 12px}
+.art-body h3{font-size:1rem;color:var(--blue);margin:20px 0 10px;font-weight:700}
+.art-body p{margin-bottom:14px}
+.art-body ul,.art-body ol{margin:10px 0 14px 22px}
+.art-body li{margin-bottom:7px}
+.art-body strong{color:#fff;font-weight:700}
+.art-body .tip{background:rgba(0,210,255,.08);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0;font-size:.9rem}
+.art-body .tip strong{color:var(--blue)}
+.art-cta{background:linear-gradient(135deg,rgba(0,210,255,.1),rgba(157,80,187,.1));border:1px solid rgba(0,210,255,.2);border-radius:16px;padding:24px;text-align:center;margin-top:32px}
+.art-cta h3{color:#fff;font-weight:800;margin-bottom:8px}
+.art-cta p{color:var(--muted);font-size:.88rem;margin-bottom:16px}
+.art-cta a{display:inline-flex;align-items:center;gap:8px;padding:11px 28px;border-radius:12px;background:linear-gradient(135deg,#00d2ff,#3a7bd5);color:#fff;font-weight:700;text-decoration:none;transition:all .3s}
+.art-cta a:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,210,255,.35)}
+
+/* NEWSLETTER */
+.nl-section{max-width:600px;margin:0 auto;padding:0 20px 80px;text-align:center}
+.nl-card{background:linear-gradient(145deg,rgba(14,14,42,.95),rgba(5,5,18,.97));border:1px solid rgba(157,80,187,.3);border-radius:24px;padding:40px 32px}
+.nl-icon{font-size:2.8rem;color:var(--purple);margin-bottom:16px}
+.nl-title{font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:8px}
+.nl-desc{color:var(--muted);font-size:.9rem;margin-bottom:22px;line-height:1.6}
+.nl-row{display:flex;gap:10px}
+@media(max-width:480px){.nl-row{flex-direction:column}}
+.nl-input{flex:1;padding:12px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:12px;color:#fff;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:600;outline:none;transition:.3s}
+.nl-input:focus{border-color:rgba(157,80,187,.6);background:rgba(157,80,187,.08)}
+.nl-input::placeholder{color:rgba(136,146,164,.5)}
+.nl-btn{padding:12px 22px;border:none;border-radius:12px;background:linear-gradient(135deg,#9d50bb,#6c3ea6);color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;white-space:nowrap;transition:all .3s}
+.nl-btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(157,80,187,.4)}
+
+footer{text-align:center;padding:28px 20px;border-top:1px solid var(--border);color:var(--muted);font-size:.82rem;font-weight:600}
+footer a{color:var(--blue);text-decoration:none;margin:0 8px}
+footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="univ"></div>
+<div class="nebula"></div>
+<canvas id="star-canvas"></canvas>
+
+<nav>
+  <a href="index" class="nav-logo"><div class="nav-dot"></div>LENOVOX</a>
+  <div class="nav-links">
+    <a href="login" class="btn-nav btn-out"><i class="fas fa-right-to-bracket"></i> Sign In</a>
+    <a href="signup" class="btn-nav btn-sol"><i class="fas fa-rocket"></i> Get Started</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge"><i class="fas fa-newspaper"></i> LENOVOX BLOG</div>
+  <h1>Study Smarter, Score Higher</h1>
+  <p>Free guides, tips, and strategies for Nigerian students preparing for WAEC, JAMB, NECO and beyond — powered by AI insights.</p>
+</div>
+
+<!-- FEATURED ARTICLE -->
+<div class="featured">
+  <div class="feat-card">
+    <div>
+      <div class="feat-badge"><i class="fas fa-star"></i> FEATURED ARTICLE</div>
+      <div class="feat-title">How to Score 300+ in JAMB 2025 Using AI Study Tools</div>
+      <div class="feat-meta">
+        <span><i class="fas fa-calendar"></i> May 2025</span>
+        <span><i class="fas fa-clock"></i> 8 min read</span>
+        <span><i class="fas fa-eye"></i> 12,400 views</span>
+      </div>
+      <div class="feat-excerpt">Thousands of Nigerian students use AI tools to prepare smarter for JAMB. In this guide, we break down exactly how to use Lenovox AI's tutor, quiz engine, and past questions to build the skills you need to score above 300 — with a day-by-day 30-day plan included.</div>
+      <a href="#" class="btn-read" onclick="openArticle('jamb300');return false"><i class="fas fa-book-open"></i> Read Full Article</a>
+    </div>
+    <div class="feat-visual">
+      <i class="fas fa-graduation-cap"></i>
+      <div style="font-family:'Orbitron',monospace;font-size:1rem;color:#fff;font-weight:700;margin-bottom:4px">JAMB 2025 Guide</div>
+      <div style="color:var(--muted);font-size:.82rem">Complete strategy included</div>
+      <div class="feat-stats">
+        <div class="stat-box"><div class="stat-num">300+</div><div class="stat-lbl">Target Score</div></div>
+        <div class="stat-box"><div class="stat-num">30</div><div class="stat-lbl">Day Plan</div></div>
+        <div class="stat-box"><div class="stat-num">4</div><div class="stat-lbl">Core Subjects</div></div>
+        <div class="stat-box"><div class="stat-num">AI</div><div class="stat-lbl">Powered</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BLOG GRID -->
+<div class="grid-section">
+  <div class="grid-title"><i class="fas fa-th-large"></i> All Articles</div>
+  <div class="blog-grid">
+
+    <a class="blog-card" href="#" onclick="openArticle('waec');return false">
+      <div class="card-icon icon-g"><i class="fas fa-book"></i></div>
+      <div class="card-category">WAEC Guide</div>
+      <div class="card-title">The Ultimate WAEC Preparation Strategy for 2025</div>
+      <div class="card-excerpt">A subject-by-subject breakdown of how to prepare for WAEC using past questions, active recall, and the Lenovox AI tutor.</div>
+      <div class="card-meta">
+        <span><i class="fas fa-clock"></i> 7 min read</span>
+        <span class="read-more">Read <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </a>
+
+    <a class="blog-card" href="#" onclick="openArticle('ailearn');return false">
+      <div class="card-icon icon-b"><i class="fas fa-robot"></i></div>
+      <div class="card-category">AI Learning</div>
+      <div class="card-title">5 Ways AI Can Help You Study Twice as Fast</div>
+      <div class="card-excerpt">Traditional studying takes time you don't have. Here's how Nigerian students are using AI to cut their study time in half while retaining more.</div>
+      <div class="card-meta">
+        <span><i class="fas fa-clock"></i> 5 min read</span>
+        <span class="read-more">Read <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </a>
+
+    <a class="blog-card" href="#" onclick="openArticle('lnxcoins');return false">
+      <div class="card-icon icon-o"><i class="fas fa-coins"></i></div>
+      <div class="card-category">Lenovox Tips</div>
+      <div class="card-title">How to Earn Maximum LNX Coins Every Day on Lenovox</div>
+      <div class="card-excerpt">LNX coins unlock premium features, subscription upgrades, and exclusive rewards. Here's the full guide to earning as many as possible daily.</div>
+      <div class="card-meta">
+        <span><i class="fas fa-clock"></i> 4 min read</span>
+        <span class="read-more">Read <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </a>
+
+    <a class="blog-card" href="#" onclick="openArticle('neco');return false">
+      <div class="card-icon icon-p"><i class="fas fa-pencil"></i></div>
+      <div class="card-category">NECO Guide</div>
+      <div class="card-title">NECO 2025: What to Expect and How to Prepare</div>
+      <div class="card-excerpt">NECO is not WAEC — it has its own patterns and hot topics. This guide covers the key differences and how to maximize your score.</div>
+      <div class="card-meta">
+        <span><i class="fas fa-clock"></i> 6 min read</span>
+        <span class="read-more">Read <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </a>
+
+    <a class="blog-card" href="#" onclick="openArticle('memory');return false">
+      <div class="card-icon icon-r"><i class="fas fa-brain"></i></div>
+      <div class="card-category">Study Science</div>
+      <div class="card-title">Memory Hacks: Why Nigerian Students Forget What They Study</div>
+      <div class="card-excerpt">The science of forgetting — and how spaced repetition, active recall, and consistent review sessions can permanently fix it.</div>
+      <div class="card-meta">
+        <span><i class="fas fa-clock"></i> 6 min read</span>
+        <span class="read-more">Read <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </a>
+
+    <a class="blog-card" href="#" onclick="openArticle('referral');return false">
+      <div class="card-icon icon-g"><i class="fas fa-user-group"></i></div>
+      <div class="card-category">Earn on Lenovox</div>
+      <div class="card-title">How to Earn Money Referring Friends to Lenovox AI</div>
+      <div class="card-excerpt">Lenovox's referral program pays you in LNX coins for every friend you bring in. Here's how to maximize your referral earnings as a student.</div>
+      <div class="card-meta">
+        <span><i class="fas fa-clock"></i> 3 min read</span>
+        <span class="read-more">Read <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- NEWSLETTER -->
+<div class="nl-section">
+  <div class="nl-card">
+    <div class="nl-icon"><i class="fas fa-bell"></i></div>
+    <div class="nl-title">Get Study Tips in Your Inbox</div>
+    <div class="nl-desc">Join 8,000+ Nigerian students who get free JAMB, WAEC & NECO tips every week. No spam, ever.</div>
+    <div class="nl-row">
+      <input class="nl-input" type="email" id="nlEmail" placeholder="your@email.com">
+      <button class="nl-btn" onclick="subscribeNL()"><i class="fas fa-paper-plane"></i> Subscribe</button>
+    </div>
+  </div>
+</div>
+
+<!-- ARTICLE MODALS -->
+<div class="modal-overlay" id="articleModal">
+  <div class="article">
+    <button class="modal-close" onclick="closeArticle()"><i class="fas fa-xmark"></i></button>
+    <div id="articleContent"></div>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; 2025 Lenovox AI · Nigeria's #1 AI Study Platform</p>
+  <p style="margin-top:10px">
+    <a href="index">Home</a>
+    <a href="about">About</a>
+    <a href="privacy">Privacy</a>
+    <a href="terms">Terms</a>
+    <a href="contact">Contact</a>
+    <a href="blog">Blog</a>
+  </p>
+</footer>
+
+<script>
+const sc=document.getElementById('star-canvas'),sx=sc.getContext('2d');let stars=[];
+function initStars(){sc.width=innerWidth;sc.height=innerHeight;stars=Array.from({length:120},()=>({x:Math.random()*sc.width,y:Math.random()*sc.height,s:Math.random()*1.6,o:Math.random()*.7+.2,sp:Math.random()*.035+.006}));}
+function drawStars(){sx.clearRect(0,0,sc.width,sc.height);stars.forEach(s=>{sx.fillStyle=`rgba(255,255,255,${s.o})`;sx.beginPath();sx.arc(s.x,s.y,s.s,0,Math.PI*2);sx.fill();s.y-=s.sp;if(s.y<0){s.y=sc.height;s.x=Math.random()*sc.width;}});requestAnimationFrame(drawStars);}
+window.onresize=initStars;initStars();drawStars();
+
+const articles={
+  jamb300:`<div class="art-badge"><i class="fas fa-star"></i> FEATURED · JAMB GUIDE</div>
+<div class="art-title">How to Score 300+ in JAMB 2025 Using AI Study Tools</div>
+<div class="art-meta"><span><i class="fas fa-user"></i> Lenovox Team</span><span><i class="fas fa-calendar"></i> May 2025</span><span><i class="fas fa-clock"></i> 8 min read</span></div>
+<div class="art-body">
+<p>Scoring above 300 in JAMB is the dream of every Nigerian student, and it is absolutely achievable with the right strategy. In 2025, the smartest students are not studying harder — they are studying smarter, using AI tools to target their weak areas and maximize every hour they put in.</p>
+<h2>Why Most Students Fail to Score 300+</h2>
+<p>The number one reason students score below 250 in JAMB is not lack of effort — it is poor strategy. Many students read textbooks from cover to cover, cramming everything without understanding what JAMB actually tests. JAMB questions follow patterns. Once you understand those patterns, scoring high becomes much more predictable.</p>
+<h2>The 30-Day AI-Powered JAMB Plan</h2>
+<h3>Week 1: Diagnostic + Foundation (Days 1–7)</h3>
+<p>Use Lenovox AI's quiz engine to attempt a full past paper from each of your four subjects. Do not worry about the score — this is just to identify your weakest topics. After each quiz, let the AI tutor explain every wrong answer in detail.</p>
+<div class="tip"><strong>Pro Tip:</strong> Focus on understanding why you got a question wrong, not just the correct answer. The reasoning is what transfers to new questions.</div>
+<h3>Week 2: Core Topics (Days 8–14)</h3>
+<p>Pick the three weakest topics per subject identified in Week 1. Spend two hours per day — 30 minutes per subject — drilling those specific topics with past questions. Use the AI chat to ask follow-up questions until you fully understand every concept.</p>
+<h3>Week 3: Speed Training (Days 15–21)</h3>
+<p>JAMB is timed. You have roughly 90 seconds per question. In Week 3, start doing timed mini-tests of 20 questions in 25 minutes. Track your speed and accuracy. This is where most students fail — they know the material but cannot finish in time.</p>
+<h3>Week 4: Full Mock Papers (Days 22–30)</h3>
+<p>Attempt a full 180-question JAMB mock paper every two days under real exam conditions. Review every mistake immediately after. By Day 30, you should be consistently hitting 280–320 in practice.</p>
+<h2>Subject-Specific Tips</h2>
+<h3>English Language</h3>
+<p>Focus on comprehension passages, lexis and structure, and oral English. JAMB English rewards students who read widely. Use the Lenovox AI chat to practice summarizing passages and identifying figures of speech.</p>
+<h3>Mathematics</h3>
+<p>JAMB Maths covers algebra, statistics, geometry, and number bases. Past questions repeat heavily in this subject. Doing the last 10 years of JAMB Maths past questions will cover roughly 70% of what appears on your exam.</p>
+<h3>Biology / Physics / Chemistry</h3>
+<p>These science subjects require conceptual understanding plus memorization. Use the AI tutor to ask questions like "Explain osmosis step by step" or "Why does acceleration change in projectile motion?" The AI gives you exam-focused explanations instantly.</p>
+<h2>The Lenovox Advantage</h2>
+<p>Lenovox AI gives you unlimited access to our AI tutor, thousands of JAMB past questions sorted by topic and year, instant explanations for every answer, and a leaderboard that keeps you motivated by comparing your progress with other students.</p>
+<div class="art-cta"><h3>Ready to Score 300+?</h3><p>Join Lenovox AI free today and start your 30-day JAMB plan.</p><a href="signup"><i class="fas fa-rocket"></i> Start Free — Get 300 LNX Coins</a></div>
+</div>`,
+
+  waec:`<div class="art-badge"><i class="fas fa-book"></i> WAEC GUIDE</div>
+<div class="art-title">The Ultimate WAEC Preparation Strategy for 2025</div>
+<div class="art-meta"><span><i class="fas fa-user"></i> Lenovox Team</span><span><i class="fas fa-calendar"></i> April 2025</span><span><i class="fas fa-clock"></i> 7 min read</span></div>
+<div class="art-body">
+<p>WAEC (WASSCE) remains one of the most important examinations for Nigerian secondary school students. Your WAEC result is required for university admission, polytechnic entry, and many professional certifications. Getting six credits — including English and Mathematics — opens doors that stay shut without it.</p>
+<h2>Understanding How WAEC Works</h2>
+<p>Unlike JAMB which is objective-only, WAEC has multiple components: objective (multiple choice), theory (essay), and in some subjects, practical. This means your preparation strategy must be different for each component.</p>
+<h3>Objective Section</h3>
+<p>Practice as many past questions as possible. WAEC recycles question patterns frequently — especially in Biology, Chemistry, Physics, and Economics. Aim to complete at least the last 5 years of past questions for each subject.</p>
+<h3>Theory / Essay Section</h3>
+<p>Read model answers from past WAEC marking schemes. Understanding what WAEC examiners award marks for is just as important as knowing the content. Use the Lenovox AI tutor to practice writing out answers and get instant feedback on structure and completeness.</p>
+<h2>Subject Priority Strategy</h2>
+<p>Not all subjects require the same level of preparation. Identify your strongest and weakest subjects early. Spend 60% of your time strengthening weak subjects while maintaining your strong ones. Getting a credit in a weak subject is worth more strategically than getting an A in a subject you already excel in.</p>
+<div class="tip"><strong>Key Insight:</strong> WAEC English Language is often where students lose their aggregate. Practice comprehension passages, summary writing, and letter writing formats every single day.</div>
+<h2>The 8-Week WAEC Timetable</h2>
+<ul>
+<li><strong>Weeks 1–2:</strong> Diagnostic tests in all subjects. Identify weak areas.</li>
+<li><strong>Weeks 3–5:</strong> Intensive past question drilling by topic, weakest subjects first.</li>
+<li><strong>Week 6:</strong> Theory and essay practice with model answers.</li>
+<li><strong>Weeks 7–8:</strong> Full mock WAEC papers, timed. Review every error immediately.</li>
+</ul>
+<h2>Using Lenovox for WAEC</h2>
+<p>Lenovox AI's classroom and quiz engine is built specifically for Nigerian exam preparation. You can select WAEC as your exam type, choose your subjects, and get topic-by-topic questions with instant AI explanations. The AI tutor is available 24/7 — ideal for late-night study sessions.</p>
+<div class="art-cta"><h3>Start Your WAEC Preparation Today</h3><p>Lenovox AI is free to join. Get your 300 LNX welcome bonus and start studying smarter.</p><a href="signup"><i class="fas fa-rocket"></i> Join Free Now</a></div>
+</div>`,
+
+  ailearn:`<div class="art-badge"><i class="fas fa-robot"></i> AI LEARNING</div>
+<div class="art-title">5 Ways AI Can Help You Study Twice as Fast</div>
+<div class="art-meta"><span><i class="fas fa-user"></i> Lenovox Team</span><span><i class="fas fa-calendar"></i> March 2025</span><span><i class="fas fa-clock"></i> 5 min read</span></div>
+<div class="art-body">
+<p>The way students study has not changed much in decades — read the textbook, make notes, try some past questions, repeat. But AI has changed what is possible. Nigerian students who use AI study tools are covering more material in less time and retaining it better. Here is how.</p>
+<h2>1. Instant Explanations for Anything</h2>
+<p>When you read a textbook and do not understand something, what do you do? You either skip it, ask a friend who may not know either, or wait for class. With AI, you ask immediately and get a clear, exam-focused explanation in seconds. This alone eliminates hours of confusion per week.</p>
+<h2>2. Personalized Weak-Area Targeting</h2>
+<p>A traditional study plan treats all topics equally. An AI-powered platform like Lenovox tracks which topics you get wrong most often and automatically serves you more questions in those areas. This means your study time is concentrated exactly where it matters most.</p>
+<div class="tip"><strong>Example:</strong> If you keep getting Electrochemistry questions wrong in Chemistry, Lenovox will automatically increase the frequency of those questions in your quiz sessions until your accuracy improves.</div>
+<h2>3. Active Recall Instead of Passive Reading</h2>
+<p>Research in cognitive science consistently shows that testing yourself on material is far more effective for memory than re-reading it. AI quiz engines make active recall effortless — instead of re-reading your Chemistry notes, you answer 20 targeted questions and review the explanations. You learn more in 30 minutes of active quizzing than in 2 hours of passive reading.</p>
+<h2>4. 24/7 Availability</h2>
+<p>Your teacher sleeps. Your classmates are not always available. Lenovox AI's tutor is available at 2am when you are the most focused, or during a break at school, or on a Sunday evening before Monday revision. This availability removes the single biggest bottleneck in studying: not getting answers when you need them.</p>
+<h2>5. Gamification Keeps You Motivated</h2>
+<p>The hardest part of exam preparation is staying consistent over weeks and months. Lenovox turns studying into a game — you earn LNX coins for studying, compete on leaderboards with other students, unlock badges for achievements, and track your streak. This keeps motivation high during the long preparation period.</p>
+<div class="art-cta"><h3>Try AI-Powered Studying Today</h3><p>Join thousands of Nigerian students already using Lenovox AI to study smarter.</p><a href="signup"><i class="fas fa-rocket"></i> Get Started Free</a></div>
+</div>`,
+
+  lnxcoins:`<div class="art-badge"><i class="fas fa-coins"></i> LENOVOX TIPS</div>
+<div class="art-title">How to Earn Maximum LNX Coins Every Day on Lenovox</div>
+<div class="art-meta"><span><i class="fas fa-user"></i> Lenovox Team</span><span><i class="fas fa-calendar"></i> May 2025</span><span><i class="fas fa-clock"></i> 4 min read</span></div>
+<div class="art-body">
+<p>LNX coins are Lenovox's reward currency. You earn them by being active on the platform, and you can use them to unlock premium features, top up your subscription plan, and access exclusive content. Here is how to earn as many as possible every single day.</p>
+<h2>Daily Login Bonus</h2>
+<p>Simply logging in every day earns you LNX coins. The bonus is higher on weekdays (Monday–Thursday) at 200 coins per day, and slightly lower on weekends at 150 coins. Maintaining a daily streak multiplies your earnings — so consistency is rewarded.</p>
+<h2>Complete Quizzes</h2>
+<p>Every quiz you complete on Lenovox earns you coins. The harder the quiz and the higher your accuracy score, the more coins you earn. Completing a full 40-question JAMB subject quiz with 80% accuracy earns significantly more than a 10-question basic quiz.</p>
+<div class="tip"><strong>Strategy:</strong> Do at least one full quiz per subject per day. This alone can earn you 300–500 LNX coins daily on top of your login bonus.</div>
+<h2>Refer Friends</h2>
+<p>Lenovox's referral program is one of the most powerful ways to earn coins. Every friend who signs up using your referral code earns you a bonus. Share your code on WhatsApp, Instagram stories, or your class group chat. A single week of active sharing can earn you thousands of LNX coins.</p>
+<h2>Play Games</h2>
+<p>Lenovox's gaming section — including Snake, Tetris, Breakout, and Space Shooter — all reward you with LNX coins for playing and achieving high scores. Gaming counts as active learning time and keeps your mind sharp.</p>
+<h2>Daily Study Streaks</h2>
+<p>Maintaining a study streak (logging in and completing at least one activity every day) unlocks streak bonuses that grow the longer you maintain them. A 7-day streak, a 14-day streak, and a 30-day streak all unlock significant coin bonuses.</p>
+<h2>What You Can Do With LNX Coins</h2>
+<ul>
+<li>Upgrade your subscription plan at a discounted rate</li>
+<li>Unlock the AI Imagine feature for image generation</li>
+<li>Access exclusive classroom content and premium past questions</li>
+<li>Unlock special profile badges and achievements</li>
+</ul>
+<div class="art-cta"><h3>Start Earning LNX Coins Today</h3><p>Sign up free and get 300 LNX coins instantly as a welcome bonus.</p><a href="signup"><i class="fas fa-rocket"></i> Claim Your 300 LNX Free</a></div>
+</div>`,
+
+  neco:`<div class="art-badge"><i class="fas fa-pencil"></i> NECO GUIDE</div>
+<div class="art-title">NECO 2025: What to Expect and How to Prepare</div>
+<div class="art-meta"><span><i class="fas fa-user"></i> Lenovox Team</span><span><i class="fas fa-calendar"></i> April 2025</span><span><i class="fas fa-clock"></i> 6 min read</span></div>
+<div class="art-body">
+<p>The National Examinations Council (NECO) is conducted twice a year — the main SSCE in June/July, and the NECO GCE in October/November. While NECO covers the same general curriculum as WAEC, it has its own question style, marking patterns, and areas of emphasis that many students overlook.</p>
+<h2>How NECO Differs from WAEC</h2>
+<p>Many students prepare for NECO by studying only WAEC past questions, which is a mistake. NECO tends to test slightly different aspects of topics and uses different question framing. The theory section in NECO often requires more detailed answers than WAEC's equivalent sections.</p>
+<h3>NECO English Language</h3>
+<p>NECO English places heavy emphasis on comprehension, summary, and letter writing. The oral English section in NECO includes phonetic-related questions that many students skip during preparation. Do not skip them — they are frequently tested and students who prepare for them gain an easy advantage.</p>
+<h3>NECO Mathematics</h3>
+<p>NECO Maths questions on statistics, probability, and vectors tend to be more detailed than WAEC equivalents. Ensure you practice the complete solution format — showing all working steps — as marks are awarded for method, not just the final answer.</p>
+<div class="tip"><strong>Important:</strong> In NECO theory papers, marks are awarded step by step. Even if your final answer is wrong, you can still earn partial marks for correct working. Never leave a theory question blank.</div>
+<h2>NECO Subject Preparation Priority</h2>
+<ol>
+<li><strong>English Language</strong> — Required for all institutions. Prioritize this above all others.</li>
+<li><strong>Mathematics</strong> — Required for science and most commercial courses.</li>
+<li><strong>Your science/arts/commercial core subjects</strong></li>
+<li><strong>Elective subjects</strong></li>
+</ol>
+<h2>Preparing with Past Questions</h2>
+<p>Use at least the last 7 years of NECO past questions per subject. Pay attention to topics that repeat across multiple years — these are almost certainly going to appear on your exam. Lenovox AI's question bank includes NECO past questions with AI-powered explanations for every answer.</p>
+<div class="art-cta"><h3>Start Your NECO Preparation on Lenovox</h3><p>Practice with NECO past questions and get AI explanations for every answer — free.</p><a href="signup"><i class="fas fa-rocket"></i> Start Studying Free</a></div>
+</div>`,
+
+  memory:`<div class="art-badge"><i class="fas fa-brain"></i> STUDY SCIENCE</div>
+<div class="art-title">Memory Hacks: Why Nigerian Students Forget What They Study</div>
+<div class="art-meta"><span><i class="fas fa-user"></i> Lenovox Team</span><span><i class="fas fa-calendar"></i> March 2025</span><span><i class="fas fa-clock"></i> 6 min read</span></div>
+<div class="art-body">
+<p>You study for three hours. You feel like you understand everything. Then you sit down to answer a practice question two days later and half of it is gone. Sound familiar? This is called the Forgetting Curve — and it affects every student who uses traditional study methods.</p>
+<h2>The Science of Forgetting</h2>
+<p>German psychologist Hermann Ebbinghaus discovered in the 1880s that humans forget approximately 50% of new information within an hour, and up to 90% within a week — unless the information is reviewed. This is not a sign of low intelligence. It is simply how human memory works by default.</p>
+<h2>What Actually Works: Spaced Repetition</h2>
+<p>Spaced repetition is the practice of reviewing information at increasing intervals — for example, after 1 day, then 3 days, then 1 week, then 2 weeks. Each review strengthens the memory trace and pushes back the next forgetting date. This is why Lenovox tracks your quiz performance and automatically resurfaces your weakest topics.</p>
+<div class="tip"><strong>The Lenovox Advantage:</strong> When you get a question wrong in a Lenovox quiz, that topic is automatically flagged and shown to you more frequently in future sessions. This is spaced repetition built directly into your study routine.</div>
+<h2>Active Recall vs Passive Review</h2>
+<p>Re-reading your notes feels productive but is one of the least effective study methods. Your brain recognizes the text as familiar and gives you a false sense of understanding. Active recall — testing yourself before you think you are ready — forces your brain to actually retrieve the information, which strengthens the memory far more powerfully.</p>
+<h2>The Interleaving Method</h2>
+<p>Instead of studying one subject for four straight hours, interleave different subjects and topics within a single study session. Study Mathematics for 30 minutes, then Chemistry for 30 minutes, then English for 30 minutes. Research shows this produces significantly better long-term retention than blocked study, even though it feels harder in the moment.</p>
+<h2>Sleep and Memory Consolidation</h2>
+<p>Sleep is when your brain consolidates memories — moving information from short-term to long-term storage. Students who sacrifice sleep to study more are actually harming their retention. Aim for 7–8 hours every night during exam preparation. A well-rested brain on exam day outperforms an exhausted brain every time.</p>
+<h2>Practical Application</h2>
+<ul>
+<li>Study in 25–45 minute focused blocks with short breaks (Pomodoro technique)</li>
+<li>Review new material within 24 hours of learning it</li>
+<li>Use Lenovox quizzes for active recall instead of re-reading notes</li>
+<li>Interleave subjects rather than blocking one subject per day</li>
+<li>Protect your sleep — 7 hours minimum</li>
+</ul>
+<div class="art-cta"><h3>Study Smarter with Lenovox AI</h3><p>Lenovox's quiz engine uses spaced repetition automatically. Join free and start retaining more of what you study.</p><a href="signup"><i class="fas fa-rocket"></i> Join Free Today</a></div>
+</div>`,
+
+  referral:`<div class="art-badge"><i class="fas fa-user-group"></i> EARN ON LENOVOX</div>
+<div class="art-title">How to Earn Money Referring Friends to Lenovox AI</div>
+<div class="art-meta"><span><i class="fas fa-user"></i> Lenovox Team</span><span><i class="fas fa-calendar"></i> May 2025</span><span><i class="fas fa-clock"></i> 3 min read</span></div>
+<div class="art-body">
+<p>Lenovox has a referral program that rewards you in LNX coins every time someone signs up using your unique referral code. The more people you refer, the more you earn — and the coins you earn can be used to unlock premium features or top up your subscription plan for free.</p>
+<h2>How the Referral Program Works</h2>
+<ol>
+<li>Log in to your Lenovox account and go to the Referral section in your dashboard.</li>
+<li>Copy your unique referral code or share link.</li>
+<li>Share it with your friends, classmates, or social media followers.</li>
+<li>Every person who signs up using your code earns you a referral bonus in LNX coins.</li>
+<li>Your referred friends also get a bonus for joining — so everyone wins.</li>
+</ol>
+<h2>Where to Share Your Referral Code</h2>
+<div class="tip"><strong>Best Channels:</strong> WhatsApp class groups, Instagram stories, Twitter/X posts, school notice boards (physical), or word of mouth during study sessions.</div>
+<h3>WhatsApp Strategy</h3>
+<p>Post your referral link in every class group you are in with a short message explaining what Lenovox is and why it is useful for JAMB/WAEC preparation. Students actively preparing for exams are your best audience.</p>
+<h3>Instagram Strategy</h3>
+<p>Post a story showing your Lenovox dashboard and quiz scores, and include your referral link in the story. Authentic results — your actual scores and progress — are far more convincing than generic promotional messages.</p>
+<h2>How Much Can You Earn?</h2>
+<p>The more active your referred friends are on the platform, the more coins you continue earning. A student who refers 20 classmates and stays active on the platform can earn enough LNX coins to cover a full month's premium subscription without spending any money.</p>
+<div class="art-cta"><h3>Start Referring and Earning Today</h3><p>Sign up free, get your referral code, and start earning LNX coins for every friend you bring in.</p><a href="signup"><i class="fas fa-rocket"></i> Get Your Referral Code</a></div>
+</div>`
+};
+
+function openArticle(id){
+  document.getElementById('articleContent').innerHTML=articles[id]||'<p>Article not found.</p>';
+  document.getElementById('articleModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeArticle(){
+  document.getElementById('articleModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('articleModal').addEventListener('click',function(e){if(e.target===this)closeArticle();});
+
+function subscribeNL(){
+  const e=document.getElementById('nlEmail').value.trim();
+  if(!e||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){alert('Please enter a valid email address.');return;}
+  document.getElementById('nlEmail').value='';
+  alert('You\'re subscribed! Check your inbox for a welcome message from Lenovox.');
+}
+</script>
+</body>
+</html>
